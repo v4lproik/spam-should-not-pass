@@ -1,0 +1,13 @@
+elasticsearch:
+  image: "itzg/elasticsearch:latest"
+  ports:
+    - "9200:9200"
+    - "9300:9300"
+
+mysql:
+  image: "mysql:5.7"
+  ports:
+    - "3306:3306"
+  environment:
+    - MYSQL_ROOT_PASSWORD=s3cretP4ssword123456789OverrideInPipeline
+    - MYSQL_DATABASE=googlanime
