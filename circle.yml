@@ -1,0 +1,17 @@
+machine:
+  java:
+    version: oraclejdk8
+  services:
+    - docker
+  hosts:
+    es.googlanime: 127.0.0.1
+
+general:
+    build_dir: .
+
+test:
+  override:
+  - docker run -d -p 9200:9200 -p 9300:9300 -e PUBLISH_AS=127.0.0.1:9300 itzg/elasticsearch
+  - sudo /etc/init.d/mysql stop && sudo apt-get remove -y mysql-server
+  - docker run -d -p 3306:3306 -e MYSQL_ROOT_PASSWORD=s3cretP4ssword123456789OverrideInPipeline -e MYSQL_DATABASE=googlanime mysql
+  - mvn clean install test -Dspring.profiles.active="dev"
