@@ -77,6 +77,7 @@ public class ConfigMysql {
         c.addAnnotatedClass(Others.class);
         c.addAnnotatedClass(SideStories.class);
         c.addAnnotatedClass(AnimeProducer.class);
+        c.addAnnotatedClass(Member.class);
 
         c.setProperty("connection.provider_class", "org.hibernate.connection.C3P0ConnectionProvider");
         c.setProperty("c3p0.min_size", "5");

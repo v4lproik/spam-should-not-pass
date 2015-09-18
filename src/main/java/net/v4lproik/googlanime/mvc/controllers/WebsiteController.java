@@ -2,8 +2,8 @@ package net.v4lproik.googlanime.mvc.controllers;
 
 import net.v4lproik.googlanime.client.crawler.CrawlerRegistry;
 import net.v4lproik.googlanime.mvc.models.AbstractTypeEnum;
+import net.v4lproik.googlanime.mvc.models.AnimeResponse;
 import net.v4lproik.googlanime.mvc.models.BackendException;
-import net.v4lproik.googlanime.mvc.models.JSONResponse;
 import net.v4lproik.googlanime.service.api.AnimeServiceWrite;
 import net.v4lproik.googlanime.service.api.MangaServiceWrite;
 import net.v4lproik.googlanime.service.api.entities.AnimeModel;
@@ -38,12 +38,12 @@ public class WebsiteController {
     @RequestMapping(value = "/import", method = RequestMethod.GET, params={"from", "type", "name"})
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public JSONResponse list(@RequestParam(value = "from", required = true) String from,
+    public AnimeResponse list(@RequestParam(value = "from", required = true) String from,
                              @RequestParam(value = "type", required = true) String type,
                              @RequestParam(value = "name", required = true) String name,
                              @RequestParam(value = "dependency", required = false, defaultValue = "false") Boolean dependency) throws BackendException {
 
-        JSONResponse response = new JSONResponse();
+        AnimeResponse response = new AnimeResponse();
 
         SourceEnum website = SourceEnum.fromValue(from);
 
@@ -76,12 +76,12 @@ public class WebsiteController {
     @RequestMapping(value = "/import", method = RequestMethod.GET, params={"from", "type", "id"})
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public JSONResponse list(@RequestParam(value = "from", required = true) String from,
+    public AnimeResponse list(@RequestParam(value = "from", required = true) String from,
                              @RequestParam(value = "type", required = true) String type,
                              @RequestParam(value = "id", required = true) Integer id,
                              @RequestParam(value = "dependency", required = false, defaultValue = "false") Boolean dependency) throws BackendException {
 
-        JSONResponse response = new JSONResponse();
+        AnimeResponse response = new AnimeResponse();
 
         SourceEnum website = SourceEnum.fromValue(from);
 
@@ -115,12 +115,12 @@ public class WebsiteController {
     @RequestMapping(value = "/import/store", method = RequestMethod.GET, params={"from", "type", "id"})
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public JSONResponse store(@RequestParam(value = "from", required = true) String from,
+    public AnimeResponse store(@RequestParam(value = "from", required = true) String from,
                              @RequestParam(value = "type", required = true) String type,
                              @RequestParam(value = "id", required = true) Integer id,
                              @RequestParam(value = "dependency", required = false, defaultValue = "true") Boolean dependency) throws BackendException {
 
-        JSONResponse response = new JSONResponse();
+        AnimeResponse response = new AnimeResponse();
 
         SourceEnum website = SourceEnum.fromValue(from);
 

@@ -77,7 +77,6 @@ public class AnimeServiceReadImpl implements AnimeServiceRead {
 
         for (SearchHit hit : responseElastic.getHits()){
             anime = gson.fromJson(hit.getSourceAsString(), toCast);
-            System.out.println(anime);
             animes.add(anime);
         }
 

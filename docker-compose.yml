@@ -11,3 +11,8 @@ mysql:
   environment:
     - MYSQL_ROOT_PASSWORD=s3cretP4ssword123456789OverrideInPipeline
     - MYSQL_DATABASE=googlanime
+
+redis:
+  image: "redis:2.8.21"
+  ports:
+    - "6379:6379"

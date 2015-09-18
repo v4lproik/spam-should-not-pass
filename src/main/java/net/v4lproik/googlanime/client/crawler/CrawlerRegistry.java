@@ -3,6 +3,7 @@ package net.v4lproik.googlanime.client.crawler;
 import net.v4lproik.googlanime.service.api.entities.Entry;
 import net.v4lproik.googlanime.service.api.models.SourceEnum;
 import net.v4lproik.googlanime.service.api.models.TypeEnum;
+import org.springframework.context.annotation.Configuration;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.io.IOException;
@@ -10,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+@Configuration
 public class CrawlerRegistry implements Crawler{
 
     Map<SourceEnum, Map<TypeEnum, AbstractUnitCrawler>> crawlers;
