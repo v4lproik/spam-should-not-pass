@@ -9,7 +9,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = "Anime")
-public class AnimeIdModel {
+public class AnimeId {
 
     @Id
     @Column(name = "id")
@@ -19,11 +19,11 @@ public class AnimeIdModel {
 
     private String type_jpa;
 
-    public AnimeIdModel(Long id) {
+    public AnimeId(Long id) {
         this.id = id;
     }
 
-    public AnimeIdModel() {
+    public AnimeId() {
     }
 
     public Long getId() {

@@ -13,6 +13,7 @@ import java.util.*;
 public class ElasticsearchIndexInitializer {
 
     public final static String CONF_ELASTICSEARCH_BASE_FOLDER = "elasticsearch/mapping/";
+
     @NotNull
     private Client client;
 

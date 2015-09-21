@@ -1,9 +1,7 @@
 package net.v4lproik.googlanime.service.api.utils;
 
-import com.github.v4lproik.myanimelist.api.models.Anime;
-import com.github.v4lproik.myanimelist.api.models.Author;
-import com.github.v4lproik.myanimelist.api.models.Character;
 import net.v4lproik.googlanime.service.api.entities.*;
+import net.v4lproik.googlanime.service.api.entities.Character;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -22,17 +20,17 @@ public class TransformAnimeMapper extends TransformAbstractMapper {
     public final static String DATE_FORMAT = "MMM dd, yyyy";
 
 
-    public AnimeModel transformMyAnimeListAnimeDependencyToDAO(Anime myAnimeListEntryDependency){
-        AnimeModel anime;
+    public Anime transformMyAnimeListAnimeDependencyToDAO(com.github.v4lproik.myanimelist.api.models.Anime myAnimeListEntryDependency){
+        Anime anime;
 
         ModelMapper modelMapper = new ModelMapper();
-        anime = modelMapper.map(myAnimeListEntryDependency, AnimeModel.class);
+        anime = modelMapper.map(myAnimeListEntryDependency, Anime.class);
 
         String[] genres = myAnimeListEntryDependency.getGenres();
         if (genres != null){
-            Set<GenreModel> genresModel = new HashSet<>();
+            Set<Genre> genresModel = new HashSet<>();
             for (String genre:genres){
-                GenreModel genreModel = new GenreModel();
+                Genre genreModel = new Genre();
                 genreModel.setName(genre);
                 genresModel.add(genreModel);
             }
@@ -41,30 +39,30 @@ public class TransformAnimeMapper extends TransformAbstractMapper {
 
         String[] producers = myAnimeListEntryDependency.getProducers();
         if (producers != null){
-            Set<ProducerModel> producersModel = new HashSet<>();
+            Set<Producer> producersModel = new HashSet<>();
             for (String producer:producers){
-                ProducerModel producerModel = new ProducerModel();
+                Producer producerModel = new Producer();
                 producerModel.setName(producer);
                 producersModel.add(producerModel);
             }
             anime.setProducers(producersModel);
         }
 
-        List<Character> characters = myAnimeListEntryDependency.getCharacters();
+        List<com.github.v4lproik.myanimelist.api.models.Character> characters = myAnimeListEntryDependency.getCharacters();
         if (characters != null) {
-            CharacterModel characterModel;
-            Set<CharacterModel> charactersModel = new HashSet<>();
-            for (Character character : characters) {
-                characterModel = new CharacterModel();
+            Character characterModel;
+            Set<Character> charactersModel = new HashSet<>();
+            for (com.github.v4lproik.myanimelist.api.models.Character character : characters) {
+                characterModel = new Character();
                 characterModel.setRole(character.getRole());
                 characterModel.setFirstName(character.getFirstName());
                 characterModel.setJapaneseName(character.getJapaneseName());
                 characterModel.setLastName(character.getLastName());
 
-                Set<CharacterNicknameModel> characterNicknamesModel = new HashSet<>();
+                Set<CharacterNickname> characterNicknamesModel = new HashSet<>();
                 if (character.getNickNames() != null){
                     for (String nickname:character.getNickNames()){
-                        characterNicknamesModel.add(new CharacterNicknameModel(nickname));
+                        characterNicknamesModel.add(new CharacterNickname(nickname));
                     }
                 }
                 characterModel.setNicknames(characterNicknamesModel);
@@ -74,12 +72,12 @@ public class TransformAnimeMapper extends TransformAbstractMapper {
             anime.setCharacters(charactersModel);
         }
 
-        List<Author> authors = myAnimeListEntryDependency.getAuthors();
+        List<com.github.v4lproik.myanimelist.api.models.Author> authors = myAnimeListEntryDependency.getAuthors();
         if (authors != null) {
-            AuthorModel authorModel;
-            Set<AuthorModel> authorsModel = new HashSet<>();
-            for (Author author : authors) {
-                authorModel = new AuthorModel();
+            Author authorModel;
+            Set<Author> authorsModel = new HashSet<>();
+            for (com.github.v4lproik.myanimelist.api.models.Author author : authors) {
+                authorModel = new Author();
                 authorModel.setFirstName(author.getFirstName());
                 authorModel.setLastName(author.getLastName());
 
@@ -120,10 +118,10 @@ public class TransformAnimeMapper extends TransformAbstractMapper {
 
         String[] synonyms = myAnimeListEntryDependency.getSynonyms();
         if (synonyms != null) {
-            SynonymModel synonymModel;
-            Set<SynonymModel> synonymsModel = new HashSet<>();
+            Synonym synonymModel;
+            Set<Synonym> synonymsModel = new HashSet<>();
             for (String synonym : synonyms) {
-                synonymModel = new SynonymModel();
+                synonymModel = new Synonym();
                 synonymModel.setTitle(synonym);
                 synonymModel.setEntry(anime);
                 synonymsModel.add(synonymModel);
@@ -133,10 +131,10 @@ public class TransformAnimeMapper extends TransformAbstractMapper {
 
         String[] tags = myAnimeListEntryDependency.getTags();
         if (tags != null) {
-            TagModel tagModel;
-            Set<TagModel> tagsModel = new HashSet<>();
+            Tag tagModel;
+            Set<Tag> tagsModel = new HashSet<>();
             for (String tag : tags) {
-                tagModel = new TagModel();
+                tagModel = new Tag();
                 tagModel.setName(tag);
                 tagsModel.add(tagModel);
             }
@@ -146,17 +144,17 @@ public class TransformAnimeMapper extends TransformAbstractMapper {
         return anime;
     }
 
-//    public AnimeModel transformMyAnimeListAnimeToDAO(Anime myAnimeListAnime){
-//        AnimeModel anime;
+//    public Anime transformMyAnimeListAnimeToDAO(Anime myAnimeListAnime){
+//        Anime anime;
 //
 //        ModelMapper modelMapper = new ModelMapper();
-//        anime = modelMapper.map(myAnimeListAnime, AnimeModel.class);
+//        anime = modelMapper.map(myAnimeListAnime, Anime.class);
 //
 //        String[] genres = myAnimeListAnime.getGenres();
 //        if (genres != null){
-//            Set<GenreModel> genresModel = new HashSet<>();
+//            Set<Genre> genresModel = new HashSet<>();
 //            for (String genre:genres){
-//                GenreModel genreModel = new GenreModel();
+//                Genre genreModel = new Genre();
 //                genreModel.setName(genre);
 //                genresModel.add(genreModel);
 //            }
@@ -165,9 +163,9 @@ public class TransformAnimeMapper extends TransformAbstractMapper {
 //
 //        String[] producers = myAnimeListAnime.getProducers();
 //        if (producers != null){
-//            Set<ProducerModel> producersModel = new HashSet<>();
+//            Set<Producer> producersModel = new HashSet<>();
 //            for (String producer:producers){
-//                ProducerModel producerModel = new ProducerModel();
+//                Producer producerModel = new Producer();
 //                producerModel.setName(producer);
 //                producersModel.add(producerModel);
 //            }
@@ -176,19 +174,19 @@ public class TransformAnimeMapper extends TransformAbstractMapper {
 //
 //        List<Character> characters = myAnimeListAnime.getCharacters();
 //        if (characters != null) {
-//            CharacterModel characterModel;
-//            Set<CharacterModel> charactersModel = new HashSet<>();
+//            Character characterModel;
+//            Set<Character> charactersModel = new HashSet<>();
 //            for (Character character : characters) {
-//                characterModel = new CharacterModel();
+//                characterModel = new Character();
 //                characterModel.setRole(character.getRole());
 //                characterModel.setFirstName(character.getFirstName());
 //                characterModel.setJapaneseName(character.getJapaneseName());
 //                characterModel.setLastName(character.getLastName());
 //
-//                Set<CharacterNicknameModel> characterNicknamesModel = new HashSet<>();
+//                Set<CharacterNickname> characterNicknamesModel = new HashSet<>();
 //                if (character.getNickNames() != null){
 //                    for (String nickname:character.getNickNames()){
-//                        characterNicknamesModel.add(new CharacterNicknameModel(nickname));
+//                        characterNicknamesModel.add(new CharacterNickname(nickname));
 //                    }
 //                }
 //                characterModel.setNicknames(characterNicknamesModel);
@@ -200,10 +198,10 @@ public class TransformAnimeMapper extends TransformAbstractMapper {
 //
 //        List<Author> authors = myAnimeListAnime.getAuthors();
 //        if (authors != null) {
-//            AuthorModel authorModel;
-//            Set<AuthorModel> authorsModel = new HashSet<>();
+//            Author authorModel;
+//            Set<Author> authorsModel = new HashSet<>();
 //            for (Author author : authors) {
-//                authorModel = new AuthorModel();
+//                authorModel = new Author();
 //                authorModel.setFirstName(author.getFirstName());
 //                authorModel.setLastName(author.getLastName());
 //
@@ -244,10 +242,10 @@ public class TransformAnimeMapper extends TransformAbstractMapper {
 //
 //        String[] synonyms = myAnimeListAnime.getSynonyms();
 //        if (synonyms != null) {
-//            SynonymModel synonymModel;
-//            Set<SynonymModel> synonymsModel = new HashSet<>();
+//            Synonym synonymModel;
+//            Set<Synonym> synonymsModel = new HashSet<>();
 //            for (String synonym : synonyms) {
-//                synonymModel = new SynonymModel();
+//                synonymModel = new Synonym();
 //                synonymModel.setTitle(synonym);
 //                synonymModel.setEntry(anime);
 //                synonymsModel.add(synonymModel);
@@ -257,10 +255,10 @@ public class TransformAnimeMapper extends TransformAbstractMapper {
 //
 //        String[] tags = myAnimeListAnime.getTags();
 //        if (tags != null) {
-//            TagModel tagModel;
-//            Set<TagModel> tagsModel = new HashSet<>();
+//            Tag tagModel;
+//            Set<Tag> tagsModel = new HashSet<>();
 //            for (String tag : tags) {
-//                tagModel = new TagModel();
+//                tagModel = new Tag();
 //                tagModel.setName(tag);
 //                tagsModel.add(tagModel);
 //            }

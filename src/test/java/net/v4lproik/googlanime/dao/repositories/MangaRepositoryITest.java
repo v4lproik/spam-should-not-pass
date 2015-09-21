@@ -4,7 +4,7 @@ import com.github.v4lproik.myanimelist.api.models.TypeEnum;
 import net.v4lproik.googlanime.client.mysql.DatabaseTestConfiguration;
 import net.v4lproik.googlanime.client.mysql.SqlDatabaseInitializer;
 import net.v4lproik.googlanime.dao.api.MangaDao;
-import net.v4lproik.googlanime.service.api.entities.MangaModel;
+import net.v4lproik.googlanime.service.api.entities.Manga;
 import net.v4lproik.googlanime.service.api.utils.TransformMangaMapper;
 import org.hibernate.SessionFactory;
 import org.junit.After;
@@ -13,11 +13,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.IOException;
 
@@ -28,8 +26,6 @@ import static org.junit.Assert.assertEquals;
         classes = {
                 DatabaseTestConfiguration.class,
         })
-@ImportResource("classpath*  : application-context.xml")
-@WebAppConfiguration
 @TransactionConfiguration
 public class MangaRepositoryITest {
 
@@ -58,7 +54,7 @@ public class MangaRepositoryITest {
     public void test_saveManga_shouldBeInserted() throws Exception {
 
         // Given
-        MangaModel response = getManga();
+        Manga response = getManga();
 
         // When
         mangaDao.saveOrUpdate(response);
@@ -68,14 +64,14 @@ public class MangaRepositoryITest {
     public void test_saveMangaTwice_shouldBeUpdated() throws Exception {
 
         // Given
-        MangaModel mangaRes = getManga();
+        Manga mangaRes = getManga();
 
         // When
         mangaDao.saveOrUpdate(mangaRes);
         mangaRes.setTitle(mangaRes.getTitle() + "_UPDATED");
         mangaDao.saveOrUpdate(mangaRes);
 
-        MangaModel mangaFind = mangaDao.findById(mangaRes.getId());
+        Manga mangaFind = mangaDao.findById(mangaRes.getId());
 
         String title = mangaRes.getTitle();
 
@@ -89,12 +85,12 @@ public class MangaRepositoryITest {
         mangaDao.deleteById(new Long(11));
     }
 
-    private MangaModel getManga() throws IOException {
+    private Manga getManga() throws IOException {
         // Given
         TypeEnum type = TypeEnum.MANGA;
         Integer id = 11;
 
-        MangaModel manga = new MangaModel();
+        Manga manga = new Manga();
         manga.setId(new Long(id));
         manga.setType(type.toString());
 

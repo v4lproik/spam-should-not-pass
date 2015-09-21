@@ -16,9 +16,9 @@ import org.springframework.core.env.Environment;
 
 @Configuration
 @PropertySources(@PropertySource("classpath:properties/app-${spring.profiles.active}.properties"))
-public class Config {
+public class ConfigES {
 
-    private static final Logger log = LoggerFactory.getLogger(Config.class);
+    private static final Logger log = LoggerFactory.getLogger(ConfigES.class);
 
     @Autowired
     private Environment env;

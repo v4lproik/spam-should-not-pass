@@ -1,9 +1,7 @@
 package net.v4lproik.googlanime.service.api.utils;
 
-import com.github.v4lproik.myanimelist.api.models.Author;
-import com.github.v4lproik.myanimelist.api.models.Character;
-import com.github.v4lproik.myanimelist.api.models.Manga;
 import net.v4lproik.googlanime.service.api.entities.*;
+import net.v4lproik.googlanime.service.api.entities.Character;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
@@ -21,38 +19,38 @@ public class TransformMangaMapper extends TransformAbstractMapper {
 
     public final static String DATE_FORMAT = "MMM dd, yyyy";
 
-    public MangaModel transformMyAnimeListMangaDependencyToDAO(Manga myAnimeListMangaDependency){
-        MangaModel manga = new MangaModel();
+    public Manga transformMyAnimeListMangaDependencyToDAO(com.github.v4lproik.myanimelist.api.models.Manga myAnimeListMangaDependency){
+        Manga manga = new Manga();
 
         ModelMapper modelMapper = new ModelMapper();
-        manga = modelMapper.map(myAnimeListMangaDependency, MangaModel.class);
+        manga = modelMapper.map(myAnimeListMangaDependency, Manga.class);
 
         String[] genres = myAnimeListMangaDependency.getGenres();
         if (genres != null){
-            Set<GenreModel> genresModel = new HashSet<>();
+            Set<Genre> genresModel = new HashSet<>();
             for (String genre:genres){
-                GenreModel genreModel = new GenreModel();
+                Genre genreModel = new Genre();
                 genreModel.setName(genre);
                 genresModel.add(genreModel);
             }
             manga.setGenres(genresModel);
         }
 
-        List<Character> characters = myAnimeListMangaDependency.getCharacters();
+        List<com.github.v4lproik.myanimelist.api.models.Character> characters = myAnimeListMangaDependency.getCharacters();
         if (characters != null) {
-            CharacterModel characterModel;
-            Set<CharacterModel> charactersModel = new HashSet<>();
-            for (Character character : characters) {
-                characterModel = new CharacterModel();
+            Character characterModel;
+            Set<Character> charactersModel = new HashSet<>();
+            for (com.github.v4lproik.myanimelist.api.models.Character character : characters) {
+                characterModel = new Character();
                 characterModel.setRole(character.getRole());
                 characterModel.setFirstName(character.getFirstName());
                 characterModel.setJapaneseName(character.getJapaneseName());
                 characterModel.setLastName(character.getLastName());
 
-                Set<CharacterNicknameModel> characterNicknamesModel = new HashSet<>();
+                Set<CharacterNickname> characterNicknamesModel = new HashSet<>();
                 if (character.getNickNames() != null){
                     for (String nickname:character.getNickNames()){
-                        characterNicknamesModel.add(new CharacterNicknameModel(nickname));
+                        characterNicknamesModel.add(new CharacterNickname(nickname));
                     }
                 }
                 characterModel.setNicknames(characterNicknamesModel);
@@ -62,12 +60,12 @@ public class TransformMangaMapper extends TransformAbstractMapper {
             manga.setCharacters(charactersModel);
         }
 
-        List<Author> authors = myAnimeListMangaDependency.getAuthors();
+        List<com.github.v4lproik.myanimelist.api.models.Author> authors = myAnimeListMangaDependency.getAuthors();
         if (authors != null) {
-            AuthorModel authorModel;
-            Set<AuthorModel> authorsModel = new HashSet<>();
-            for (Author author : authors) {
-                authorModel = new AuthorModel();
+            Author authorModel;
+            Set<Author> authorsModel = new HashSet<>();
+            for (com.github.v4lproik.myanimelist.api.models.Author author : authors) {
+                authorModel = new Author();
                 authorModel.setFirstName(author.getFirstName());
                 authorModel.setLastName(author.getLastName());
 
@@ -108,10 +106,10 @@ public class TransformMangaMapper extends TransformAbstractMapper {
 
         String[] synonyms = myAnimeListMangaDependency.getSynonyms();
         if (synonyms != null) {
-            SynonymModel synonymModel;
-            Set<SynonymModel> synonymsModel = new HashSet<>();
+            Synonym synonymModel;
+            Set<Synonym> synonymsModel = new HashSet<>();
             for (String synonym : synonyms) {
-                synonymModel = new SynonymModel();
+                synonymModel = new Synonym();
                 synonymModel.setTitle(synonym);
                 synonymModel.setEntry(manga);
                 synonymsModel.add(synonymModel);
@@ -121,10 +119,10 @@ public class TransformMangaMapper extends TransformAbstractMapper {
 
         String[] tags = myAnimeListMangaDependency.getTags();
         if (tags != null) {
-            TagModel tagModel;
-            Set<TagModel> tagsModel = new HashSet<>();
+            Tag tagModel;
+            Set<Tag> tagsModel = new HashSet<>();
             for (String tag : tags) {
-                tagModel = new TagModel();
+                tagModel = new Tag();
                 tagModel.setName(tag);
                 tagsModel.add(tagModel);
             }
@@ -134,17 +132,17 @@ public class TransformMangaMapper extends TransformAbstractMapper {
         return manga;
     }
 
-//    public MangaModel transformMyAnimeListMangaToDAO(Manga myAnimeListManga){
-//        MangaModel manga = new MangaModel();
+//    public Manga transformMyAnimeListMangaToDAO(Manga myAnimeListManga){
+//        Manga manga = new Manga();
 //
 //        ModelMapper modelMapper = new ModelMapper();
-//        manga = modelMapper.map(myAnimeListManga, MangaModel.class);
+//        manga = modelMapper.map(myAnimeListManga, Manga.class);
 //
 //        String[] genres = myAnimeListManga.getGenres();
 //        if (genres != null){
-//            Set<GenreModel> genresModel = new HashSet<>();
+//            Set<Genre> genresModel = new HashSet<>();
 //            for (String genre:genres){
-//                GenreModel genreModel = new GenreModel();
+//                Genre genreModel = new Genre();
 //                genreModel.setName(genre);
 //                genresModel.add(genreModel);
 //            }
@@ -153,19 +151,19 @@ public class TransformMangaMapper extends TransformAbstractMapper {
 //
 //        List<Character> characters = myAnimeListManga.getCharacters();
 //        if (characters != null) {
-//            CharacterModel characterModel;
-//            Set<CharacterModel> charactersModel = new HashSet<>();
+//            Character characterModel;
+//            Set<Character> charactersModel = new HashSet<>();
 //            for (Character character : characters) {
-//                characterModel = new CharacterModel();
+//                characterModel = new Character();
 //                characterModel.setRole(character.getRole());
 //                characterModel.setFirstName(character.getFirstName());
 //                characterModel.setJapaneseName(character.getJapaneseName());
 //                characterModel.setLastName(character.getLastName());
 //
-//                Set<CharacterNicknameModel> characterNicknamesModel = new HashSet<>();
+//                Set<CharacterNickname> characterNicknamesModel = new HashSet<>();
 //                if (character.getNickNames() != null){
 //                    for (String nickname:character.getNickNames()){
-//                        characterNicknamesModel.add(new CharacterNicknameModel(nickname));
+//                        characterNicknamesModel.add(new CharacterNickname(nickname));
 //                    }
 //                }
 //                characterModel.setNicknames(characterNicknamesModel);
@@ -177,10 +175,10 @@ public class TransformMangaMapper extends TransformAbstractMapper {
 //
 //        List<Author> authors = myAnimeListManga.getAuthors();
 //        if (authors != null) {
-//            AuthorModel authorModel;
-//            Set<AuthorModel> authorsModel = new HashSet<>();
+//            Author authorModel;
+//            Set<Author> authorsModel = new HashSet<>();
 //            for (Author author : authors) {
-//                authorModel = new AuthorModel();
+//                authorModel = new Author();
 //                authorModel.setFirstName(author.getFirstName());
 //                authorModel.setLastName(author.getLastName());
 //
@@ -221,10 +219,10 @@ public class TransformMangaMapper extends TransformAbstractMapper {
 //
 //        String[] synonyms = myAnimeListManga.getSynonyms();
 //        if (synonyms != null) {
-//            SynonymModel synonymModel;
-//            Set<SynonymModel> synonymsModel = new HashSet<>();
+//            Synonym synonymModel;
+//            Set<Synonym> synonymsModel = new HashSet<>();
 //            for (String synonym : synonyms) {
-//                synonymModel = new SynonymModel();
+//                synonymModel = new Synonym();
 //                synonymModel.setTitle(synonym);
 //                synonymModel.setEntry(manga);
 //                synonymsModel.add(synonymModel);
@@ -234,10 +232,10 @@ public class TransformMangaMapper extends TransformAbstractMapper {
 //
 //        String[] tags = myAnimeListManga.getTags();
 //        if (tags != null) {
-//            TagModel tagModel;
-//            Set<TagModel> tagsModel = new HashSet<>();
+//            Tag tagModel;
+//            Set<Tag> tagsModel = new HashSet<>();
 //            for (String tag : tags) {
-//                tagModel = new TagModel();
+//                tagModel = new Tag();
 //                tagModel.setName(tag);
 //                tagsModel.add(tagModel);
 //            }

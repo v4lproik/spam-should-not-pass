@@ -2,6 +2,7 @@ package net.v4lproik.googlanime.dao.repositories;
 
 import net.v4lproik.googlanime.dao.api.MangaDao;
 import net.v4lproik.googlanime.service.api.entities.*;
+import net.v4lproik.googlanime.service.api.entities.Character;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -23,12 +24,12 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
 
     @Autowired
     public MangaRepository(final SessionFactory sessionFactory) {
-        super(MangaModel.class, sessionFactory);
+        super(Manga.class, sessionFactory);
         this.sessionFactory = sessionFactory;
     }
 
     @Override
-    public Long save(MangaModel manga) {
+    public Long save(Manga manga) {
         Transaction tx=currentSession().beginTransaction();
 
         Object idSave = currentSession().save(manga);
@@ -40,7 +41,7 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
     }
 
     @Override
-    public Long save(AnimeIdModel manga) {
+    public Long save(AnimeId manga) {
         Transaction tx=currentSession().beginTransaction();
 
         Object idSave = currentSession().save(manga);
@@ -52,7 +53,7 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
     }
 
     @Override
-    public void saveOrUpdate(MangaModel manga) {
+    public void saveOrUpdate(Manga manga) {
         Transaction tx;
         long id = manga.getId();
 
@@ -60,7 +61,7 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
         // Save ManyToMany/OneToMany Entities
 
         if (manga.getAuthors() != null) {
-            for (AuthorModel author : manga.getAuthors()) {
+            for (Author author : manga.getAuthors()) {
                 Integer idAuthor = author.getId();
 
                 if (author.getId() != null) {
@@ -71,7 +72,7 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
                         put("lastName", author.getLastName());
                     }};
 
-                    AuthorModel authorDB = (AuthorModel) getBySimpleCondition(AuthorModel.class, conditions);
+                    Author authorDB = (Author) getBySimpleCondition(Author.class, conditions);
 
                     if (authorDB == null) {
                         idAuthor = (Integer) save(author).intValue();
@@ -85,7 +86,7 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
         }
 
         if (manga.getCharacters() != null) {
-            for (CharacterModel character : manga.getCharacters()) {
+            for (Character character : manga.getCharacters()) {
                 Integer idCharacter = character.getId();
 
                 if (character.getId() != null) {
@@ -96,7 +97,7 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
                         put("lastName", character.getLastName());
                     }};
 
-                    CharacterModel characterDB = (CharacterModel) getBySimpleCondition(CharacterModel.class, conditions);
+                    Character characterDB = (Character) getBySimpleCondition(Character.class, conditions);
 
                     if (characterDB == null) {
                         idCharacter = (Integer) save(character).intValue();
@@ -111,13 +112,13 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
 
 
         if (manga.getGenres() != null) {
-            for (GenreModel genre : manga.getGenres()) {
+            for (Genre genre : manga.getGenres()) {
                 Integer idGenre = genre.getId();
 
                 if (genre.getId() != null) {
                     update(genre);
                 } else {
-                    GenreModel genreDB = (GenreModel) getBySimpleCondition(GenreModel.class, "name", genre.getName());
+                    Genre genreDB = (Genre) getBySimpleCondition(Genre.class, "name", genre.getName());
                     if (genreDB == null) {
                         idGenre = (Integer) save(genre).intValue();
                         genre.setId(idGenre);
@@ -129,13 +130,13 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
         }
 
         if (manga.getTags() != null) {
-            for (TagModel tag : manga.getTags()) {
+            for (Tag tag : manga.getTags()) {
                 Integer idTag = tag.getId();
 
                 if (tag.getId() != null) {
                     update(tag);
                 } else {
-                    TagModel tagDB = (TagModel) getBySimpleCondition(TagModel.class, "name", tag.getName());
+                    Tag tagDB = (Tag) getBySimpleCondition(Tag.class, "name", tag.getName());
                     if (tagDB == null) {
                         idTag = (Integer) save(tag).intValue();
                         tag.setId(idTag);
@@ -147,7 +148,7 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
         }
 
         if (manga.getSynonyms() != null) {
-            for (SynonymModel synonym : manga.getSynonyms()) {
+            for (Synonym synonym : manga.getSynonyms()) {
                 Integer idSynonym = synonym.getId();
 
                 if (synonym.getId() != null) {
@@ -158,7 +159,7 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
                         put("title", synonym.getTitle());
                         put("entry", synonym.getEntry());
                     }};
-                    SynonymModel synonymDB = (SynonymModel) getBySimpleConditionObject(SynonymModel.class, conditions);
+                    Synonym synonymDB = (Synonym) getBySimpleConditionObject(Synonym.class, conditions);
                     if (synonymDB == null) {
                         idSynonym = (Integer) save(synonym).intValue();
                         synonym.setId(idSynonym);
@@ -184,7 +185,7 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
         // Save Alternatives, SidesStories etc
 
         if (manga.getSequels() != null){
-            for (AnimeIdModel sequel:manga.getSequels()){
+            for (AnimeId sequel:manga.getSequels()){
                 if (sequel.getId() != id){
 
                     if (findById(sequel.getId()) != null){
@@ -199,7 +200,7 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
         }
 
         if (manga.getAlternativeVersions() != null){
-            for (AnimeIdModel alter:manga.getAlternativeVersions()){
+            for (AnimeId alter:manga.getAlternativeVersions()){
                 if (alter.getId() != id) {
 
                     if (findById(alter.getId()) != null){
@@ -214,7 +215,7 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
         }
 
         if (manga.getPrequels() != null){
-            for (AnimeIdModel prequel:manga.getPrequels()){
+            for (AnimeId prequel:manga.getPrequels()){
                 if (prequel.getId() != id){
 
                     if (findById(prequel.getId()) != null){
@@ -229,7 +230,7 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
         }
 
         if (manga.getSpinoff() != null){
-            for (AnimeIdModel spinOff:manga.getSpinoff()){
+            for (AnimeId spinOff:manga.getSpinoff()){
                 if (spinOff.getId() != id){
 
                     if (findById(spinOff.getId()) != null){
@@ -244,7 +245,7 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
         }
 
         if (manga.getSideStories() != null){
-            for (AnimeIdModel sideStory:manga.getSideStories()){
+            for (AnimeId sideStory:manga.getSideStories()){
                 if (sideStory.getId() != id){
 
                     if (findById(sideStory.getId()) != null){
@@ -259,7 +260,7 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
         }
 
         if (manga.getOthers() != null){
-            for (AnimeIdModel other:manga.getOthers()){
+            for (AnimeId other:manga.getOthers()){
                 if (other.getId() != id){
 
                     if (findById(other.getId()) != null){
@@ -274,7 +275,7 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
         }
 
         if (manga.getSummaries() != null){
-            for (AnimeIdModel summary:manga.getSummaries()){
+            for (AnimeId summary:manga.getSummaries()){
                 if (summary.getId() != id){
 
                     if (findById(summary.getId()) != null){
@@ -289,7 +290,7 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
         }
 
         if (manga.getAdaptations() != null){
-            for (AnimeIdModel adaptation:manga.getAdaptations()) {
+            for (AnimeId adaptation:manga.getAdaptations()) {
                 if (adaptation.getId() != id){
 
                     if (findById(adaptation.getId()) != null){
@@ -309,7 +310,7 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
         // Save ManyToMany Extra Columns
 
         if (manga.getAuthors() != null) {
-            for (AuthorModel author : manga.getAuthors()) {
+            for (Author author : manga.getAuthors()) {
                 Integer idAuthor = author.getId();
 
                 if (author.getJobs() != null){
@@ -321,7 +322,7 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
         }
 
         if (manga.getCharacters() != null) {
-            for (CharacterModel character : manga.getCharacters()) {
+            for (Character character : manga.getCharacters()) {
                 Integer idCharacter = character.getId();
 
                 if (character.getRole() != null){
@@ -332,30 +333,30 @@ public class MangaRepository extends AbstractRepository implements MangaDao{
     }
 
     @Override
-    public MangaModel findById(Long id){
-        return (MangaModel) getById(id);
+    public Manga findById(Long id){
+        return (Manga) getById(id);
     }
 
     @Override
-    public MangaModel find(MangaModel manga){
+    public Manga find(Manga manga){
         final Long id = manga.getId();
         final String type = manga.getType();
         final String title = manga.getTitle();
 
         Transaction tx=currentSession().beginTransaction();
-        Criteria criteria = currentSession().createCriteria(MangaModel.class);
+        Criteria criteria = currentSession().createCriteria(Manga.class);
         if (id != null) criteria.add(Restrictions.eq("id", id));
         if (type != null) criteria.add(Restrictions.eq("type", type));
         if (title != null) criteria.add(Restrictions.eq("title", title));
 
-        MangaModel mangaRes = (MangaModel) criteria.uniqueResult();
+        Manga mangaRes = (Manga) criteria.uniqueResult();
         tx.commit();
 
         return mangaRes;
     }
 
     @Override
-    public void delete(MangaModel anime) {
+    public void delete(Manga anime) {
         delete(anime);
     }
 }

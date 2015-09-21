@@ -1,6 +1,6 @@
 package net.v4lproik.googlanime.mvc.controllers;
 
-import net.v4lproik.googlanime.annotation.PrivateAccess;
+import net.v4lproik.googlanime.annotation.UserAccess;
 import net.v4lproik.googlanime.mvc.models.UserResponse;
 import net.v4lproik.googlanime.service.api.UserService;
 import net.v4lproik.googlanime.service.api.entities.Member;
@@ -72,7 +72,7 @@ public class UserController {
         return response;
     }
 
-    @PrivateAccess
+    @UserAccess
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody

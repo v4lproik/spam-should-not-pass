@@ -2,6 +2,7 @@ package net.v4lproik.googlanime.client.mysql;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import net.v4lproik.googlanime.service.api.entities.*;
+import net.v4lproik.googlanime.service.api.entities.Character;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.slf4j.Logger;
@@ -37,10 +38,6 @@ public class ConfigMysql {
         final String PWD = env.getRequiredProperty("database.password");
         final String DB = env.getRequiredProperty("database.db");
 
-        if (HOST == null || USER == null || PWD == null || DB == null){
-            throw new IllegalArgumentException("Database host, user or password cannot be found. Check that the active profile provided a file that contains the variable mysql.host... ");
-        }
-
         //SET character_set_database='UTF8';
         //SET character_set_server='UTF8';
 
@@ -56,16 +53,16 @@ public class ConfigMysql {
         c.setProperty("hibernate.current_session_context_class", "thread");
         c.addPackage("net.v4lproik.googlanime");
         c.addAnnotatedClass(Entry.class);
-        c.addAnnotatedClass(AnimeModel.class);
-        c.addAnnotatedClass(MangaModel.class);
-        c.addAnnotatedClass(AnimeIdModel.class);
-        c.addAnnotatedClass(GenreModel.class);
-        c.addAnnotatedClass(ProducerModel.class);
-        c.addAnnotatedClass(SynonymModel.class);
-        c.addAnnotatedClass(TagModel.class);
-        c.addAnnotatedClass(CharacterModel.class);
-        c.addAnnotatedClass(CharacterNicknameModel.class);
-        c.addAnnotatedClass(AuthorModel.class);
+        c.addAnnotatedClass(Anime.class);
+        c.addAnnotatedClass(Manga.class);
+        c.addAnnotatedClass(AnimeId.class);
+        c.addAnnotatedClass(Genre.class);
+        c.addAnnotatedClass(Producer.class);
+        c.addAnnotatedClass(Synonym.class);
+        c.addAnnotatedClass(Tag.class);
+        c.addAnnotatedClass(Character.class);
+        c.addAnnotatedClass(CharacterNickname.class);
+        c.addAnnotatedClass(Author.class);
         c.addAnnotatedClass(AnimeJobAuthor.class);
         c.addAnnotatedClass(AnimeRoleCharacter.class);
         c.addAnnotatedClass(Adaptations.class);

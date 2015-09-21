@@ -7,7 +7,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "CharacterNicknames")
-public class CharacterNicknameModel {
+public class CharacterNickname {
 
     @Id
     @GeneratedValue
@@ -18,12 +18,12 @@ public class CharacterNicknameModel {
 
     @ManyToOne
     @JoinColumn(name="idCharacter")
-    private CharacterModel character;
+    private Character character;
 
-    public CharacterNicknameModel() {
+    public CharacterNickname() {
     }
 
-    public CharacterNicknameModel(String nickname) {
+    public CharacterNickname(String nickname) {
         this.nickname = nickname;
     }
 
@@ -43,11 +43,11 @@ public class CharacterNicknameModel {
         this.nickname = nickname;
     }
 
-    public CharacterModel getCharacter() {
+    public Character getCharacter() {
         return character;
     }
 
-    public void setCharacter(CharacterModel character) {
+    public void setCharacter(Character character) {
         this.character = character;
     }
 

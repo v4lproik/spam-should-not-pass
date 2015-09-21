@@ -45,7 +45,7 @@ public class Entry {
 
     @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "entry")
     @ElementCollection
-    private Set<SynonymModel> synonyms;
+    private Set<Synonym> synonyms;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name="Anime_has_Genre",
@@ -53,7 +53,7 @@ public class Entry {
             inverseJoinColumns={@JoinColumn(name="idGenre", referencedColumnName="id")
             })
     @ElementCollection
-    private Set<GenreModel> genres;
+    private Set<Genre> genres;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name="Anime_has_Author",
@@ -61,7 +61,7 @@ public class Entry {
             inverseJoinColumns={@JoinColumn(name="idAuthor", referencedColumnName="id")
             })
     @ElementCollection
-    private Set<AuthorModel> authors;
+    private Set<Author> authors;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name="Anime_has_Tag",
@@ -69,7 +69,7 @@ public class Entry {
             inverseJoinColumns={@JoinColumn(name="idTag", referencedColumnName="id")
             })
     @ElementCollection
-    private Set<TagModel> tags;
+    private Set<Tag> tags;
 
     @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinTable(name="Anime_has_Character",
@@ -77,36 +77,36 @@ public class Entry {
             inverseJoinColumns={@JoinColumn(name="idCharacter", referencedColumnName="id")
             })
     @ElementCollection
-    private Set<CharacterModel> characters;
+    private Set<Character> characters;
 
     //Recursive dependecnies
 
     @Transient
-    private List<AnimeIdModel> sequels;
+    private List<AnimeId> sequels;
 
     @Transient
-    private List<AnimeIdModel> alternativeVersions;
+    private List<AnimeId> alternativeVersions;
 
     @Transient
-    private List<AnimeIdModel> prequels;
+    private List<AnimeId> prequels;
 
     @Transient
-    private List<AnimeIdModel> spinoff;
+    private List<AnimeId> spinoff;
 
     @Transient
-    private List<AnimeIdModel> sideStories;
+    private List<AnimeId> sideStories;
 
     @Transient
-    private List<AnimeIdModel> others;
+    private List<AnimeId> others;
 
     @Transient
-    private List<AnimeIdModel> summaries;
+    private List<AnimeId> summaries;
 
     @Transient
-    private List<AnimeIdModel> adaptations;
+    private List<AnimeId> adaptations;
 
     @Transient
-    private List<AnimeIdModel> parentStories;
+    private List<AnimeId> parentStories;
 
 
     public Entry(Long id) {
@@ -204,11 +204,11 @@ public class Entry {
         this.score = score;
     }
 
-    public Set<GenreModel> getGenres() {
+    public Set<Genre> getGenres() {
         return genres;
     }
 
-    public void setGenres(Set<GenreModel> genres) {
+    public void setGenres(Set<Genre> genres) {
         this.genres = genres;
     }
 
@@ -220,19 +220,19 @@ public class Entry {
         this.title = title;
     }
 
-    public Set<CharacterModel> getCharacters() {
+    public Set<Character> getCharacters() {
         return characters;
     }
 
-    public void setCharacters(Set<CharacterModel> characters) {
+    public void setCharacters(Set<Character> characters) {
         this.characters = characters;
     }
 
-    public Set<AuthorModel> getAuthors() {
+    public Set<Author> getAuthors() {
         return authors;
     }
 
-    public void setAuthors(Set<AuthorModel> authors) {
+    public void setAuthors(Set<Author> authors) {
         this.authors = authors;
     }
 
@@ -244,83 +244,83 @@ public class Entry {
         this.type = type;
     }
 
-    public List<AnimeIdModel> getSequels() {
+    public List<AnimeId> getSequels() {
         return sequels;
     }
 
-    public void setSequels(List<AnimeIdModel> sequels) {
+    public void setSequels(List<AnimeId> sequels) {
         this.sequels = sequels;
     }
 
-    public List<AnimeIdModel> getAlternativeVersions() {
+    public List<AnimeId> getAlternativeVersions() {
         return alternativeVersions;
     }
 
-    public void setAlternativeVersions(List<AnimeIdModel> alternativeVersions) {
+    public void setAlternativeVersions(List<AnimeId> alternativeVersions) {
         this.alternativeVersions = alternativeVersions;
     }
 
-    public List<AnimeIdModel> getPrequels() {
+    public List<AnimeId> getPrequels() {
         return prequels;
     }
 
-    public void setPrequels(List<AnimeIdModel> prequels) {
+    public void setPrequels(List<AnimeId> prequels) {
         this.prequels = prequels;
     }
 
-    public List<AnimeIdModel> getSpinoff() {
+    public List<AnimeId> getSpinoff() {
         return spinoff;
     }
 
-    public void setSpinoff(List<AnimeIdModel> spinoff) {
+    public void setSpinoff(List<AnimeId> spinoff) {
         this.spinoff = spinoff;
     }
 
-    public List<AnimeIdModel> getSideStories() {
+    public List<AnimeId> getSideStories() {
         return sideStories;
     }
 
-    public void setSideStories(List<AnimeIdModel> sideStories) {
+    public void setSideStories(List<AnimeId> sideStories) {
         this.sideStories = sideStories;
     }
 
-    public List<AnimeIdModel> getOthers() {
+    public List<AnimeId> getOthers() {
         return others;
     }
 
-    public void setOthers(List<AnimeIdModel> others) {
+    public void setOthers(List<AnimeId> others) {
         this.others = others;
     }
 
-    public List<AnimeIdModel> getSummaries() {
+    public List<AnimeId> getSummaries() {
         return summaries;
     }
 
-    public void setSummaries(List<AnimeIdModel> summaries) {
+    public void setSummaries(List<AnimeId> summaries) {
         this.summaries = summaries;
     }
 
-    public List<AnimeIdModel> getAdaptations() {
+    public List<AnimeId> getAdaptations() {
         return adaptations;
     }
 
-    public void setAdaptations(List<AnimeIdModel> adaptations) {
+    public void setAdaptations(List<AnimeId> adaptations) {
         this.adaptations = adaptations;
     }
 
-    public Set<SynonymModel> getSynonyms() {
+    public Set<Synonym> getSynonyms() {
         return synonyms;
     }
 
-    public void setSynonyms(Set<SynonymModel> synonyms) {
+    public void setSynonyms(Set<Synonym> synonyms) {
         this.synonyms = synonyms;
     }
 
-    public Set<TagModel> getTags() {
+    public Set<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(Set<TagModel> tags) {
+    public void setTags(Set<Tag> tags) {
         this.tags = tags;
     }
 

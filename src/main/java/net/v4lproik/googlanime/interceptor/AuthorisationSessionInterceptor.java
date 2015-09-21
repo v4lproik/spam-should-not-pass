@@ -1,6 +1,6 @@
 package net.v4lproik.googlanime.interceptor;
 
-import net.v4lproik.googlanime.annotation.PrivateAccess;
+import net.v4lproik.googlanime.annotation.UserAccess;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -32,7 +32,7 @@ public class AuthorisationSessionInterceptor extends HandlerInterceptorAdapter {
 
         Method methodToTest = ((HandlerMethod) handler).getMethod();
 
-        if (AnnotationUtils.getAnnotation(methodToTest, PrivateAccess.class) == null) {
+        if (AnnotationUtils.getAnnotation(methodToTest, UserAccess.class) == null) {
             log.debug(String.format("[AuthorisationSessionInterceptor] %s is public access", methodToTest.toGenericString()));
             return true;
         }

@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "Author")
-public class AuthorModel {
+public class Author {
 
     @Id
     @GeneratedValue
@@ -31,7 +31,7 @@ public class AuthorModel {
     @Transient
     private Set<String> jobs;
 
-    public AuthorModel() {
+    public Author() {
     }
 
     public Integer getId() {
@@ -97,7 +97,7 @@ public class AuthorModel {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        AuthorModel that = (AuthorModel) o;
+        Author that = (Author) o;
         return Objects.equals(id, that.id) &&
                 Objects.equals(firstName, that.firstName) &&
                 Objects.equals(lastName, that.lastName) &&

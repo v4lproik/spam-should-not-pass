@@ -5,7 +5,7 @@ import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue("manga")
-public final class MangaModel extends Entry {
+public final class Manga extends Entry {
 
     private Integer nbVolumes;
 

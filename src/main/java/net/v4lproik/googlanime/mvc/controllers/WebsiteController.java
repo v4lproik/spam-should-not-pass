@@ -6,9 +6,9 @@ import net.v4lproik.googlanime.mvc.models.AnimeResponse;
 import net.v4lproik.googlanime.mvc.models.BackendException;
 import net.v4lproik.googlanime.service.api.AnimeServiceWrite;
 import net.v4lproik.googlanime.service.api.MangaServiceWrite;
-import net.v4lproik.googlanime.service.api.entities.AnimeModel;
+import net.v4lproik.googlanime.service.api.entities.Anime;
 import net.v4lproik.googlanime.service.api.entities.Entry;
-import net.v4lproik.googlanime.service.api.entities.MangaModel;
+import net.v4lproik.googlanime.service.api.entities.Manga;
 import net.v4lproik.googlanime.service.api.models.SourceEnum;
 import net.v4lproik.googlanime.service.api.models.TypeEnum;
 import org.apache.log4j.Logger;
@@ -145,10 +145,10 @@ public class WebsiteController {
             for (Entry entity : entries){
 
                 if (AbstractTypeEnum.fromValue(entity.getType()) == AbstractTypeEnum.ANIME){
-                    animeServiceWrite.save((AnimeModel) entity);
+                    animeServiceWrite.save((Anime) entity);
                 }else
                 {
-                    mangaServiceWrite.save((MangaModel) entity);
+                    mangaServiceWrite.save((Manga) entity);
                 }
             }
 

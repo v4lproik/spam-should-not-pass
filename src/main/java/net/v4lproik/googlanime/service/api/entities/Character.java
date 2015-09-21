@@ -8,7 +8,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "CharacterT")
-public class CharacterModel {
+public class Character {
 
     @Id
     @GeneratedValue
@@ -30,12 +30,12 @@ public class CharacterModel {
 
     @OneToMany(cascade=CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "character", orphanRemoval = true)
     @ElementCollection
-    private Set<CharacterNicknameModel> nicknames;
+    private Set<CharacterNickname> nicknames;
 
     @Transient
     private String role;
 
-    public CharacterModel() {
+    public Character() {
     }
 
     public Integer getId() {
@@ -78,11 +78,11 @@ public class CharacterModel {
         this.role = role;
     }
 
-    public Set<CharacterNicknameModel> getNicknames() {
+    public Set<CharacterNickname> getNicknames() {
         return nicknames;
     }
 
-    public void setNicknames(Set<CharacterNicknameModel> nicknames) {
+    public void setNicknames(Set<CharacterNickname> nicknames) {
         this.nicknames = nicknames;
     }
 

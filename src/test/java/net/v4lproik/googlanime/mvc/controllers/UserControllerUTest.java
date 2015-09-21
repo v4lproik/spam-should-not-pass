@@ -28,10 +28,13 @@ public class UserControllerUTest {
 
     @Mock
     PasswordService passwordService;
+
     @Mock
     UserService userService;
+
     @Mock
     private HttpServletRequest req;
+
     @Mock
     private SessionRepository sessionRepo;
 

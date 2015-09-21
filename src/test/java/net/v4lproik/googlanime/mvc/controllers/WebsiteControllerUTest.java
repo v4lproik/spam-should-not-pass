@@ -2,8 +2,8 @@ package net.v4lproik.googlanime.mvc.controllers;
 
 import com.jayway.jsonpath.JsonPath;
 import net.v4lproik.googlanime.client.crawler.CrawlerRegistry;
-import net.v4lproik.googlanime.client.elasticsearch.Config;
-import net.v4lproik.googlanime.service.api.entities.AnimeModel;
+import net.v4lproik.googlanime.client.elasticsearch.ConfigES;
+import net.v4lproik.googlanime.service.api.entities.Anime;
 import net.v4lproik.googlanime.service.api.models.SourceEnum;
 import net.v4lproik.googlanime.service.api.models.TypeEnum;
 import org.junit.Before;
@@ -28,7 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {Config.class})
+@ContextConfiguration(classes = {ConfigES.class})
 @WebAppConfiguration
 public class WebsiteControllerUTest {
 
@@ -53,7 +53,7 @@ public class WebsiteControllerUTest {
         final Integer id = 20;
         final String type = "anime";
         final Boolean dependency = false;
-        AnimeModel anime = new AnimeModel();
+        Anime anime = new Anime();
         anime.setId(new Long(20));
         anime.setTitle("Naruto");
 
@@ -76,7 +76,7 @@ public class WebsiteControllerUTest {
         final Integer id = 20;
         final String type = "anime";
         final Boolean dependency = false;
-        AnimeModel anime = new AnimeModel();
+        Anime anime = new Anime();
         anime.setId(new Long(20));
         anime.setTitle("Naruto");
 
@@ -101,7 +101,7 @@ public class WebsiteControllerUTest {
         final String from = "mal";
         final Integer id = 20;
         final String type = "anime";
-        AnimeModel anime = new AnimeModel();
+        Anime anime = new Anime();
         anime.setId(new Long(20));
         anime.setTitle("Naruto");
 
@@ -122,7 +122,7 @@ public class WebsiteControllerUTest {
         final String from = "unknown";
         final Integer id = 20;
         final String type = "anime";
-        AnimeModel anime = new AnimeModel();
+        Anime anime = new Anime();
         anime.setId(new Long(20));
         anime.setTitle("Naruto");
 

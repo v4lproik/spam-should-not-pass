@@ -6,8 +6,8 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name="Producer")
-public class ProducerModel {
+@Table(name="Tag")
+public class Tag {
 
     @Id
     @GeneratedValue
@@ -16,13 +16,13 @@ public class ProducerModel {
 
     private String name;
 
-    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY, mappedBy = "producers")
-    private Set<AnimeModel> animes;
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY, mappedBy = "tags")
+    private Set<Entry> entries;
 
-    public ProducerModel() {
+    public Tag() {
     }
 
-    public ProducerModel(String name) {
+    public Tag(String name) {
         this.name = name;
     }
 
@@ -42,12 +42,12 @@ public class ProducerModel {
         this.name = name;
     }
 
-    public Set<AnimeModel> getAnimes() {
-        return animes;
+    public Set<Entry> getEntries() {
+        return entries;
     }
 
-    public void setAnimes(Set<AnimeModel> animes) {
-        this.animes = animes;
+    public void setEntries(Set<Entry> entries) {
+        this.entries = entries;
     }
 
     @Override

@@ -7,7 +7,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "Genre")
-public class GenreModel {
+public class Genre {
 
     @Id
     @GeneratedValue
@@ -19,7 +19,7 @@ public class GenreModel {
     @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY, mappedBy = "genres")
     private Set<Entry> entries;
 
-    public GenreModel() {
+    public Genre() {
     }
 
     public Integer getId() {
@@ -58,7 +58,7 @@ public class GenreModel {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        GenreModel that = (GenreModel) o;
+        Genre that = (Genre) o;
         return java.util.Objects.equals(id, that.id) &&
                 java.util.Objects.equals(name, that.name);
     }

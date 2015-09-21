@@ -2,7 +2,7 @@ package net.v4lproik.googlanime.service.impl;
 
 import com.google.gson.Gson;
 import net.v4lproik.googlanime.service.api.AnimeServiceRead;
-import net.v4lproik.googlanime.service.api.entities.AnimeModel;
+import net.v4lproik.googlanime.service.api.entities.Anime;
 import org.apache.log4j.Logger;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.Client;
@@ -26,11 +26,11 @@ public class AnimeServiceReadImpl implements AnimeServiceRead {
     private Client client;
 
     @Override
-    public List<AnimeModel> find(String query, String[] type, String[] fields) {
+    public List<Anime> find(String query, String[] type, String[] fields) {
 
         log.debug(String.format("trying to get information from elasticsearch node with %s, %s", query, Arrays.asList(fields)));
 
-        List<AnimeModel> animes = new ArrayList<>();
+        List<Anime> animes = new ArrayList<>();
 
         QueryBuilder qb = fuzzyLikeThisQuery(fields)
                 .likeText(query)
@@ -43,11 +43,11 @@ public class AnimeServiceReadImpl implements AnimeServiceRead {
                 .execute()
                 .actionGet();
 
-        AnimeModel anime;
+        Anime anime;
         Gson gson = new Gson();
 
         for (SearchHit hit : responseElastic.getHits()){
-            anime = gson.fromJson(hit.getSourceAsString(), AnimeModel.class);
+            anime = gson.fromJson(hit.getSourceAsString(), Anime.class);
             animes.add(anime);
         }
 

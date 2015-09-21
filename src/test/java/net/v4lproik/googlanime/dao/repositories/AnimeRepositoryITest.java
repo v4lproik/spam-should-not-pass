@@ -3,18 +3,16 @@ package net.v4lproik.googlanime.dao.repositories;
 import net.v4lproik.googlanime.client.mysql.DatabaseTestConfiguration;
 import net.v4lproik.googlanime.client.mysql.SqlDatabaseInitializer;
 import net.v4lproik.googlanime.dao.api.AnimeDao;
-import net.v4lproik.googlanime.service.api.entities.AnimeModel;
+import net.v4lproik.googlanime.service.api.entities.Anime;
 import org.hibernate.SessionFactory;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.io.IOException;
 
@@ -25,8 +23,6 @@ import static org.junit.Assert.assertEquals;
         classes = {
                 DatabaseTestConfiguration.class,
         })
-@ImportResource("classpath*  : application-context.xml")
-@WebAppConfiguration
 @TransactionConfiguration
 public class AnimeRepositoryITest {
 
@@ -55,7 +51,7 @@ public class AnimeRepositoryITest {
     public void test_saveAnime_shouldBeInserted() throws Exception {
 
         // Given
-        AnimeModel response = getAnime();
+        Anime response = getAnime();
 
         // When
         animeDao.saveOrUpdate(response);
@@ -67,14 +63,14 @@ public class AnimeRepositoryITest {
     public void test_saveAnimeTwice_shouldBeUpdated() throws Exception {
 
         // Given
-        AnimeModel animeRes = getAnime();
+        Anime animeRes = getAnime();
 
         // When
         animeDao.saveOrUpdate(animeRes);
         animeRes.setTitle(animeRes.getTitle() + "_UPDATED");
         animeDao.saveOrUpdate(animeRes);
 
-        AnimeModel animeFind = animeDao.findById(animeRes.getId());
+        Anime animeFind = animeDao.findById(animeRes.getId());
 
         String title = animeRes.getTitle();
 
@@ -87,16 +83,16 @@ public class AnimeRepositoryITest {
     public void deleteAnime_shouldBeOK() throws Exception{
 
         // Given
-        AnimeModel response = getAnime();
+        Anime response = getAnime();
 
         animeDao.saveOrUpdate(response);
 
         animeDao.deleteById(response.getId());
     }
 
-    private AnimeModel getAnime() throws IOException{
+    private Anime getAnime() throws IOException{
         // Given
-        AnimeModel anime = new AnimeModel();
+        Anime anime = new Anime();
         anime.setId(new Long(1));
         anime.setTitle("Test Title");
         anime.setType("anime");
