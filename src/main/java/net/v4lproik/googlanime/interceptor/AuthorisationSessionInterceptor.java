@@ -1,10 +1,10 @@
 package net.v4lproik.googlanime.interceptor;
 
 import net.v4lproik.googlanime.annotation.UserAccess;
+import net.v4lproik.googlanime.dao.repositories.CacheSessionRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
-import org.springframework.session.SessionRepository;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -19,7 +19,7 @@ public class AuthorisationSessionInterceptor extends HandlerInterceptorAdapter {
     static Logger log = Logger.getLogger(AuthorisationSessionInterceptor.class.getName());
 
     @Autowired
-    SessionRepository repository;
+    CacheSessionRepository repository;
 
     public AuthorisationSessionInterceptor() {
         super();
@@ -28,7 +28,7 @@ public class AuthorisationSessionInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest req, HttpServletResponse res, Object handler) throws Exception {
 
-        log.debug("[AuthorisationSessionInterceptor] job starts");
+        log.debug("[AuthorisationSessionInterceptor] job starts from url " + req.getPathInfo());
 
         Method methodToTest = ((HandlerMethod) handler).getMethod();
 
@@ -45,6 +45,13 @@ public class AuthorisationSessionInterceptor extends HandlerInterceptorAdapter {
         }
 
         if (repository.getSession(session.getId()) == null){
+            return false;
+        }
+
+        req.setAttribute(CacheSessionRepository.MEMBER_KEY, session.getAttribute(CacheSessionRepository.MEMBER_KEY));
+
+        if (req.getPathInfo().matches("/user/auth.+")){
+            res.sendRedirect("/");
             return false;
         }
 
