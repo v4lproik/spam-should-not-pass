@@ -1,6 +1,8 @@
 package net.v4lproik.googlanime.mvc.controllers;
 
 import net.v4lproik.googlanime.annotation.UserAccess;
+import net.v4lproik.googlanime.dao.repositories.CacheSessionRepository;
+import net.v4lproik.googlanime.mvc.models.BasicMember;
 import net.v4lproik.googlanime.mvc.models.UserResponse;
 import net.v4lproik.googlanime.service.api.UserService;
 import net.v4lproik.googlanime.service.api.entities.Member;
@@ -8,21 +10,22 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.session.Session;
-import org.springframework.session.SessionRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping(value = "/user")
 public class UserController {
 
-    static Logger log = Logger.getLogger(UserController.class.getName());
+    private static Logger log = Logger.getLogger(UserController.class.getName());
 
     @Autowired
     private UserService userService;
 
     @Autowired
-    private SessionRepository sessionRepo;
+    private CacheSessionRepository sessionRepo;
 
     @RequestMapping(value = "/auth", method = RequestMethod.POST, params = {"login", "password"})
     @ResponseStatus(value = HttpStatus.OK)
@@ -44,6 +47,8 @@ public class UserController {
         response.setUser(member);
 
         Session session = sessionRepo.createSession();
+        BasicMember basicMember = new BasicMember(member.getId(), member.getFirstName(), member.getLastName(), member.getEmail(), member.getNickName());
+        session.setAttribute(CacheSessionRepository.MEMBER_KEY, basicMember);
         sessionRepo.save(session);
 
         response.setToken(session.getId());
@@ -76,13 +81,13 @@ public class UserController {
     @RequestMapping(value = "/info", method = RequestMethod.GET)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public UserResponse profile() {
+    public UserResponse profile(HttpServletRequest req) {
 
         log.debug(String.format("/user/info"));
 
         UserResponse response = new UserResponse();
 
-        response.setUser("profile");
+        response.setUser(req.getAttribute(CacheSessionRepository.MEMBER_KEY));
 
         return response;
     }

@@ -1,6 +1,7 @@
 package net.v4lproik.googlanime.spring;
 
 import net.v4lproik.googlanime.dao.api.MemberDao;
+import net.v4lproik.googlanime.dao.repositories.CacheSessionRepository;
 import net.v4lproik.googlanime.dao.repositories.MemberRepository;
 import net.v4lproik.googlanime.interceptor.AuthorisationSessionInterceptor;
 import net.v4lproik.googlanime.service.api.PasswordService;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.session.SessionRepository;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -21,6 +23,14 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 
     @Autowired
     SessionFactory sessionFactory;
+
+    @Autowired
+    SessionRepository sessionRepository;
+
+    @Bean
+    public CacheSessionRepository cacheSessionRepository(SessionRepository sessionRepository){
+        return new CacheSessionRepository(sessionRepository);
+    }
 
     @Bean
     public AuthorisationSessionInterceptor authenticationInterceptor() {
