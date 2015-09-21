@@ -6,7 +6,7 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "Synonym")
-public class SynonymModel {
+public class Synonym {
 
     @Id
     @GeneratedValue
@@ -20,10 +20,10 @@ public class SynonymModel {
     @JoinColumn(name="idAnime")
     private Entry entry;
 
-    public SynonymModel() {
+    public Synonym() {
     }
 
-    public SynonymModel(String title) {
+    public Synonym(String title) {
         this.title = title;
     }
 

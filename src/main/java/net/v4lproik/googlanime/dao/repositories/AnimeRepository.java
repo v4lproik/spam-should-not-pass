@@ -2,6 +2,7 @@ package net.v4lproik.googlanime.dao.repositories;
 
 import net.v4lproik.googlanime.dao.api.AnimeDao;
 import net.v4lproik.googlanime.service.api.entities.*;
+import net.v4lproik.googlanime.service.api.entities.Character;
 import org.hibernate.Criteria;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -22,12 +23,12 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
 
     @Autowired
     public AnimeRepository(final SessionFactory sessionFactory) {
-        super(AnimeModel.class, sessionFactory);
+        super(Anime.class, sessionFactory);
         this.sessionFactory = sessionFactory;
     }
 
     @Override
-    public Long save(AnimeModel anime) {
+    public Long save(Anime anime) {
         Transaction tx=currentSession().beginTransaction();
 
         Object idSave = currentSession().save(anime);
@@ -39,7 +40,7 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
     }
 
     @Override
-    public Long save(AnimeIdModel anime) {
+    public Long save(AnimeId anime) {
         Transaction tx=currentSession().beginTransaction();
 
         Object idSave = currentSession().save(anime);
@@ -51,12 +52,12 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
     }
 
     @Override
-    public void update(AnimeModel anime){
+    public void update(Anime anime){
         update(anime);
     }
 
     @Override
-    public void saveOrUpdate(AnimeModel anime) {
+    public void saveOrUpdate(Anime anime) {
         Transaction tx;
         long id = anime.getId();
 
@@ -64,7 +65,7 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
         // Save ManyToMany/OneToMany Entities
 
         if (anime.getAuthors() != null) {
-            for (AuthorModel author : anime.getAuthors()) {
+            for (Author author : anime.getAuthors()) {
                 Integer idAuthor = author.getId();
 
                 if (author.getId() != null) {
@@ -75,7 +76,7 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
                         put("lastName", author.getLastName());
                     }};
 
-                    AuthorModel authorDB = (AuthorModel) getBySimpleCondition(AuthorModel.class, conditions);
+                    Author authorDB = (Author) getBySimpleCondition(Author.class, conditions);
 
                     if (authorDB == null) {
                         idAuthor = save(author).intValue();
@@ -89,7 +90,7 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
         }
 
         if (anime.getCharacters() != null) {
-            for (CharacterModel character : anime.getCharacters()) {
+            for (Character character : anime.getCharacters()) {
                 Integer idCharacter = character.getId();
 
                 if (character.getId() != null) {
@@ -100,7 +101,7 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
                         put("lastName", character.getLastName());
                     }};
 
-                    CharacterModel characterDB = (CharacterModel) getBySimpleCondition(CharacterModel.class, conditions);
+                    Character characterDB = (Character) getBySimpleCondition(Character.class, conditions);
 
                     if (characterDB == null) {
                         idCharacter = (Integer) save(character).intValue();
@@ -114,11 +115,11 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
         }
 
         if (anime.getProducers() != null) {
-            for (ProducerModel producer : anime.getProducers()) {
+            for (Producer producer : anime.getProducers()) {
                 Integer idProducer = producer.getId();
 
                 if (producer.getId() == null) {
-                    ProducerModel producerDB = (ProducerModel) getBySimpleCondition(ProducerModel.class, "name", producer.getName());
+                    Producer producerDB = (Producer) getBySimpleCondition(Producer.class, "name", producer.getName());
                     if (producerDB == null) {
                         idProducer = (Integer) save(producer).intValue();
                         producer.setId(idProducer);
@@ -130,13 +131,13 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
         }
 
         if (anime.getGenres() != null) {
-            for (GenreModel genre : anime.getGenres()) {
+            for (Genre genre : anime.getGenres()) {
                 Integer idGenre = genre.getId();
 
                 if (genre.getId() != null) {
                     update(genre);
                 } else {
-                    GenreModel genreDB = (GenreModel) getBySimpleCondition(GenreModel.class, "name", genre.getName());
+                    Genre genreDB = (Genre) getBySimpleCondition(Genre.class, "name", genre.getName());
                     if (genreDB == null) {
                         idGenre = save(genre).intValue();
                         genre.setId(idGenre);
@@ -148,13 +149,13 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
         }
 
         if (anime.getTags() != null) {
-            for (TagModel tag : anime.getTags()) {
+            for (Tag tag : anime.getTags()) {
                 Integer idTag = tag.getId();
 
                 if (tag.getId() != null) {
                     update(tag);
                 } else {
-                    TagModel tagDB = (TagModel) getBySimpleCondition(TagModel.class, "name", tag.getName());
+                    Tag tagDB = (Tag) getBySimpleCondition(Tag.class, "name", tag.getName());
                     if (tagDB == null) {
                         idTag = (Integer) save(tag).intValue();
                         tag.setId(idTag);
@@ -166,7 +167,7 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
         }
 
         if (anime.getSynonyms() != null) {
-            for (SynonymModel synonym : anime.getSynonyms()) {
+            for (Synonym synonym : anime.getSynonyms()) {
                 Integer idSynonym = synonym.getId();
 
                 if (synonym.getId() != null) {
@@ -177,7 +178,7 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
                         put("title", synonym.getTitle());
                         put("entry", synonym.getEntry());
                     }};
-                    SynonymModel synonymDB = (SynonymModel) getBySimpleConditionObject(SynonymModel.class, conditions);
+                    Synonym synonymDB = (Synonym) getBySimpleConditionObject(Synonym.class, conditions);
                     if (synonymDB == null) {
                         idSynonym = (Integer) save(synonym).intValue();
                         synonym.setId(idSynonym);
@@ -203,7 +204,7 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
         // Save Alternatives, SidesStories etc
 
         if (anime.getSequels() != null){
-            for (AnimeIdModel sequel:anime.getSequels()){
+            for (AnimeId sequel:anime.getSequels()){
                 if (sequel.getId() != id){
 
                     if (findById(sequel.getId()) != null){
@@ -218,7 +219,7 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
         }
 
         if (anime.getAlternativeVersions() != null){
-            for (AnimeIdModel alter:anime.getAlternativeVersions()){
+            for (AnimeId alter:anime.getAlternativeVersions()){
                 if (alter.getId() != id) {
 
                     if (findById(alter.getId()) != null){
@@ -233,7 +234,7 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
         }
 
         if (anime.getPrequels() != null){
-            for (AnimeIdModel prequel:anime.getPrequels()){
+            for (AnimeId prequel:anime.getPrequels()){
                 if (prequel.getId() != id){
 
                     if (findById(prequel.getId()) != null){
@@ -248,7 +249,7 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
         }
 
         if (anime.getSpinoff() != null){
-            for (AnimeIdModel spinOff:anime.getSpinoff()){
+            for (AnimeId spinOff:anime.getSpinoff()){
                 if (spinOff.getId() != id){
 
                     if (findById(spinOff.getId()) != null){
@@ -263,7 +264,7 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
         }
 
         if (anime.getSideStories() != null){
-            for (AnimeIdModel sideStory:anime.getSideStories()){
+            for (AnimeId sideStory:anime.getSideStories()){
                 if (sideStory.getId() != id){
 
                     if (findById(sideStory.getId()) != null){
@@ -278,7 +279,7 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
         }
 
         if (anime.getOthers() != null){
-            for (AnimeIdModel other:anime.getOthers()){
+            for (AnimeId other:anime.getOthers()){
                 if (other.getId() != id){
 
                     if (findById(other.getId()) != null){
@@ -293,7 +294,7 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
         }
 
         if (anime.getSummaries() != null){
-            for (AnimeIdModel summary:anime.getSummaries()){
+            for (AnimeId summary:anime.getSummaries()){
                 if (summary.getId() != id){
 
                     if (findById(summary.getId()) != null){
@@ -308,7 +309,7 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
         }
 
         if (anime.getAdaptations() != null){
-            for (AnimeIdModel adaptation:anime.getAdaptations()) {
+            for (AnimeId adaptation:anime.getAdaptations()) {
                 if (adaptation.getId() != id){
 
                     if (findById(adaptation.getId()) != null){
@@ -328,7 +329,7 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
         // Save ManyToMany Extra Columns
 
         if (anime.getAuthors() != null) {
-            for (AuthorModel author : anime.getAuthors()) {
+            for (Author author : anime.getAuthors()) {
                 Integer idAuthor = author.getId();
 
                 if (author.getJobs() != null){
@@ -340,7 +341,7 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
         }
 
         if (anime.getCharacters() != null) {
-            for (CharacterModel character : anime.getCharacters()) {
+            for (Character character : anime.getCharacters()) {
                 Integer idCharacter = character.getId();
 
                 if (character.getRole() != null){
@@ -351,32 +352,32 @@ public class AnimeRepository extends AbstractRepository implements AnimeDao{
     }
 
     @Override
-    public AnimeModel findById(Long id){
-        return (AnimeModel) getById(id);
+    public Anime findById(Long id){
+        return (Anime) getById(id);
     }
 
     @Override
-    public AnimeModel find(AnimeModel anime){
+    public Anime find(Anime anime){
         final Long id = anime.getId();
         final String type = anime.getType();
         final String showType = anime.getShowType();
         final String title = anime.getTitle();
 
         Transaction tx=currentSession().beginTransaction();
-        Criteria criteria = currentSession().createCriteria(AnimeModel.class);
+        Criteria criteria = currentSession().createCriteria(Anime.class);
         if (id != null) criteria.add(Restrictions.eq("id", id));
         if (type != null) criteria.add(Restrictions.eq("type", type));
         if (showType != null) criteria.add(Restrictions.eq("showType", showType));
         if (title != null) criteria.add(Restrictions.eq("title", title));
 
-        AnimeModel animeRes = (AnimeModel) criteria.uniqueResult();
+        Anime animeRes = (Anime) criteria.uniqueResult();
         tx.commit();
 
         return animeRes;
     }
 
     @Override
-    public void delete(AnimeModel anime) {
+    public void delete(Anime anime) {
         delete(anime);
     }
 }

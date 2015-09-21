@@ -8,7 +8,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
@@ -19,7 +18,6 @@ import static org.junit.Assert.fail;
         classes = {
                 ElasticsearchTestConfiguration.class
         })
-@ImportResource("classpath*  : application-context.xml")
 public class ElasticSearchITest {
 
     @Autowired

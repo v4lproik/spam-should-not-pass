@@ -7,12 +7,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
-@Import({Config.class})
+@Import({ConfigES.class})
 public class ElasticsearchTestConfiguration {
 
     @Bean
     public ElasticsearchIndexInitializer elasticsearchIndexInitializer(Client client){
-
         return new ElasticsearchIndexInitializer(client);
     }
 }

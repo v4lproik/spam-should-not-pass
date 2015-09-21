@@ -5,7 +5,7 @@ import java.util.Set;
 
 @Entity
 @DiscriminatorValue("anime")
-public final class AnimeModel extends Entry{
+public final class Anime extends Entry{
 
     private String episodeCount;
 
@@ -19,9 +19,9 @@ public final class AnimeModel extends Entry{
             inverseJoinColumns={@JoinColumn(name="idProducer", referencedColumnName="id")
             })
     @ElementCollection
-    private Set<ProducerModel> producers;
+    private Set<Producer> producers;
 
-    public AnimeModel() {
+    public Anime() {
     }
 
     public String getEpisodeCount() {
@@ -40,11 +40,11 @@ public final class AnimeModel extends Entry{
         this.episodeLength = episodeLength;
     }
 
-    public Set<ProducerModel> getProducers() {
+    public Set<Producer> getProducers() {
         return producers;
     }
 
-    public void setProducers(Set<ProducerModel> producers) {
+    public void setProducers(Set<Producer> producers) {
         this.producers = producers;
     }
 

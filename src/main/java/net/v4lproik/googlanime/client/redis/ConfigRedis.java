@@ -33,10 +33,6 @@ public class ConfigRedis {
 
         JedisConnectionFactory connectionFactory = new JedisConnectionFactory();
 
-        if (HOST == null || PORT == null){
-            throw new IllegalArgumentException("Database host, user or password cannot be found. Check that the active profile provided a file that contains the variable mysql.host... ");
-        }
-
         JedisPoolConfig configPool = new JedisPoolConfig();
         configPool.setMaxIdle(MAX_IDLE);
         configPool.setMinIdle(MIN_IDLE);

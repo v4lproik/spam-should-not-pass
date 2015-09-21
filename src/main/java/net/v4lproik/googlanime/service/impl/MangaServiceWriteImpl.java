@@ -2,8 +2,8 @@ package net.v4lproik.googlanime.service.impl;
 
 import net.v4lproik.googlanime.dao.api.MangaDao;
 import net.v4lproik.googlanime.service.api.MangaServiceWrite;
-import net.v4lproik.googlanime.service.api.entities.AnimeIdModel;
-import net.v4lproik.googlanime.service.api.entities.MangaModel;
+import net.v4lproik.googlanime.service.api.entities.AnimeId;
+import net.v4lproik.googlanime.service.api.entities.Manga;
 import net.v4lproik.googlanime.service.api.utils.TransformMangaMapper;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,15 +28,15 @@ public class MangaServiceWriteImpl implements MangaServiceWrite {
 
     @Transactional( readOnly = false)
     @Override
-    public void save(MangaModel mangaRes) {
-//        MangaModel mangaRes = mangaMapper.transformMyAnimeListMangaDependencyToDAO(manga);
+    public void save(Manga mangaRes) {
+//        Manga mangaRes = mangaMapper.transformMyAnimeListMangaDependencyToDAO(manga);
 
         if (mangaRes.getTitle() != null) {
 
             if (mangaRes.getId() != null){
 
                 if (mangaDao.findById(mangaRes.getId()) == null){
-                    AnimeIdModel entryId = mangaMapper.transformEntryToEntryId(mangaRes);
+                    AnimeId entryId = mangaMapper.transformEntryToEntryId(mangaRes);
                     mangaDao.save(entryId);
                 }
 
@@ -47,20 +47,20 @@ public class MangaServiceWriteImpl implements MangaServiceWrite {
 
     @Transactional( readOnly = false)
     @Override
-    public void save(AnimeIdModel entity) {
-//        MangaModel entity = mangaMapper.transformMyAnimeListMangaToDAO(manga);
+    public void save(AnimeId entity) {
+//        Manga entity = mangaMapper.transformMyAnimeListMangaToDAO(manga);
 //        log.debug(entity.toString());
         mangaDao.save(entity);
     }
 
     @Transactional( readOnly = false)
     @Override
-    public void delete(MangaModel entity) {
-//        MangaModel entity = mangaMapper.transformMyAnimeListMangaToDAO(manga);
+    public void delete(Manga entity) {
+//        Manga entity = mangaMapper.transformMyAnimeListMangaToDAO(manga);
         mangaDao.delete(entity);
     }
 
-    private boolean isSavable(MangaModel anime){
+    private boolean isSavable(Manga anime){
         return anime.getTitle() != null ? true : false;
     }
 }

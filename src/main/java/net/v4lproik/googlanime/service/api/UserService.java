@@ -87,14 +87,7 @@ public class UserService {
             return null;
         }
 
-        Member created = null;
-        try{
-            created = memberDao.save(email, passwordGenerated);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-
-        return created;
+        return memberDao.save(email, passwordGenerated);
     }
 
     @Transactional(readOnly = true)

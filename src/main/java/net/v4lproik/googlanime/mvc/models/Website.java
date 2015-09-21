@@ -3,10 +3,6 @@ package net.v4lproik.googlanime.mvc.models;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by joel on 08/05/2015.
- */
-
 public enum Website{
     MAL(0);
 
@@ -16,7 +12,6 @@ public enum Website{
     }};
 
     Website(int i) {
-
     }
 
     public static Website getTypeFromId(int value) {
