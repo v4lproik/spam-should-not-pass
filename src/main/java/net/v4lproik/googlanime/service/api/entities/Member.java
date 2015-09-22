@@ -1,6 +1,5 @@
 package net.v4lproik.googlanime.service.api.entities;
 
-import net.v4lproik.googlanime.mvc.models.MemberStatus;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -13,7 +12,7 @@ public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    Integer id;
+    Long id;
 
     String firstName;
 
@@ -25,20 +24,22 @@ public class Member {
 
     String password;
 
-    MemberStatus memberStatus;
+    String status;
 
-    public Member(Integer id) {
+    String permission;
+
+    public Member(Long id) {
         this.id = id;
     }
 
     public Member() {
     }
 
-    public Integer getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -82,12 +83,20 @@ public class Member {
         this.password = password;
     }
 
-    public MemberStatus getMemberStatus() {
-        return memberStatus;
+    public String getStatus() {
+        return status;
     }
 
-    public void setMemberStatus(MemberStatus memberStatus) {
-        this.memberStatus = memberStatus;
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getPermission() {
+        return permission;
+    }
+
+    public void setPermission(String permission) {
+        this.permission = permission;
     }
 
     @Override
@@ -99,7 +108,8 @@ public class Member {
                 .append("email", email)
                 .append("nickName", nickName)
                 .append("password", password)
-                .append("memberStatus", memberStatus)
+                .append("status", status)
+                .append("permission", permission)
                 .toString();
     }
 }

@@ -1,16 +1,3 @@
-# ************************************************************
-# Sequel Pro SQL dump
-# Version 4096
-#
-# http://www.sequelpro.com/
-# http://code.google.com/p/sequel-pro/
-#
-# Host: 192.168.59.103 (MySQL 5.7.7-rc)
-# Database: googlanime
-# Generation Time: 2015-07-26 15:37:11 +0000
-# ************************************************************
-
-
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
@@ -18,6 +5,24 @@
 /*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
 /*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+# Dump of table Member
+# ------------------------------------------------------------
+
+DROP TABLE IF EXISTS `Member`;
+
+CREATE TABLE `Member` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `firstName` varchar(100) DEFAULT NULL,
+  `lastName` varchar(100) DEFAULT NULL,
+  `email` varchar(100) NOT NULL DEFAULT '',
+  `nickName` varchar(100) DEFAULT NULL,
+  `password` varchar(1000) NOT NULL DEFAULT '',
+  `status` varchar(2) NOT NULL DEFAULT '',
+  `permission` varchar(2) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
 
 # Dump of table Anime
 # ------------------------------------------------------------

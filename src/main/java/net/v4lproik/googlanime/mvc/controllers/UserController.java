@@ -3,6 +3,8 @@ package net.v4lproik.googlanime.mvc.controllers;
 import net.v4lproik.googlanime.annotation.UserAccess;
 import net.v4lproik.googlanime.dao.repositories.CacheSessionRepository;
 import net.v4lproik.googlanime.mvc.models.BasicMember;
+import net.v4lproik.googlanime.mvc.models.MemberPermission;
+import net.v4lproik.googlanime.mvc.models.MemberStatus;
 import net.v4lproik.googlanime.mvc.models.UserResponse;
 import net.v4lproik.googlanime.service.api.UserService;
 import net.v4lproik.googlanime.service.api.entities.Member;
@@ -47,7 +49,7 @@ public class UserController {
         response.setUser(member);
 
         Session session = sessionRepo.createSession();
-        BasicMember basicMember = new BasicMember(member.getId(), member.getFirstName(), member.getLastName(), member.getEmail(), member.getNickName());
+        BasicMember basicMember = new BasicMember(member.getId(), member.getEmail(), member.getNickName(), MemberStatus.get(member.getStatus()), MemberPermission.get(member.getPermission()));
         session.setAttribute(CacheSessionRepository.MEMBER_KEY, basicMember);
         sessionRepo.save(session);
 
@@ -66,10 +68,10 @@ public class UserController {
 
         UserResponse response = new UserResponse();
 
-        Member member = userService.save(login, password);
+        Member created = userService.save(login, password);
 
-        if (member != null){
-            response.setUser(member);
+        if (created != null){
+            response.setUser(created);
             return response;
         }
 

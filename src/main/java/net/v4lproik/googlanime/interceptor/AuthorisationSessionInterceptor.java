@@ -1,7 +1,10 @@
 package net.v4lproik.googlanime.interceptor;
 
+import net.v4lproik.googlanime.annotation.AdminAccess;
 import net.v4lproik.googlanime.annotation.UserAccess;
 import net.v4lproik.googlanime.dao.repositories.CacheSessionRepository;
+import net.v4lproik.googlanime.mvc.models.BasicMember;
+import net.v4lproik.googlanime.mvc.models.MemberPermission;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -30,28 +33,50 @@ public class AuthorisationSessionInterceptor extends HandlerInterceptorAdapter {
 
         log.debug("[AuthorisationSessionInterceptor] job starts from url " + req.getPathInfo());
 
-        Method methodToTest = ((HandlerMethod) handler).getMethod();
+        final Method methodToTest = ((HandlerMethod) handler).getMethod();
+        final String methodName = methodToTest.toGenericString() == null ? "" : methodToTest.toGenericString();
 
-        if (AnnotationUtils.getAnnotation(methodToTest, UserAccess.class) == null) {
-            log.debug(String.format("[AuthorisationSessionInterceptor] %s is public access", methodToTest.toGenericString()));
+        //============== PUBLIC ACCESS ===============//
+
+        if (AnnotationUtils.getAnnotation(methodToTest, UserAccess.class) == null && AnnotationUtils.getAnnotation(methodToTest, AdminAccess.class) == null) {
+            log.debug(String.format("[AuthorisationSessionInterceptor] %s is public access", methodName));
             return true;
         }
 
-        log.debug(String.format("[AuthorisationSessionInterceptor] %s is private access", methodToTest.toGenericString()));
+
+        //============== PRIVATE ACCESS ===============//
+
+        log.debug(String.format("[AuthorisationSessionInterceptor] %s is private access", methodName));
         final HttpSession session = req.getSession();
 
         if (session == null){
+            log.debug(String.format("[AuthorisationSessionInterceptor] job finished : No x-auth-token found"));
             return false;
         }
 
         if (repository.getSession(session.getId()) == null){
+            log.debug(String.format("[AuthorisationSessionInterceptor] job finished : No match for session id %s", session.getId()));
             return false;
         }
 
         req.setAttribute(CacheSessionRepository.MEMBER_KEY, session.getAttribute(CacheSessionRepository.MEMBER_KEY));
 
         if (req.getPathInfo().matches("/user/auth.+")){
+            log.debug(String.format("[AuthorisationSessionInterceptor] job finished : User logged and try to access authentication page"));
             res.sendRedirect("/");
+            return false;
+        }
+
+        if (AnnotationUtils.getAnnotation(methodToTest, AdminAccess.class) != null) {
+            log.debug(String.format("[AuthorisationSessionInterceptor] %s is admin access", methodName));
+
+            MemberPermission permission = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getPermission();
+            if (permission.equals(MemberPermission.ADMIN)){
+                log.debug(String.format("[AuthorisationSessionInterceptor] job finished"));
+                return true;
+            }
+
+            log.debug(String.format("[AuthorisationSessionInterceptor] job finished : User %s with session id %s is not ADMIN permission", permission, session.getId()));
             return false;
         }
 

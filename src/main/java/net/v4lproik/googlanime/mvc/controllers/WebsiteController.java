@@ -1,6 +1,7 @@
 package net.v4lproik.googlanime.mvc.controllers;
 
-import net.v4lproik.googlanime.client.crawler.CrawlerRegistry;
+import net.v4lproik.googlanime.annotation.AdminAccess;
+import net.v4lproik.googlanime.client.crawler.Crawler;
 import net.v4lproik.googlanime.mvc.models.AbstractTypeEnum;
 import net.v4lproik.googlanime.mvc.models.AnimeResponse;
 import net.v4lproik.googlanime.mvc.models.BackendException;
@@ -33,8 +34,9 @@ public class WebsiteController {
     private MangaServiceWrite mangaServiceWrite;
 
     @Autowired
-    private CrawlerRegistry crawler;
+    private Crawler crawlerRegistry;
 
+    @AdminAccess
     @RequestMapping(value = "/import", method = RequestMethod.GET, params={"from", "type", "name"})
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
@@ -61,7 +63,7 @@ public class WebsiteController {
 
         try{
 
-            Entry entry = crawler.crawl(0, typeEnum, website);
+            Entry entry = crawlerRegistry.crawl(0, typeEnum, website);
             response.setAnimes(entry);
 
             return response;
@@ -73,6 +75,7 @@ public class WebsiteController {
         return response;
     }
 
+    @AdminAccess
     @RequestMapping(value = "/import", method = RequestMethod.GET, params={"from", "type", "id"})
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
@@ -100,7 +103,7 @@ public class WebsiteController {
         try{
             log.debug(String.format("/import with options from=%s, type=%s, id=%s, dependency=%s", from, type, id.toString(), dependency.toString()));
 
-            Entry entry = crawler.crawl(id, typeEnum, website);
+            Entry entry = crawlerRegistry.crawl(id, typeEnum, website);
             response.setAnimes(entry);
 
             return response;
@@ -112,6 +115,7 @@ public class WebsiteController {
         return response;
     }
 
+    @AdminAccess
     @RequestMapping(value = "/import/store", method = RequestMethod.GET, params={"from", "type", "id"})
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
@@ -139,7 +143,7 @@ public class WebsiteController {
         try{
             log.debug(String.format("/import/store with options from=%s, type=%s, id=%s, dependency=%s", from, type, id.toString(), dependency.toString()));
 
-            Set<Entry> entries = crawler.crawl(id, typeEnum, website, dependency);
+            Set<Entry> entries = crawlerRegistry.crawl(id, typeEnum, website, dependency);
             response.setAnimes(entries);
 
             for (Entry entity : entries){

@@ -1,6 +1,8 @@
 package net.v4lproik.googlanime.service.api;
 
 import net.v4lproik.googlanime.dao.api.MemberDao;
+import net.v4lproik.googlanime.mvc.models.MemberPermission;
+import net.v4lproik.googlanime.mvc.models.MemberStatus;
 import net.v4lproik.googlanime.service.api.entities.Member;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +65,9 @@ public class UserService {
         return null;
     }
 
-    public Member save(String email, String password) {
+    public Member save(final String email, final String password) {
+
+        Member member = new Member();
 
         if (email == null || email.isEmpty()){
             log.debug("[UserService] The email cannot be empty or null");
@@ -87,11 +91,17 @@ public class UserService {
             return null;
         }
 
-        return memberDao.save(email, passwordGenerated);
+        member.setPassword(passwordGenerated);
+        member.setEmail(email);
+        member.setPassword(password);
+        member.setPermission(MemberPermission.REGULAR.toString());
+        member.setStatus(MemberStatus.USER.toString());
+
+        return memberDao.save(member);
     }
 
     @Transactional(readOnly = false)
-    public void delete(Integer id) {
+    public void delete(Long id) {
         memberDao.delete(id);
     }
 
@@ -101,7 +111,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Member findById(Integer id) {
+    public Member findById(Long id) {
         return memberDao.findById(id);
     }
 

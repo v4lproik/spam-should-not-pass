@@ -11,7 +11,6 @@ import org.springframework.session.SessionRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -24,9 +23,6 @@ public class AnimeController {
 
     @Autowired
     private AnimeServiceRead service;
-
-    @Autowired
-    private HttpServletRequest req;
 
     @Autowired
     private SessionRepository sessionRepo;

@@ -3,6 +3,7 @@ package net.v4lproik.googlanime.client.crawler;
 import net.v4lproik.googlanime.service.api.entities.Entry;
 import net.v4lproik.googlanime.service.api.models.SourceEnum;
 import net.v4lproik.googlanime.service.api.models.TypeEnum;
+import org.apache.log4j.Logger;
 import org.springframework.context.annotation.Configuration;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -12,9 +13,15 @@ import java.util.Map;
 import java.util.Set;
 
 @Configuration
-public class CrawlerRegistry implements Crawler{
+public class DefaultCrawler implements Crawler{
+
+    static Logger log = Logger.getLogger(DefaultCrawler.class.getName());
 
     Map<SourceEnum, Map<TypeEnum, AbstractUnitCrawler>> crawlers;
+
+    public DefaultCrawler() {
+        crawlers = new HashMap<SourceEnum, Map<TypeEnum, AbstractUnitCrawler>>() {};
+    }
 
     @Override
     public Entry crawl(Integer id, TypeEnum type) {
@@ -59,9 +66,17 @@ public class CrawlerRegistry implements Crawler{
     @Override
     public void register(AbstractUnitCrawler unitCrawler, SourceEnum source, TypeEnum type) {
 
-        Map<TypeEnum, AbstractUnitCrawler> tmp = new HashMap<>();
-        tmp.put(type, unitCrawler);
+        Map<TypeEnum, AbstractUnitCrawler> sourceCrawlers = crawlers.get(source);
 
-        crawlers.put(source, tmp);
+        if (sourceCrawlers == null){
+            Map<TypeEnum, AbstractUnitCrawler> tmp = new HashMap<>();
+            tmp.put(type, unitCrawler);
+            crawlers.put(source, tmp);
+        }else{
+            sourceCrawlers.put(type, unitCrawler);
+        }
+
+        log.debug(String.format("[DefaultCrawler] UnitCrawler type %s and source %s has been registered", type.toString(), source.toString()));
     }
 }
+

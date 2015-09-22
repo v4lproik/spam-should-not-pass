@@ -11,7 +11,11 @@ public enum TypeEnum {
     }
 
     public static TypeEnum fromValue(String value){
-        return TypeEnum.valueOf(value.toUpperCase()) != null ? TypeEnum.valueOf(value.toUpperCase()) : null;
+        try{
+            return TypeEnum.valueOf(value.toUpperCase());
+        }catch (Exception e){
+            return null;
+        }
     }
 
     @Override

@@ -1,5 +1,6 @@
 package net.v4lproik.googlanime.spring;
 
+import net.v4lproik.googlanime.client.crawler.Crawler;
 import net.v4lproik.googlanime.dao.api.MemberDao;
 import net.v4lproik.googlanime.dao.repositories.CacheSessionRepository;
 import net.v4lproik.googlanime.dao.repositories.MemberRepository;
@@ -19,13 +20,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @Configuration
 @ComponentScan("net.v4lproik.googlanime")
 @EnableWebMvc
-public class AppConfig extends WebMvcConfigurerAdapter {
+public class SpringAppConfig extends WebMvcConfigurerAdapter {
 
     @Autowired
     SessionFactory sessionFactory;
 
     @Autowired
     SessionRepository sessionRepository;
+
+    @Autowired
+    Crawler defaultCrawler;
 
     @Bean
     public CacheSessionRepository cacheSessionRepository(SessionRepository sessionRepository){

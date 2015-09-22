@@ -1,21 +1,30 @@
 package net.v4lproik.googlanime.mvc.models;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum MemberStatus {
     ADMIN("A"),
     USER("B");
 
-    private final String grade;
-
-    MemberStatus(String grade) {
-        this.grade = grade;
+    private static final Map<String, MemberStatus> lookup = new HashMap<String, MemberStatus>();
+    static {
+        for (MemberStatus d : MemberStatus.values()) {
+            lookup.put(d.getMemberStatus(), d);
+        }
     }
 
-    public static AbstractTypeEnum fromValue(String value){
-        return AbstractTypeEnum.valueOf(value.toUpperCase()) != null ? AbstractTypeEnum.valueOf(value.toUpperCase()) : null;
+    private final String memberStatus;
+
+    private MemberStatus(String memberStatus) {
+        this.memberStatus = memberStatus;
     }
 
-    @Override
-    public String toString() {
-        return this.grade;
+    public String getMemberStatus() {
+        return memberStatus;
+    }
+
+    public static MemberStatus get(String grade) {
+        return lookup.get(grade);
     }
 }

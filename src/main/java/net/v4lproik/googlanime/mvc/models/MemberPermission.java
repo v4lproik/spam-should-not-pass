@@ -1,21 +1,30 @@
 package net.v4lproik.googlanime.mvc.models;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public enum MemberPermission {
     ADMIN("A"),
     REGULAR("B");
 
-    private final String permission;
-
-    MemberPermission(String permission) {
-        this.permission = permission;
+    private static final Map<String, MemberPermission> lookup = new HashMap<String, MemberPermission>();
+    static {
+        for (MemberPermission d : MemberPermission.values()) {
+            lookup.put(d.getMemberPermission(), d);
+        }
     }
 
-    public static AbstractTypeEnum fromValue(String value){
-        return AbstractTypeEnum.valueOf(value.toUpperCase()) != null ? AbstractTypeEnum.valueOf(value.toUpperCase()) : null;
+    private final String memberPermission;
+
+    private MemberPermission(String memberPermission) {
+        this.memberPermission = memberPermission;
     }
 
-    @Override
-    public String toString() {
-        return this.permission;
+    public String getMemberPermission() {
+        return memberPermission;
+    }
+
+    public static MemberPermission get(String grade) {
+        return lookup.get(grade);
     }
 }
