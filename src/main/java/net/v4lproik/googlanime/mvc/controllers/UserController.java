@@ -31,7 +31,7 @@ public class UserController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public UserResponse authenticate(@RequestParam(value = "login", required = true) String login,
-                             @RequestParam(value = "password", required = true) String password) {
+                                     @RequestParam(value = "password", required = true) String password) {
 
         log.debug(String.format("/user/auth?login=%s&password=%s", login, password));
 
@@ -74,6 +74,24 @@ public class UserController {
         }
 
         response.setError("Member has not been created");
+        return response;
+    }
+
+    @UserAccess
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public UserResponse delete(HttpServletRequest req) {
+
+        log.debug(String.format("/user/delete"));
+
+        UserResponse response = new UserResponse();
+
+        BasicMember member = (BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY);
+
+        userService.delete(member.getId());
+
+        response.setError("Member has been deleted");
         return response;
     }
 

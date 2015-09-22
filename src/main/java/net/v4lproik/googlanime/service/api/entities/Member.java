@@ -1,5 +1,6 @@
 package net.v4lproik.googlanime.service.api.entities;
 
+import net.v4lproik.googlanime.mvc.models.MemberStatus;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -12,7 +13,7 @@ public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    Long id;
+    Integer id;
 
     String firstName;
 
@@ -24,18 +25,20 @@ public class Member {
 
     String password;
 
-    public Member() {
-    }
+    MemberStatus memberStatus;
 
-    public Member(Long id) {
+    public Member(Integer id) {
         this.id = id;
     }
 
-    public Long getId() {
+    public Member() {
+    }
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -79,6 +82,14 @@ public class Member {
         this.password = password;
     }
 
+    public MemberStatus getMemberStatus() {
+        return memberStatus;
+    }
+
+    public void setMemberStatus(MemberStatus memberStatus) {
+        this.memberStatus = memberStatus;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
@@ -88,6 +99,7 @@ public class Member {
                 .append("email", email)
                 .append("nickName", nickName)
                 .append("password", password)
+                .append("memberStatus", memberStatus)
                 .toString();
     }
 }

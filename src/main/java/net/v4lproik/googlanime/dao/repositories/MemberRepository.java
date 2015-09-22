@@ -30,12 +30,22 @@ public class MemberRepository extends AbstractRepository implements MemberDao {
 
         Transaction tx = currentSession().beginTransaction();
 
-        Object idSave = currentSession().save(member);
+        Integer idSave = Integer.parseInt(currentSession().save(member).toString());
 
         currentSession().flush();
         tx.commit();
 
-        return new Member(new Long(idSave.toString()));
+        return new Member(idSave);
+    }
+
+    @Override
+    public void delete(Integer id) {
+        Transaction tx = currentSession().beginTransaction();
+
+        currentSession().delete(id.toString(), Member.class);
+
+        currentSession().flush();
+        tx.commit();
     }
 
     @Override

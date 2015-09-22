@@ -7,4 +7,6 @@ public interface MemberDao {
     Member find(String email);
 
     Member save(String email, String password);
+
+    void delete(Integer id);
 }
