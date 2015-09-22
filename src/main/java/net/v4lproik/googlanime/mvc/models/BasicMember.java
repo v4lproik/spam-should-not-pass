@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 public final class BasicMember implements Serializable {
 
-    Long id;
+    Integer id;
 
     String firstName;
 
@@ -14,7 +14,7 @@ public final class BasicMember implements Serializable {
 
     String nickName;
 
-    public BasicMember(Long id, String firstName, String lastName, String email, String nickName) {
+    public BasicMember(Integer id, String firstName, String lastName, String email, String nickName) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -22,15 +22,15 @@ public final class BasicMember implements Serializable {
         this.nickName = nickName;
     }
 
-    public BasicMember(Long id) {
+    public BasicMember(Integer id) {
         this.id = id;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 

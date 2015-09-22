@@ -90,6 +90,16 @@ public class UserService {
         return memberDao.save(email, passwordGenerated);
     }
 
+    @Transactional(readOnly = false)
+    public void delete(Integer id) {
+        memberDao.delete(id);
+    }
+
+    @Transactional(readOnly = false)
+    public void delete(Member member) {
+        memberDao.delete(member.getId());
+    }
+
     @Transactional(readOnly = true)
     public Member findById(Integer id) {
         return memberDao.findById(id);
