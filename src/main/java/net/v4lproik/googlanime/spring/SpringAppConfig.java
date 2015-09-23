@@ -1,12 +1,12 @@
 package net.v4lproik.googlanime.spring;
 
-import net.v4lproik.googlanime.client.crawler.Crawler;
-import net.v4lproik.googlanime.dao.api.MemberDao;
-import net.v4lproik.googlanime.dao.repositories.CacheSessionRepository;
-import net.v4lproik.googlanime.dao.repositories.MemberRepository;
-import net.v4lproik.googlanime.interceptor.AuthorisationSessionInterceptor;
-import net.v4lproik.googlanime.service.api.PasswordService;
-import net.v4lproik.googlanime.service.api.UserService;
+import net.v4lproik.googlanime.platform.client.crawler.Crawler;
+import net.v4lproik.googlanime.platform.dao.api.MemberDao;
+import net.v4lproik.googlanime.platform.dao.repositories.CacheSessionRepository;
+import net.v4lproik.googlanime.platform.dao.repositories.MemberRepository;
+import net.v4lproik.googlanime.spring.interceptor.AuthorisationSessionInterceptor;
+import net.v4lproik.googlanime.platform.service.api.PasswordService;
+import net.v4lproik.googlanime.platform.service.api.UserService;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

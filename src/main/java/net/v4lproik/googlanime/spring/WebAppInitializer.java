@@ -1,6 +1,6 @@
 package net.v4lproik.googlanime.spring;
 
-import net.v4lproik.googlanime.client.redis.ConfigRedis;
+import net.v4lproik.googlanime.platform.client.redis.ConfigRedis;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
