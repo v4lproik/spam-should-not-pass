@@ -1,8 +1,5 @@
 package net.v4lproik.googlanime.service.api.models;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
 public enum SourceEnum {
     MAL("mal");
 
@@ -22,8 +19,6 @@ public enum SourceEnum {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
-                .append("source", source)
-                .toString();
+        return source;
     }
 }

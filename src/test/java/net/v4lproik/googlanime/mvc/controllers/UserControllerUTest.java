@@ -2,7 +2,7 @@ package net.v4lproik.googlanime.mvc.controllers;
 
 import net.v4lproik.googlanime.service.api.PasswordService;
 import net.v4lproik.googlanime.service.api.UserService;
-import net.v4lproik.googlanime.spring.AppConfig;
+import net.v4lproik.googlanime.spring.SpringAppConfig;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {AppConfig.class})
+@ContextConfiguration(classes = {SpringAppConfig.class})
 @WebAppConfiguration
 public class UserControllerUTest {
 

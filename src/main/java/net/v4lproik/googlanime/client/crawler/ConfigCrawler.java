@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 public class ConfigCrawler {
 
     private Crawler initializeCrawler(){
-        Crawler crawlerRegistry = new CrawlerRegistry();
+        Crawler crawlerRegistry = new DefaultCrawler();
 
         //register crawlers
         crawlerRegistry.register(new MALUnitCrawler(new AnimeCrawler()), SourceEnum.MAL, TypeEnum.ANIME);
@@ -22,7 +22,7 @@ public class ConfigCrawler {
     }
 
     @Bean
-    public Crawler crawlerRegistry(){
+    public Crawler defaultCrawler(){
         return initializeCrawler();
     }
 }

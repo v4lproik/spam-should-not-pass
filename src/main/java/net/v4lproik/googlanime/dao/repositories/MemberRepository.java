@@ -23,11 +23,7 @@ public class MemberRepository extends AbstractRepository implements MemberDao {
     }
 
     @Override
-    public Member save(String email, String password) {
-        Member member = new Member();
-        member.setEmail(email);
-        member.setPassword(password);
-
+    public Member save(Member member) {
         Transaction tx = currentSession().beginTransaction();
 
         Integer idSave = Integer.parseInt(currentSession().save(member).toString());
@@ -35,11 +31,11 @@ public class MemberRepository extends AbstractRepository implements MemberDao {
         currentSession().flush();
         tx.commit();
 
-        return new Member(idSave);
+        return new Member(new Long(idSave));
     }
 
     @Override
-    public void delete(Integer id) {
+    public void delete(Long id) {
         Transaction tx = currentSession().beginTransaction();
 
         currentSession().delete(id.toString(), Member.class);
@@ -49,7 +45,7 @@ public class MemberRepository extends AbstractRepository implements MemberDao {
     }
 
     @Override
-    public Member findById(Integer id) {
+    public Member findById(Long id) {
         Transaction tx=currentSession().beginTransaction();
         Member member = (Member) sessionFactory.getCurrentSession().get(Member.class, id);
         tx.commit();
