@@ -1,5 +1,5 @@
 elasticsearch:
-  image: "quay.io/googanime/docker-elasticsearch:latest"
+  image: "itzg/elasticsearch:latest"
   ports:
     - "9200:9200"
     - "9300:9300"
