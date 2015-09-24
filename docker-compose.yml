@@ -5,7 +5,7 @@ elasticsearch:
     - "9300:9300"
 
 mysql:
-  image: "mysql:5.7"
+  image: "quay.io/googanime/docker-mysql:latest"
   ports:
     - "3306:3306"
   environment:
