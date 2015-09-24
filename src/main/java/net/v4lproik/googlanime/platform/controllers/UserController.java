@@ -1,11 +1,11 @@
-package net.v4lproik.googlanime.platform.mvc.controllers;
+package net.v4lproik.googlanime.platform.controllers;
 
 import net.v4lproik.googlanime.spring.annotation.UserAccess;
 import net.v4lproik.googlanime.platform.dao.repositories.CacheSessionRepository;
-import net.v4lproik.googlanime.platform.mvc.models.BasicMember;
-import net.v4lproik.googlanime.platform.mvc.models.MemberPermission;
-import net.v4lproik.googlanime.platform.mvc.models.MemberStatus;
-import net.v4lproik.googlanime.platform.mvc.models.UserResponse;
+import net.v4lproik.googlanime.platform.models.BasicMember;
+import net.v4lproik.googlanime.platform.models.MemberPermission;
+import net.v4lproik.googlanime.platform.models.MemberStatus;
+import net.v4lproik.googlanime.platform.models.UserResponse;
 import net.v4lproik.googlanime.platform.service.api.UserService;
 import net.v4lproik.googlanime.platform.service.api.entities.Member;
 import org.apache.log4j.Logger;

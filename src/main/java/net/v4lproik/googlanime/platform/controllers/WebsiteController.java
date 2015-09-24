@@ -1,10 +1,10 @@
-package net.v4lproik.googlanime.platform.mvc.controllers;
+package net.v4lproik.googlanime.platform.controllers;
 
 import net.v4lproik.googlanime.spring.annotation.AdminAccess;
 import net.v4lproik.googlanime.platform.client.crawler.Crawler;
-import net.v4lproik.googlanime.platform.mvc.models.AbstractTypeEnum;
-import net.v4lproik.googlanime.platform.mvc.models.AnimeResponse;
-import net.v4lproik.googlanime.platform.mvc.models.BackendException;
+import net.v4lproik.googlanime.platform.models.AbstractTypeEnum;
+import net.v4lproik.googlanime.platform.models.AnimeResponse;
+import net.v4lproik.googlanime.platform.models.BackendException;
 import net.v4lproik.googlanime.platform.service.api.AnimeServiceWrite;
 import net.v4lproik.googlanime.platform.service.api.MangaServiceWrite;
 import net.v4lproik.googlanime.platform.service.api.entities.Anime;

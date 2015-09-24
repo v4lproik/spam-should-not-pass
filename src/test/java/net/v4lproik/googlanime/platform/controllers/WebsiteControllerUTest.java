@@ -1,4 +1,4 @@
-package net.v4lproik.googlanime.platform.mvc.controllers;
+package net.v4lproik.googlanime.platform.controllers;
 
 import com.jayway.jsonpath.JsonPath;
 import net.v4lproik.googlanime.platform.client.crawler.Crawler;

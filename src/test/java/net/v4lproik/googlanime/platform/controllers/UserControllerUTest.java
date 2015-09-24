@@ -1,4 +1,4 @@
-package net.v4lproik.googlanime.platform.mvc.controllers;
+package net.v4lproik.googlanime.platform.controllers;
 
 import net.v4lproik.googlanime.platform.service.api.PasswordService;
 import net.v4lproik.googlanime.platform.service.api.UserService;

@@ -1,7 +1,7 @@
-package net.v4lproik.googlanime.platform.mvc.controllers;
+package net.v4lproik.googlanime.platform.controllers;
 
-import net.v4lproik.googlanime.platform.mvc.models.AnimeResponse;
-import net.v4lproik.googlanime.platform.mvc.models.Website;
+import net.v4lproik.googlanime.platform.models.AnimeResponse;
+import net.v4lproik.googlanime.platform.models.Website;
 import net.v4lproik.googlanime.platform.service.api.AnimeServiceRead;
 import net.v4lproik.googlanime.platform.service.api.entities.Entry;
 import org.apache.log4j.Logger;

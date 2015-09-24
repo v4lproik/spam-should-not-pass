@@ -1,4 +1,4 @@
-package net.v4lproik.googlanime.platform.mvc.models;
+package net.v4lproik.googlanime.platform.models;
 
 import java.util.HashMap;
 import java.util.Map;

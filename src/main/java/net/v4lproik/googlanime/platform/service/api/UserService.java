@@ -1,8 +1,8 @@
 package net.v4lproik.googlanime.platform.service.api;
 
 import net.v4lproik.googlanime.platform.dao.api.MemberDao;
-import net.v4lproik.googlanime.platform.mvc.models.MemberPermission;
-import net.v4lproik.googlanime.platform.mvc.models.MemberStatus;
+import net.v4lproik.googlanime.platform.models.MemberPermission;
+import net.v4lproik.googlanime.platform.models.MemberStatus;
 import net.v4lproik.googlanime.platform.service.api.entities.Member;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
