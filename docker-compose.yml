@@ -13,6 +13,6 @@ mysql:
     - MYSQL_DATABASE=googlanime
 
 redis:
-  image: "redis:2.8.21"
+  image: "quay.io/googanime/docker-redis:latest"
   ports:
     - "6379:6379"
