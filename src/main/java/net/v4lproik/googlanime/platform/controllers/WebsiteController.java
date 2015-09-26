@@ -34,7 +34,7 @@ public class WebsiteController {
     private MangaServiceWrite mangaServiceWrite;
 
     @Autowired
-    private Crawler crawlerRegistry;
+    private Crawler defaultCrawler;
 
     @AdminAccess
     @RequestMapping(value = "/import", method = RequestMethod.GET, params={"from", "type", "name"})
@@ -63,7 +63,7 @@ public class WebsiteController {
 
         try{
 
-            Entry entry = crawlerRegistry.crawl(0, typeEnum, website);
+            Entry entry = defaultCrawler.crawl(0, typeEnum, website);
             response.setAnimes(entry);
 
             return response;
@@ -103,7 +103,7 @@ public class WebsiteController {
         try{
             log.debug(String.format("/import with options from=%s, type=%s, id=%s, dependency=%s", from, type, id.toString(), dependency.toString()));
 
-            Entry entry = crawlerRegistry.crawl(id, typeEnum, website);
+            Entry entry = defaultCrawler.crawl(id, typeEnum, website);
             response.setAnimes(entry);
 
             return response;
@@ -143,7 +143,7 @@ public class WebsiteController {
         try{
             log.debug(String.format("/import/store with options from=%s, type=%s, id=%s, dependency=%s", from, type, id.toString(), dependency.toString()));
 
-            Set<Entry> entries = crawlerRegistry.crawl(id, typeEnum, website, dependency);
+            Set<Entry> entries = defaultCrawler.crawl(id, typeEnum, website, dependency);
             response.setAnimes(entries);
 
             for (Entry entity : entries){

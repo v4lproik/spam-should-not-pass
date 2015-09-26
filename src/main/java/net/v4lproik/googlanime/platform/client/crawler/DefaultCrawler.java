@@ -37,7 +37,7 @@ public class DefaultCrawler implements Crawler{
 
         AbstractUnitCrawler crawler = sourceCrawlers.get(type);
         if (crawler == null){
-            throw new IllegalArgumentException(String.format("The crawler %s has not been registered", source.toString()));
+            throw new IllegalArgumentException(String.format("The crawler %s %s has not been registered", source.toString(), type.toString()));
         }
 
         return crawler.crawl(id);
