@@ -28,10 +28,7 @@ public class ConfigES {
         Settings settings = ImmutableSettings.settingsBuilder()
                 .put("cluster.name", "elasticsearch").build();
 
-        final String ELASTICSEARCH_HOST = env.getProperty("elasticsearch.host");
-
-        if (ELASTICSEARCH_HOST == null)
-            throw new IllegalArgumentException("ElasticSearch host cannot be found. Check that the active profile provided a file that contains the variable elasticsearch.host ");
+        final String ELASTICSEARCH_HOST = env.getRequiredProperty("elasticsearch.host");
 
         return new TransportClient(settings).addTransportAddress(new InetSocketTransportAddress(ELASTICSEARCH_HOST, 9300));
     }
