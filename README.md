@@ -24,7 +24,7 @@ It provides a powerful JEE platform that returns different types of information 
 
 1. Clone the repository
 2. `cd` to the created directory.
-3. `<ELASTICSEARCH_NODE_IP> es.googlanime` to add the dns name to your /etc/hosts file 
+3. `export DOCKER_IP=$(docker-machine ip <YOUR-DOCKER-VM> 2>/dev/null)` to set your docker ip for the tests
 4. `docker-compose -d up` to start docker containers
 5. `mvn clean compile jetty:run -Dspring.profiles.active="test"` to launch the server (Reachable at http://localhost:8080/ by default)
 6. `sh scripts/fill-elasticsearch.sh` to fill elasticsearch with some data
