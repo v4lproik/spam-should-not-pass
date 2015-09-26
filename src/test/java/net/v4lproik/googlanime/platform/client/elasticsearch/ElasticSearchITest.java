@@ -1,7 +1,5 @@
-package net.v4lproik.googlanime;
+package net.v4lproik.googlanime.platform.client.elasticsearch;
 
-import net.v4lproik.googlanime.platform.client.elasticsearch.ElasticsearchIndexInitializer;
-import net.v4lproik.googlanime.platform.client.elasticsearch.ElasticsearchTestConfiguration;
 import org.elasticsearch.client.Client;
 import org.junit.Before;
 import org.junit.Test;
