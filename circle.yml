@@ -3,8 +3,6 @@ machine:
     version: oraclejdk8
   services:
     - docker
-  hosts:
-    es.googlanime: 127.0.0.1
 
 dependencies:
   cache_directories:
@@ -16,7 +14,7 @@ dependencies:
 
   override:
     # stop services running locally
-    - sudo /etc/init.d/mysql stop && sudo /etc/init.d/redis-server stop
+    - sudo /etc/init.d/postgresql stop && sudo /etc/init.d/redis-server stop
     - docker-compose up -d
 
   post:
