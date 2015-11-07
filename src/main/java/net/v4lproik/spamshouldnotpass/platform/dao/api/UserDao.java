@@ -5,7 +5,7 @@ import net.v4lproik.spamshouldnotpass.platform.service.api.entities.User;
 import java.util.UUID;
 
 public interface UserDao {
-    User findById(String id);
+    User findById(UUID id);
     User findByEmail(String email);
 
     User save(User user);

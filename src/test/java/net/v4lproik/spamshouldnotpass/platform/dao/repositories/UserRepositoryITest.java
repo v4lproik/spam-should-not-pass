@@ -5,6 +5,7 @@ import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
 import net.v4lproik.spamshouldnotpass.platform.service.api.entities.User;
 import org.joda.time.DateTime;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,6 +14,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.UUID;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(
@@ -23,31 +26,37 @@ import java.util.UUID;
 public class UserRepositoryITest {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
+
+    private final UUID uuid = UUID.randomUUID();
+    private User user;
 
     @Before
     public void setUp(){
+        user = new User(
+                uuid,
+                "firstname",
+                "lastname",
+                "email",
+                "nickname",
+                "password",
+                MemberStatus.ADMIN,
+                MemberPermission.REGULAR,
+                DateTime.now()
+        );
     }
 
     @Test
     public void testSave() throws Exception {
         userRepository.save(
-                new User(
-                        UUID.randomUUID(),
-                        "firstname",
-                        "lastname",
-                        "email",
-                        "nickname",
-                        "password",
-                        MemberStatus.ADMIN,
-                        MemberPermission.REGULAR,
-                        DateTime.now()
-                )
+                user
         );
+
+        assertEquals(userRepository.findById(user.getId()), user);
     }
 
-    @Test
-    public void testDelete() throws Exception {
-
+    @After
+    public void cleanUp() throws Exception {
+        userRepository.delete(user.getId());
     }
 }

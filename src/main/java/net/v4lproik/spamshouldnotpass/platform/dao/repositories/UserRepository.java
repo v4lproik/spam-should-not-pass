@@ -22,7 +22,7 @@ public class UserRepository implements UserDao {
     public final SessionFactory sessionFactory;
 
     // Tables
-    public final QUser user = QUser.user;
+    public final QUser quser = QUser.user;
 
     @Autowired
     public UserRepository(final SessionFactory sessionFactory) {
@@ -45,24 +45,37 @@ public class UserRepository implements UserDao {
     public void delete(UUID id) {
         Transaction tx = currentSession().beginTransaction();
 
-        currentSession().delete(id.toString(), User.class);
+        User toDelete = new User();
+        toDelete.setId(id);
+
+        currentSession().delete(toDelete);
 
         currentSession().flush();
         tx.commit();
     }
 
     @Override
-    public User findById(String id) {
+    public User findById(UUID id) {
+        Transaction tx = currentSession().beginTransaction();
+
         HibernateQuery<?> query = new HibernateQuery<Void>(currentSession());
 
-        return query.select(user).where(user.id.eq(id)).fetchFirst();
+        User user = query.from(quser)
+                .select(quser)
+                .where(quser.id.eq(id))
+                .fetchFirst();
+
+        currentSession().flush();
+        tx.commit();
+
+        return user;
     }
 
     @Override
     public User findByEmail(String email) {
         HibernateQuery<?> query = new HibernateQuery<Void>(currentSession());
 
-        return query.select(user).where(user.email.eq(email)).fetchFirst();
+        return query.select(quser).where(quser.email.eq(email)).fetchFirst();
     }
 
     protected Session currentSession() {

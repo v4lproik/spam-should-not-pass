@@ -112,7 +112,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public User findById(String id) {
+    public User findById(UUID id) {
         return userDao.findById(id);
     }
 

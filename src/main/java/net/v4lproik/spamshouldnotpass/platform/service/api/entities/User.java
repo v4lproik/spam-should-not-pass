@@ -1,5 +1,6 @@
 package net.v4lproik.spamshouldnotpass.platform.service.api.entities;
 
+import com.google.common.base.Objects;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
 import org.hibernate.annotations.Type;
@@ -126,5 +127,19 @@ public class User {
 
     public void setDate(DateTime date) {
         this.date = date;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+        return Objects.equal(getId(), user.getId()) &&
+                Objects.equal(getEmail(), user.getEmail());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId(), getEmail());
     }
 }
