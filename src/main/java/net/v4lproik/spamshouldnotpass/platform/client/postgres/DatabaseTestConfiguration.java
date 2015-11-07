@@ -1,4 +1,4 @@
-package net.v4lproik.spamshouldnotpass.platform.client.mysql;
+package net.v4lproik.spamshouldnotpass.platform.client.postgres;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Import;
 import javax.sql.DataSource;
 
 @Configuration
-@Import({ConfigMysql.class})
+@Import({Config.class})
 public class DatabaseTestConfiguration {
 
     @Autowired

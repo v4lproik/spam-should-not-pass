@@ -1,4 +1,4 @@
-package net.v4lproik.spamshouldnotpass.platform.client.mysql;
+package net.v4lproik.spamshouldnotpass.platform.client.postgres;
 
 public enum DatabaseEnum {
     MYSQL(0);

@@ -1,18 +1,19 @@
 elasticsearch:
-  image: "quay.io/spamshouldnotpass/docker-elasticsearch:latest"
+  image: "quay.io/googanime/docker-elasticsearch:latest"
   ports:
     - "9200:9200"
     - "9300:9300"
 
-mysql:
-  image: "quay.io/spamshouldnotpass/docker-mysql:latest"
+postgres:
+  image: orchardup/postgresql
   ports:
-    - "3306:3306"
+    - "5432:5432"
   environment:
-    - MYSQL_ROOT_PASSWORD=s3cretP4ssword123456789OverrideInPipeline
-    - MYSQL_DATABASE=spamshouldnotpass
+    - POSTGRESQL_USER=root
+    - POSTGRESQL_PASS=s3cretP4ssword123456789OverrideInPipeline
+    - POSTGRESQL_DB=spamshouldnotpass
 
 redis:
-  image: "quay.io/spamshouldnotpass/docker-redis:latest"
+  image: "quay.io/googanime/docker-redis:latest"
   ports:
     - "6379:6379"

@@ -1,4 +1,4 @@
-package net.v4lproik.spamshouldnotpass.platform.client.mysql;
+package net.v4lproik.spamshouldnotpass.platform.client.postgres;
 
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.ClassPathResource;

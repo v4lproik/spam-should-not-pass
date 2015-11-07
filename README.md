@@ -7,7 +7,7 @@ It provides a powerful JEE platform
 
 ## Backends (Available through docker containers)
 
-- Mysql 5.7
+- Pstgresql 9.4
 - Redis 2.8.21
 - Elasticsearch 1.5
 

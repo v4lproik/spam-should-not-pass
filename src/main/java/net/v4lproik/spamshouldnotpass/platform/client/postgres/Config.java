@@ -1,4 +1,4 @@
-package net.v4lproik.spamshouldnotpass.platform.client.mysql;
+package net.v4lproik.spamshouldnotpass.platform.client.postgres;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import net.v4lproik.spamshouldnotpass.platform.service.api.entities.Member;
@@ -18,9 +18,9 @@ import javax.sql.DataSource;
 
 @Configuration
 @PropertySources(@PropertySource("classpath:properties/app-${spring.profiles.active}.properties"))
-public class ConfigMysql {
+public class Config {
 
-    private static final Logger log = LoggerFactory.getLogger(ConfigMysql.class);
+    private static final Logger log = LoggerFactory.getLogger(Config.class);
 
     @Autowired
     private Environment env;
@@ -38,16 +38,16 @@ public class ConfigMysql {
         //SET character_set_database='UTF8';
         //SET character_set_server='UTF8';
 
-        String connectionURI = String.format("jdbc:mysql://%s:%s/%s?zeroDateTimeBehavior=convertToNull&useUnicode=yes&characterEncoding=utf8", HOST, PORT, DB);
+        String connectionURI = String.format("jdbc:postgresql://%s:%s/%s", HOST, PORT, DB);
 
         org.hibernate.cfg.Configuration c = new org.hibernate.cfg.Configuration();
-        c.setProperty("hibernate.dialect", "org.hibernate.dialect.MySQL5InnoDBDialect");
-        c.setProperty("hibernate.connection.driver_class", "com.mysql.jdbc.Driver");
+        c.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
+        c.setProperty("hibernate.connection.driver_class", "org.postgresql.Driver");
         c.setProperty("hibernate.connection.url", connectionURI);
         c.setProperty("hibernate.connection.username", USER);
         c.setProperty("hibernate.connection.password", PWD);
         c.setProperty("hibernate.connection.autoReconnect", "true");
-        c.setProperty("hibernate.current_session_context_class", "thread");
+//        c.setProperty("hibernate.current_session_context_class", "thread");
         c.addPackage("net.v4lproik.spamshouldnotpass");
         c.addAnnotatedClass(Member.class);
 
