@@ -1,9 +1,9 @@
 package net.v4lproik.spamshouldnotpass.platform.service.api;
 
-import net.v4lproik.spamshouldnotpass.platform.dao.api.MemberDao;
+import net.v4lproik.spamshouldnotpass.platform.dao.api.UserDao;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
-import net.v4lproik.spamshouldnotpass.platform.service.api.entities.Member;
+import net.v4lproik.spamshouldnotpass.platform.service.api.entities.User;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,45 +11,46 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.UUID;
 
 @Service
 public class UserService {
 
     private static Logger log = Logger.getLogger(UserService.class);
 
-    private final MemberDao memberDao;
+    private final UserDao userDao;
 
     private final PasswordService passwordService;
 
     @Autowired
-    public UserService(final MemberDao memberDao, final PasswordService passwordService) {
-        this.memberDao = memberDao;
+    public UserService(final UserDao userDao, final PasswordService passwordService) {
+        this.userDao = userDao;
         this.passwordService = passwordService;
     }
 
-    public Member authenticate(String email, String password){
-        Member member = null;
+    public User authenticate(String email, String password){
+        User user = null;
 
         if (email == null || email.isEmpty()){
             log.debug("[UserService] The email cannot be empty or null");
-            return member;
+            return user;
         }
 
         // password policy
         if (password == null || password.isEmpty()){
             log.debug("[UserService] The password cannot be empty or null");
-            return member;
+            return user;
         }
 
-        member = memberDao.find(email);
+        user = userDao.findByEmail(email);
 
-        if (member == null){
-            return member;
+        if (user == null){
+            return user;
         }
 
         boolean auth = false;
         try {
-            auth = passwordService.validatePassword(password, member.getPassword());
+            auth = passwordService.validatePassword(password, user.getPassword());
         } catch (NoSuchAlgorithmException e) {
             log.debug("[UserService] Error generating password to check if user exist in database", e);
             return null;
@@ -59,15 +60,15 @@ public class UserService {
         }
 
         if (auth){
-            return member;
+            return user;
         }
 
         return null;
     }
 
-    public Member save(final String email, final String password) {
+    public User save(final String email, final String password) {
 
-        Member member = new Member();
+        User user = new User();
 
         if (email == null || email.isEmpty()){
             log.debug("[UserService] The email cannot be empty or null");
@@ -91,32 +92,32 @@ public class UserService {
             return null;
         }
 
-        member.setPassword(passwordGenerated);
-        member.setEmail(email);
-        member.setPassword(password);
-        member.setPermission(MemberPermission.REGULAR.toString());
-        member.setStatus(MemberStatus.USER.toString());
+        user.setPassword(passwordGenerated);
+        user.setEmail(email);
+        user.setPassword(password);
+        user.setPermission(MemberPermission.REGULAR);
+        user.setStatus(MemberStatus.USER);
 
-        return memberDao.save(member);
+        return userDao.save(user);
     }
 
     @Transactional(readOnly = false)
-    public void delete(Long id) {
-        memberDao.delete(id);
+    public void delete(UUID id) {
+        userDao.delete(id);
     }
 
     @Transactional(readOnly = false)
-    public void delete(Member member) {
-        memberDao.delete(member.getId());
+    public void delete(User user) {
+        userDao.delete(user.getId());
     }
 
     @Transactional(readOnly = true)
-    public Member findById(Long id) {
-        return memberDao.findById(id);
+    public User findById(String id) {
+        return userDao.findById(id);
     }
 
     @Transactional(readOnly = true)
-    public Member findByLogin(String email) {
+    public User findByLogin(String email) {
         return null;
     }
 }

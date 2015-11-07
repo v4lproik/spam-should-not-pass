@@ -1,13 +1,11 @@
 package net.v4lproik.spamshouldnotpass.platform.controllers;
 
-import net.v4lproik.spamshouldnotpass.spring.annotation.UserAccess;
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
-import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
-import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
 import net.v4lproik.spamshouldnotpass.platform.models.UserResponse;
 import net.v4lproik.spamshouldnotpass.platform.service.api.UserService;
-import net.v4lproik.spamshouldnotpass.platform.service.api.entities.Member;
+import net.v4lproik.spamshouldnotpass.platform.service.api.entities.User;
+import net.v4lproik.spamshouldnotpass.spring.annotation.UserAccess;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,16 +38,16 @@ public class UserController {
         UserResponse response = new UserResponse();
         boolean auth = false;
 
-        Member member = userService.authenticate(login, password);
-        if (member == null){
+        User user = userService.authenticate(login, password);
+        if (user == null){
             response.setError("The user cannot be authenticated");
             return response;
         }
 
-        response.setUser(member);
+        response.setUser(user);
 
         Session session = sessionRepo.createSession();
-        BasicMember basicMember = new BasicMember(member.getId(), member.getEmail(), member.getNickName(), MemberStatus.get(member.getStatus()), MemberPermission.get(member.getPermission()));
+        BasicMember basicMember = new BasicMember(user.getId(), user.getEmail(), user.getNickname(), user.getStatus(), user.getPermission());
         session.setAttribute(CacheSessionRepository.MEMBER_KEY, basicMember);
         sessionRepo.save(session);
 
@@ -68,14 +66,14 @@ public class UserController {
 
         UserResponse response = new UserResponse();
 
-        Member created = userService.save(login, password);
+        User created = userService.save(login, password);
 
         if (created != null){
             response.setUser(created);
             return response;
         }
 
-        response.setError("Member has not been created");
+        response.setError("User has not been created");
         return response;
     }
 
@@ -93,7 +91,7 @@ public class UserController {
 
         userService.delete(member.getId());
 
-        response.setError("Member has been deleted");
+        response.setError("User has been deleted");
         return response;
     }
 

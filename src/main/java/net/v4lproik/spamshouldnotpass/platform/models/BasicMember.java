@@ -1,10 +1,11 @@
 package net.v4lproik.spamshouldnotpass.platform.models;
 
 import java.io.Serializable;
+import java.util.UUID;
 
 public final class BasicMember implements Serializable {
 
-    Long id;
+    UUID id;
 
     String email;
 
@@ -14,7 +15,7 @@ public final class BasicMember implements Serializable {
 
     MemberPermission permission;
 
-    public BasicMember(Long id, String email, String nickName, MemberStatus memberStatus, MemberPermission memberPermission) {
+    public BasicMember(UUID id, String email, String nickName, MemberStatus memberStatus, MemberPermission memberPermission) {
         this.id = id;
         this.email = email;
         this.nickName = nickName;
@@ -22,11 +23,11 @@ public final class BasicMember implements Serializable {
         this.permission = memberPermission;
     }
 
-    public BasicMember(Long id) {
+    public BasicMember(UUID id) {
         this.id = id;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 

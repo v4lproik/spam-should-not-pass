@@ -1,7 +1,7 @@
 package net.v4lproik.spamshouldnotpass.platform.client.postgres;
 
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
-import net.v4lproik.spamshouldnotpass.platform.service.api.entities.Member;
+import net.v4lproik.spamshouldnotpass.platform.service.api.entities.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.slf4j.Logger;
@@ -47,9 +47,9 @@ public class Config {
         c.setProperty("hibernate.connection.username", USER);
         c.setProperty("hibernate.connection.password", PWD);
         c.setProperty("hibernate.connection.autoReconnect", "true");
-//        c.setProperty("hibernate.current_session_context_class", "thread");
+        c.setProperty("hibernate.current_session_context_class", "thread");
         c.addPackage("net.v4lproik.spamshouldnotpass");
-        c.addAnnotatedClass(Member.class);
+        c.addAnnotatedClass(User.class);
 
         c.setProperty("connection.provider_class", "org.hibernate.connection.C3P0ConnectionProvider");
         c.setProperty("c3p0.min_size", "5");

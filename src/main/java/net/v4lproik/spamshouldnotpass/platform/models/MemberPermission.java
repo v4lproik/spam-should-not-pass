@@ -1,30 +1,28 @@
 package net.v4lproik.spamshouldnotpass.platform.models;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.google.common.base.Objects;
 
 public enum MemberPermission {
-    ADMIN("A"),
-    REGULAR("B");
+    ADMIN(0, "ADMIN"),
+    REGULAR(1, "REGULAR");
 
-    private static final Map<String, MemberPermission> lookup = new HashMap<String, MemberPermission>();
-    static {
-        for (MemberPermission d : MemberPermission.values()) {
-            lookup.put(d.getMemberPermission(), d);
+    private final int position;
+    private final String letter;
+
+    MemberPermission(int position, String letter) {
+        this.position = position;
+        this.letter = letter;
+    }
+
+    public static String get() {
+        Objects.ToStringHelper toString = Objects.toStringHelper("");
+        for (MemberPermission status : MemberPermission.values()) {
+            toString.addValue(status.letter);
         }
+        return toString.toString();
     }
 
-    private final String memberPermission;
-
-    private MemberPermission(String memberPermission) {
-        this.memberPermission = memberPermission;
-    }
-
-    public String getMemberPermission() {
-        return memberPermission;
-    }
-
-    public static MemberPermission get(String grade) {
-        return lookup.get(grade);
+    public int getPosition(){
+        return this.position;
     }
 }

@@ -1,8 +1,8 @@
 package net.v4lproik.spamshouldnotpass.spring;
 
-import net.v4lproik.spamshouldnotpass.platform.dao.api.MemberDao;
+import net.v4lproik.spamshouldnotpass.platform.dao.api.UserDao;
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.MemberRepository;
+import net.v4lproik.spamshouldnotpass.platform.dao.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.platform.service.api.PasswordService;
 import net.v4lproik.spamshouldnotpass.platform.service.api.UserService;
 import net.v4lproik.spamshouldnotpass.spring.interceptor.AuthorisationSessionInterceptor;
@@ -38,8 +38,8 @@ public class SpringAppConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public MemberDao memberDao() {
-        return new MemberRepository(sessionFactory);
+    public UserDao memberDao() {
+        return new UserRepository(sessionFactory);
     }
 
     @Bean
@@ -48,8 +48,8 @@ public class SpringAppConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public UserService userServiceImpl(MemberDao memberDao, PasswordService passwordService){
-        return new UserService(memberDao, passwordService);
+    public UserService userServiceImpl(UserDao userDao, PasswordService passwordService){
+        return new UserService(userDao, passwordService);
     }
 
     @Override
