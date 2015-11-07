@@ -1,11 +1,9 @@
-# Googanime Backend
-[![Circle CI](https://circleci.com/gh/v4lproik/googanime-backend/tree/master.svg?style=shield)](https://circleci.com/gh/v4lproik/googanime-backend/tree/master)
-
-Googanime-backend is the main core of a bigger project called Googanime. It is a platform between that is used by different other project such as [googanime-frontend](https://github.com/googanime/googanime-frontend/tree/master).
+# Spam Should Not Pass
+[![Circle CI](https://circleci.com/gh/v4lproik/spamshouldnotpass/tree/master.svg?style=shield)](https://circleci.com/gh/v4lproik/googanime-backend/tree/master)
 
 ## Features implemented
 
-It provides a powerful JEE platform that returns different types of information about animes, mangas, podcasts and so on.
+It provides a powerful JEE platform
 
 ## Backends (Available through docker containers)
 

@@ -1,18 +1,18 @@
 elasticsearch:
-  image: "quay.io/googanime/docker-elasticsearch:latest"
+  image: "quay.io/spamshouldnotpass/docker-elasticsearch:latest"
   ports:
     - "9200:9200"
     - "9300:9300"
 
 mysql:
-  image: "quay.io/googanime/docker-mysql:latest"
+  image: "quay.io/spamshouldnotpass/docker-mysql:latest"
   ports:
     - "3306:3306"
   environment:
     - MYSQL_ROOT_PASSWORD=s3cretP4ssword123456789OverrideInPipeline
-    - MYSQL_DATABASE=googlanime
+    - MYSQL_DATABASE=spamshouldnotpass
 
 redis:
-  image: "quay.io/googanime/docker-redis:latest"
+  image: "quay.io/spamshouldnotpass/docker-redis:latest"
   ports:
     - "6379:6379"
