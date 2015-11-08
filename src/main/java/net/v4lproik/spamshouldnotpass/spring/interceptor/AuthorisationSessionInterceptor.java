@@ -12,6 +12,7 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import javax.security.sasl.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -36,6 +37,7 @@ public class AuthorisationSessionInterceptor extends HandlerInterceptorAdapter {
         final Method methodToTest = ((HandlerMethod) handler).getMethod();
         final String methodName = methodToTest.toGenericString() == null ? "" : methodToTest.toGenericString();
 
+
         //============== PUBLIC ACCESS ===============//
 
         if (AnnotationUtils.getAnnotation(methodToTest, UserAccess.class) == null && AnnotationUtils.getAnnotation(methodToTest, AdminAccess.class) == null) {
@@ -50,34 +52,33 @@ public class AuthorisationSessionInterceptor extends HandlerInterceptorAdapter {
         final HttpSession session = req.getSession();
 
         if (session == null){
-            log.debug(String.format("[AuthorisationSessionInterceptor] job finished : No x-auth-token found"));
-            return false;
+            throw new AuthenticationException("[AuthorisationSessionInterceptor] job finished : No x-auth-token found");
         }
 
         if (repository.getSession(session.getId()) == null){
-            log.debug(String.format("[AuthorisationSessionInterceptor] job finished : No match for session id %s", session.getId()));
-            return false;
+            throw new AuthenticationException(String.format("[AuthorisationSessionInterceptor] job finished : No match for session id %s", session.getId()));
         }
 
         req.setAttribute(CacheSessionRepository.MEMBER_KEY, session.getAttribute(CacheSessionRepository.MEMBER_KEY));
 
         if (req.getPathInfo().matches("/user/auth.+")){
-            log.debug(String.format("[AuthorisationSessionInterceptor] job finished : User logged and try to access authentication page"));
+            log.debug("[AuthorisationSessionInterceptor] job finished : User logged and try to access authentication page");
             res.sendRedirect("/");
             return false;
         }
+
+        //====== CHECK PERMISSION ======//
 
         if (AnnotationUtils.getAnnotation(methodToTest, AdminAccess.class) != null) {
             log.debug(String.format("[AuthorisationSessionInterceptor] %s is admin access", methodName));
 
             MemberPermission permission = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getPermission();
             if (permission.equals(MemberPermission.ADMIN)){
-                log.debug(String.format("[AuthorisationSessionInterceptor] job finished"));
+                log.debug("[AuthorisationSessionInterceptor] job finished");
                 return true;
             }
 
-            log.debug(String.format("[AuthorisationSessionInterceptor] job finished : User %s with session id %s is not ADMIN permission", permission, session.getId()));
-            return false;
+            throw new AuthenticationException(String.format("[AuthorisationSessionInterceptor] job finished : User %s with session id %s is not ADMIN permission", permission, session.getId()));
         }
 
         log.debug("[AuthorisationSessionInterceptor] job finished");
