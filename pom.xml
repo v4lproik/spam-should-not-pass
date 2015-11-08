@@ -59,9 +59,9 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.mortbay.jetty</groupId>
+                <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>8.1.9.v20130131</version>
+                <version>9.3.5.v20151012</version>
                 <configuration>
                     <stopKey>STOP</stopKey>
                     <stopPort>9999</stopPort>
@@ -179,11 +179,6 @@
             <groupId>org.elasticsearch</groupId>
             <artifactId>elasticsearch</artifactId>
             <version>1.5.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-servlets</artifactId>
-            <version>9.3.0.M2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
