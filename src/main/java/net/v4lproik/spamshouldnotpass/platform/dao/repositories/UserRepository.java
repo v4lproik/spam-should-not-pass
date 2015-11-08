@@ -88,7 +88,7 @@ public class UserRepository implements UserDao {
         return user;
     }
 
-    protected Session currentSession() {
+    private Session currentSession() {
         return sessionFactory.getCurrentSession();
     }
 

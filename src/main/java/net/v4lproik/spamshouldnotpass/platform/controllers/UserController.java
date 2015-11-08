@@ -2,7 +2,7 @@ package net.v4lproik.spamshouldnotpass.platform.controllers;
 
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
-import net.v4lproik.spamshouldnotpass.platform.models.UserResponse;
+import net.v4lproik.spamshouldnotpass.platform.models.response.UserResponse;
 import net.v4lproik.spamshouldnotpass.platform.service.api.UserService;
 import net.v4lproik.spamshouldnotpass.platform.service.api.entities.User;
 import net.v4lproik.spamshouldnotpass.spring.annotation.UserAccess;

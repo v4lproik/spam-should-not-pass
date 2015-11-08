@@ -15,16 +15,16 @@ import java.util.UUID;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class UserService {
+public class SpamService {
 
-    private static Logger log = Logger.getLogger(UserService.class);
+    private static Logger log = Logger.getLogger(SpamService.class);
 
     private final UserDao userDao;
 
     private final PasswordService passwordService;
 
     @Autowired
-    public UserService(final UserDao userDao, final PasswordService passwordService) {
+    public SpamService(final UserDao userDao, final PasswordService passwordService) {
         this.userDao = userDao;
         this.passwordService = passwordService;
     }
