@@ -5,15 +5,16 @@ import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
 import net.v4lproik.spamshouldnotpass.platform.service.api.entities.User;
 import org.apache.log4j.Logger;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.util.UUID;
 
-@Service
+import static com.google.common.base.Preconditions.checkNotNull;
+
 public class UserService {
 
     private static Logger log = Logger.getLogger(UserService.class);
@@ -29,76 +30,84 @@ public class UserService {
     }
 
     public User authenticate(String email, String password){
-        User user = null;
+        checkNotNull(email);
+        checkNotNull(password);
 
-        if (email == null || email.isEmpty()){
-            log.debug("[UserService] The email cannot be empty or null");
-            return user;
-        }
-
-        // password policy
-        if (password == null || password.isEmpty()){
-            log.debug("[UserService] The password cannot be empty or null");
-            return user;
-        }
-
-        user = userDao.findByEmail(email);
+        final User user = userDao.findByEmail(email);
 
         if (user == null){
             return user;
         }
 
-        boolean auth = false;
+        boolean auth;
         try {
             auth = passwordService.validatePassword(password, user.getPassword());
         } catch (NoSuchAlgorithmException e) {
-            log.debug("[UserService] Error generating password to check if user exist in database", e);
-            return null;
+            throw new IllegalArgumentException(String.format("[UserService] Error validating password for user %s", email), e);
         } catch (InvalidKeySpecException e) {
-            log.debug("[UserService] Error generating password to check if user exist in database", e);
+            throw new IllegalArgumentException(String.format("[UserService] Error validating password for user %s", email), e);
+        }
+
+        if (!auth){
             return null;
         }
 
-        if (auth){
-            return user;
-        }
-
-        return null;
+        return user;
     }
 
-    public User save(final String email, final String password) {
+    public User save(final String firstname,
+                     final String lastname,
+                     final String status,
+                     final String permission,
+                     final String email,
+                     final String password
+    ) {
+        checkNotNull(firstname);
+        checkNotNull(lastname);
+        checkNotNull(permission);
+        checkNotNull(password);
+        checkNotNull(status);
+        checkNotNull(email);
 
-        User user = new User();
-
-        if (email == null || email.isEmpty()){
-            log.debug("[UserService] The email cannot be empty or null");
-            return null;
+        if (MemberStatus.fromString(status) == null){
+            throw new IllegalArgumentException("[UserService] The member status cannot be empty or null");
         }
 
-        // password policy
-        if (password == null || password.isEmpty()){
-            log.debug("[UserService] The password cannot be empty or null");
-            return null;
+        if (MemberPermission.fromString(permission) == null){
+            throw new IllegalArgumentException("[UserService] The member permission cannot be empty or null");
         }
 
-        String passwordGenerated = null;
+        if (isEmailAlreadyTaken(email)){
+            throw new IllegalArgumentException(String.format("[UserService] The email %s is already taken", email));
+        }
+
+        String passwordGenerated;
         try {
             passwordGenerated = passwordService.generateHash(password);
         } catch (NoSuchAlgorithmException e) {
-            log.debug("[UserService] Error generating password for new user", e);
-            return null;
+            throw new IllegalArgumentException("[UserService] Error generating password for new user", e);
         } catch (InvalidKeySpecException e) {
-            log.debug("[UserService] Error generating password for new user", e);
-            return null;
+            throw new IllegalArgumentException("[UserService] Error generating password for new user", e);
         }
 
-        user.setPassword(passwordGenerated);
-        user.setEmail(email);
-        user.setPassword(password);
-        user.setPermission(MemberPermission.REGULAR);
-        user.setStatus(MemberStatus.USER);
+        User user = new User(
+                firstname,
+                lastname,
+                email,
+                String.format("%s.%s", firstname, lastname),
+                passwordGenerated,
+                MemberStatus.fromString(status),
+                MemberPermission.fromString(permission),
+                DateTime.now()
+        );
 
         return userDao.save(user);
+    }
+
+    public boolean isEmailAlreadyTaken(String email){
+        checkNotNull(email);
+
+        return userDao.findByEmail(email) != null;
     }
 
     @Transactional(readOnly = false)

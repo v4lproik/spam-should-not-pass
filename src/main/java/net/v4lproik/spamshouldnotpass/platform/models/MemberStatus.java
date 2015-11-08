@@ -7,19 +7,30 @@ public enum MemberStatus {
     USER(1, "USER");
 
     private final int position;
-    private final String letter;
+    private final String name;
 
-    MemberStatus(int position, String letter) {
+    MemberStatus(int position, String name) {
         this.position = position;
-        this.letter = letter;
+        this.name = name;
     }
 
     public static String get() {
         Objects.ToStringHelper toString = Objects.toStringHelper("");
         for (MemberStatus status : MemberStatus.values()) {
-            toString.addValue(status.letter);
+            toString.addValue(status.name);
         }
         return toString.toString();
+    }
+
+    public static MemberStatus fromString(String value) {
+        if (value != null) {
+            for (MemberStatus status : MemberStatus.values()) {
+                if (value.equalsIgnoreCase(status.name)) {
+                    return status;
+                }
+            }
+        }
+        return null;
     }
 
     public int getPosition(){

@@ -3,13 +3,11 @@ package net.v4lproik.spamshouldnotpass.platform.service.api.entities;
 import com.google.common.base.Objects;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
@@ -17,6 +15,8 @@ import java.util.UUID;
 public class User {
 
     @Id
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
     private UUID id;
 
     private String firstname;
@@ -47,6 +47,18 @@ public class User {
     public User(UUID id, String firstname, String lastname, String email, String nickname,
                 String password, MemberStatus status, MemberPermission permission, DateTime date) {
         this.id = id;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.nickname = nickname;
+        this.password = password;
+        this.status = status;
+        this.permission = permission;
+        this.date = date;
+    }
+
+    public User(String firstname, String lastname, String email, String nickname,
+                String password, MemberStatus status, MemberPermission permission, DateTime date) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
@@ -141,5 +153,20 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hashCode(getId(), getEmail());
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("id", id)
+                .add("firstname", firstname)
+                .add("lastname", lastname)
+                .add("email", email)
+                .add("nickname", nickname)
+                .add("password", password)
+                .add("status", status)
+                .add("permission", permission)
+                .add("date", date)
+                .toString();
     }
 }

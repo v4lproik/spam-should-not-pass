@@ -73,9 +73,19 @@ public class UserRepository implements UserDao {
 
     @Override
     public User findByEmail(String email) {
+        Transaction tx = currentSession().beginTransaction();
+
         HibernateQuery<?> query = new HibernateQuery<Void>(currentSession());
 
-        return query.select(quser).where(quser.email.eq(email)).fetchFirst();
+        User user =  query.from(quser)
+                .select(quser)
+                .where(quser.email.eq(email))
+                .fetchFirst();
+
+        currentSession().flush();
+        tx.commit();
+
+        return user;
     }
 
     protected Session currentSession() {

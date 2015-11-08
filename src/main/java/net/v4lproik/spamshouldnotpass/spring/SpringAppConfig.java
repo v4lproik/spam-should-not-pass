@@ -38,7 +38,7 @@ public class SpringAppConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public UserDao memberDao() {
+    public UserDao userDao() {
         return new UserRepository(sessionFactory);
     }
 
@@ -48,7 +48,7 @@ public class SpringAppConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public UserService userServiceImpl(UserDao userDao, PasswordService passwordService){
+    public UserService userService(UserDao userDao, PasswordService passwordService){
         return new UserService(userDao, passwordService);
     }
 

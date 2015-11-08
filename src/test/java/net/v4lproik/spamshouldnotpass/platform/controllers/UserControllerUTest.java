@@ -50,26 +50,21 @@ public class UserControllerUTest {
     }
 
     @Test
-    public void testAuthUser_withData_shouldReturnAuthToken() throws Exception {
-        // Given
-        final String login = "spidercochon@superspidercochon.com";
-        final String password = "spider";
-
-        mockMvc.perform(post("/user/auth")
-                        .param("login", login)
-                        .param("password", password)
-        )
-                .andExpect(status().isOk());
-    }
-
-    @Test
     public void testCreateUser_withData_shouldReturnMember() throws Exception {
         // Given
+        final String firstname = "firstname";
+        final String lastname = "lastname";
         final String login = "spidercochon@superspidercochon.com";
         final String password = "spider";
+        final String permission = "REGULAR";
+        final String status = "USER";
 
         mockMvc.perform(post("/user/create")
-                        .param("login", login)
+                        .param("firstname", firstname)
+                        .param("lastname", lastname)
+                        .param("status", status)
+                        .param("permission", permission)
+                        .param("email", login)
                         .param("password", password)
         )
                 .andExpect(status().isOk());

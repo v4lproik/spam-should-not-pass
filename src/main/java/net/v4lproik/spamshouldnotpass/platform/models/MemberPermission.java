@@ -7,19 +7,30 @@ public enum MemberPermission {
     REGULAR(1, "REGULAR");
 
     private final int position;
-    private final String letter;
+    private final String name;
 
-    MemberPermission(int position, String letter) {
+    MemberPermission(int position, String name) {
         this.position = position;
-        this.letter = letter;
+        this.name = name;
     }
 
     public static String get() {
         Objects.ToStringHelper toString = Objects.toStringHelper("");
         for (MemberPermission status : MemberPermission.values()) {
-            toString.addValue(status.letter);
+            toString.addValue(status.name);
         }
         return toString.toString();
+    }
+
+    public static MemberPermission fromString(String value) {
+        if (value != null) {
+            for (MemberPermission status : MemberPermission.values()) {
+                if (value.equalsIgnoreCase(status.name)) {
+                    return status;
+                }
+            }
+        }
+        return null;
     }
 
     public int getPosition(){

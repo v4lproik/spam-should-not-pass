@@ -36,7 +36,6 @@ public class UserController {
         log.debug(String.format("/user/auth?login=%s&password=%s", login, password));
 
         UserResponse response = new UserResponse();
-        boolean auth = false;
 
         User user = userService.authenticate(login, password);
         if (user == null){
@@ -56,24 +55,40 @@ public class UserController {
         return response;
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST, params = {"login", "password"})
+    @RequestMapping(value = "/create", method = RequestMethod.POST, params = {"firstname", "lastname", "email", "password", "status", "permission"})
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public UserResponse create(@RequestParam(value = "login", required = true) String login,
-                               @RequestParam(value = "password", required = true) String password) {
+    public UserResponse create(@RequestParam(value = "firstname", required = true) String firstname,
+                               @RequestParam(value = "lastname", required = true) String lastname,
+                               @RequestParam(value = "email", required = true) String email,
+                               @RequestParam(value = "password", required = true) String password,
+                               @RequestParam(value = "status", required = true) String status,
+                               @RequestParam(value = "permission", required = true) String permission) {
 
-        log.debug(String.format("/user/create?login=%s&password=%s", login, password));
+        log.debug(String.format("/user/create?email=%s&password=%s", email, password));
 
         UserResponse response = new UserResponse();
 
-        User created = userService.save(login, password);
-
-        if (created != null){
-            response.setUser(created);
+        if (userService.isEmailAlreadyTaken(email)){
+            response.setError("Email is already taken");
             return response;
         }
 
-        response.setError("User has not been created");
+        User created = userService.save(
+                firstname,
+                lastname,
+                status,
+                permission,
+                email,
+                password
+        );
+
+        if (created == null){
+            response.setError("User has not been created");
+            return response;
+        }
+
+        response.setUser(created);
         return response;
     }
 
