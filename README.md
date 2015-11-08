@@ -1,5 +1,5 @@
 # Spam Should Not Pass
-[![Circle CI](https://circleci.com/gh/v4lproik/spamshouldnotpass/tree/master.svg?style=shield)](https://circleci.com/gh/v4lproik/googanime-backend/tree/master)
+[![Circle CI](https://circleci.com/gh/v4lproik/spam-should-not-pass.svg?style=svg)](https://circleci.com/gh/v4lproik/spam-should-not-pass)
 
 ## Features implemented
 
