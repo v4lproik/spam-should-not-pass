@@ -30,6 +30,23 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: Rule; Type: TABLE; Schema: public; Owner: root; Tablespace: 
+--
+
+CREATE TABLE "Rule" (
+    id uuid NOT NULL,
+    name text,
+    rule text,
+    date timestamp with time zone,
+    "lastUpdate" timestamp with time zone,
+    "userId" uuid,
+    type text
+);
+
+
+ALTER TABLE "Rule" OWNER TO root;
+
+--
 -- Name: User; Type: TABLE; Schema: public; Owner: root; Tablespace: 
 --
 
@@ -49,11 +66,43 @@ CREATE TABLE "User" (
 ALTER TABLE "User" OWNER TO root;
 
 --
+-- Data for Name: Rule; Type: TABLE DATA; Schema: public; Owner: root
+--
+
+COPY "Rule" (id, name, rule, date, "lastUpdate", "userId", type) FROM stdin;
+\.
+
+
+--
+-- Data for Name: User; Type: TABLE DATA; Schema: public; Owner: root
+--
+
+COPY "User" (id, firstname, lastname, nickname, email, permission, status, password, date) FROM stdin;
+\.
+
+
+--
+-- Name: Rule_pkey; Type: CONSTRAINT; Schema: public; Owner: root; Tablespace: 
+--
+
+ALTER TABLE ONLY "Rule"
+    ADD CONSTRAINT "Rule_pkey" PRIMARY KEY (id);
+
+
+--
 -- Name: untitled_table_pkey; Type: CONSTRAINT; Schema: public; Owner: root; Tablespace: 
 --
 
 ALTER TABLE ONLY "User"
     ADD CONSTRAINT untitled_table_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: userId; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY "Rule"
+    ADD CONSTRAINT "userId" FOREIGN KEY ("userId") REFERENCES "User"(id);
 
 
 --
