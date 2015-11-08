@@ -16,14 +16,14 @@ import java.sql.SQLException;
 public class SqlDatabaseInitializer {
 
     @NotNull
-    private final DataSource mysqlDataSource;
+    private final DataSource postgresDataSource;
 
     @NotNull
     private final Environment env;
 
 
-    public SqlDatabaseInitializer(final DataSource mysqlDataSource, final Environment env){
-        this.mysqlDataSource = mysqlDataSource;
+    public SqlDatabaseInitializer(final DataSource postgresDataSource, final Environment env){
+        this.postgresDataSource = postgresDataSource;
         this.env = env;
     }
 
@@ -31,7 +31,7 @@ public class SqlDatabaseInitializer {
 
         DataSourceInitializer initializer = new DataSourceInitializer();
 
-        initializer.setDataSource(mysqlDataSource);
+        initializer.setDataSource(postgresDataSource);
 
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
 
@@ -46,12 +46,12 @@ public class SqlDatabaseInitializer {
         Connection connection = null;
 
         try {
-            connection = mysqlDataSource.getConnection();
-            populator.populate(mysqlDataSource.getConnection());
+            connection = postgresDataSource.getConnection();
+            populator.populate(postgresDataSource.getConnection());
         }
         finally {
             if (connection != null) {
-                DataSourceUtils.releaseConnection(connection, mysqlDataSource);
+                DataSourceUtils.releaseConnection(connection, postgresDataSource);
             }
         }
     }

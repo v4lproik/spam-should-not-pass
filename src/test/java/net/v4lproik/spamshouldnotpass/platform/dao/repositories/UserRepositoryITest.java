@@ -1,6 +1,7 @@
 package net.v4lproik.spamshouldnotpass.platform.dao.repositories;
 
 import net.v4lproik.spamshouldnotpass.platform.client.postgres.DatabaseTestConfiguration;
+import net.v4lproik.spamshouldnotpass.platform.client.postgres.SqlDatabaseInitializer;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
 import net.v4lproik.spamshouldnotpass.platform.service.api.entities.User;
@@ -28,11 +29,20 @@ public class UserRepositoryITest {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private SqlDatabaseInitializer databaseInitializer;
+
     private final UUID uuid = UUID.randomUUID();
     private User user;
 
     @Before
     public void setUp(){
+        try{
+            databaseInitializer.createDatabase();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         user = new User(
                 uuid,
                 "firstname",

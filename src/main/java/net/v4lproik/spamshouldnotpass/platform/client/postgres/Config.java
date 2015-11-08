@@ -1,9 +1,9 @@
 package net.v4lproik.spamshouldnotpass.platform.client.postgres;
 
-import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 import net.v4lproik.spamshouldnotpass.platform.service.api.entities.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.postgresql.ds.PGPoolingDataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,7 +38,7 @@ public class Config {
         //SET character_set_database='UTF8';
         //SET character_set_server='UTF8';
 
-        String connectionURI = String.format("jdbc:postgresql://%s:%s/%s", HOST, PORT, DB);
+        String connectionURI = String.format("jdbc:%s://%s:%s/%s", DRIVER, HOST, PORT, DB);
 
         org.hibernate.cfg.Configuration c = new org.hibernate.cfg.Configuration();
         c.setProperty("hibernate.dialect", "org.hibernate.dialect.PostgreSQLDialect");
@@ -65,21 +65,22 @@ public class Config {
     }
 
     @Bean
-    public DataSource mysqlDataSource() {
+    public DataSource postgresDataSource() {
 
-        MysqlDataSource mysqlDS = null;
+        PGPoolingDataSource postgresDS = null;
         final String HOST = env.getRequiredProperty("database.host");
-        final String DRIVER = env.getRequiredProperty("database.driver");
-        final String PORT = env.getRequiredProperty("database.port");
+        final Integer PORT = env.getRequiredProperty("database.port", Integer.class);
         final String USER = env.getRequiredProperty("database.user");
         final String PWD = env.getRequiredProperty("database.password");
         final String DB = env.getRequiredProperty("database.db");
 
-        mysqlDS = new MysqlDataSource();
-        mysqlDS.setURL(String.format("jdbc:%s://%s:%s/%s", DRIVER, HOST, PORT, DB));
-        mysqlDS.setUser(USER);
-        mysqlDS.setPassword(PWD);
+        postgresDS = new PGPoolingDataSource();
+        postgresDS.setUser(USER);
+        postgresDS.setPassword(PWD);
+        postgresDS.setDatabaseName(DB);
+        postgresDS.setServerName(HOST);
+        postgresDS.setPortNumber(PORT);
 
-        return mysqlDS;
+        return postgresDS;
     }
 }
