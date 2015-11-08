@@ -1,9 +1,11 @@
 package net.v4lproik.spamshouldnotpass.spring;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import net.v4lproik.spamshouldnotpass.platform.dao.api.UserDao;
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.platform.service.api.PasswordService;
+import net.v4lproik.spamshouldnotpass.platform.service.api.SchemeService;
 import net.v4lproik.spamshouldnotpass.platform.service.api.UserService;
 import net.v4lproik.spamshouldnotpass.spring.interceptor.AuthorisationSessionInterceptor;
 import org.hibernate.SessionFactory;
@@ -24,6 +26,8 @@ public class SpringAppConfig extends WebMvcConfigurerAdapter {
     @Autowired
     SessionFactory sessionFactory;
 
+    //=========== REPOSITORY ===========//
+
     @Autowired
     SessionRepository sessionRepository;
 
@@ -32,19 +36,42 @@ public class SpringAppConfig extends WebMvcConfigurerAdapter {
         return new CacheSessionRepository(sessionRepository);
     }
 
+    //=========== MAPPER ===========//
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
+    }
+
+
+    //=========== INTERCEPTOR ===========//
+
     @Bean
     public AuthorisationSessionInterceptor authenticationInterceptor() {
         return new AuthorisationSessionInterceptor();
     }
+
+
+
+    //=========== DAO ===========//
 
     @Bean
     public UserDao userDao() {
         return new UserRepository(sessionFactory);
     }
 
+
+
+    //=========== SERVICE ===========//
+
     @Bean
     PasswordService passwordService() {
         return new PasswordService();
+    }
+
+    @Bean
+    SchemeService schemeService() {
+        return new SchemeService();
     }
 
     @Bean
