@@ -1,4 +1,4 @@
-package net.v4lproik.spamshouldnotpass.platform.models;
+package net.v4lproik.spamshouldnotpass.platform.models.response;
 
 public class SpamResponse {
 
