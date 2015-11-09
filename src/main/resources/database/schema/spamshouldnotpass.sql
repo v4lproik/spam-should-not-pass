@@ -47,6 +47,22 @@ CREATE TABLE "Rule" (
 ALTER TABLE "Rule" OWNER TO root;
 
 --
+-- Name: Scheme; Type: TABLE; Schema: public; Owner: root; Tablespace: 
+--
+
+CREATE TABLE "Scheme" (
+    id uuid NOT NULL,
+    properties text,
+    "userId" uuid,
+    date timestamp with time zone,
+    "lastUpdate" timestamp with time zone,
+    type text
+);
+
+
+ALTER TABLE "Scheme" OWNER TO root;
+
+--
 -- Name: User; Type: TABLE; Schema: public; Owner: root; Tablespace: 
 --
 
@@ -74,6 +90,14 @@ COPY "Rule" (id, name, rule, date, "lastUpdate", "userId", type) FROM stdin;
 
 
 --
+-- Data for Name: Scheme; Type: TABLE DATA; Schema: public; Owner: root
+--
+
+COPY "Scheme" (id, properties, "userId", date, "lastUpdate", type) FROM stdin;
+\.
+
+
+--
 -- Data for Name: User; Type: TABLE DATA; Schema: public; Owner: root
 --
 
@@ -90,11 +114,27 @@ ALTER TABLE ONLY "Rule"
 
 
 --
+-- Name: Scheme_pkey; Type: CONSTRAINT; Schema: public; Owner: root; Tablespace: 
+--
+
+ALTER TABLE ONLY "Scheme"
+    ADD CONSTRAINT "Scheme_pkey" PRIMARY KEY (id);
+
+
+--
 -- Name: untitled_table_pkey; Type: CONSTRAINT; Schema: public; Owner: root; Tablespace: 
 --
 
 ALTER TABLE ONLY "User"
     ADD CONSTRAINT untitled_table_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: idUser; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY "Scheme"
+    ADD CONSTRAINT "idUser" FOREIGN KEY ("userId") REFERENCES "User"(id);
 
 
 --
