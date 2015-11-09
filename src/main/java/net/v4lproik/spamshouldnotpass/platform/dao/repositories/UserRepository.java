@@ -30,15 +30,15 @@ public class UserRepository implements UserDao {
     }
 
     @Override
-    public User save(User user) {
+    public UUID save(User user) {
         Transaction tx = currentSession().beginTransaction();
 
-        currentSession().save(user);
+        UUID uuid = (UUID) currentSession().save(user);
 
         currentSession().flush();
         tx.commit();
 
-        return user;
+        return uuid;
     }
 
     @Override

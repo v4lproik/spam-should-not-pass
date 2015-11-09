@@ -102,7 +102,9 @@ public class UserService {
                 DateTime.now()
         );
 
-        return userDao.save(user);
+        userDao.save(user);
+
+        return user;
     }
 
     public boolean isEmailAlreadyTaken(String email){

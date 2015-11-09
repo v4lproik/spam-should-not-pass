@@ -3,8 +3,13 @@ package net.v4lproik.spamshouldnotpass.platform.controllers;
 import junit.framework.TestCase;
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.SchemesRepository;
+import net.v4lproik.spamshouldnotpass.platform.dao.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
+import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
+import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
+import net.v4lproik.spamshouldnotpass.platform.service.api.entities.User;
 import net.v4lproik.spamshouldnotpass.spring.SpringAppConfig;
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,6 +38,9 @@ public class SpammerControllerITest extends TestCase {
     @Autowired
     private SpammerController spammerController;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private MockMvc mockMvc;
 
     @Before
@@ -43,14 +51,28 @@ public class SpammerControllerITest extends TestCase {
 
     @Test
     public void testCreateSpammerDocument() throws Exception {
-        UUID userId = UUID.fromString("8416d61c-247f-4334-80cc-2d03d0defe31");
+
+        UUID uuid = userRepository.save(new User(
+                        UUID.randomUUID(),
+                        "firstname",
+                        "lastname",
+                        "email",
+                        "nickname",
+                        "password",
+                        MemberStatus.ADMIN,
+                        MemberPermission.REGULAR,
+                        DateTime.now()
+                )
+        );
 
         mockMvc.perform(post("/spammer/create-spammer-document")
-            .contentType(MediaType.APPLICATION_JSON)
-            .content("{\"String\":\"test_\"}")
-                .requestAttr(CacheSessionRepository.MEMBER_KEY, new BasicMember(userId))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"String\":\"test_\"}")
+                        .requestAttr(CacheSessionRepository.MEMBER_KEY, new BasicMember(uuid))
         ).andExpect(status().isOk());
 
-        assertEquals(schemesRepository.listByUserId(userId).size(), 1);
+        assertEquals(schemesRepository.listByUserId(uuid).size(), 1);
     }
+
+
 }

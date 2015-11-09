@@ -8,7 +8,7 @@ public interface UserDao {
     User findById(UUID id);
     User findByEmail(String email);
 
-    User save(User user);
+    UUID save(User user);
 
     void delete(UUID id);
 }

@@ -15,9 +15,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import java.util.UUID;
 
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.atLeast;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class UserServiceUTest extends TestCase {
@@ -61,7 +59,7 @@ public class UserServiceUTest extends TestCase {
         );
 
         when(passwordService.generateHash(user.getPassword())).thenReturn("encryptedPassword");
-        when(userDao.save(userExpected)).thenReturn(userExpected);
+        when(userDao.save(userExpected)).thenReturn(userExpected.getId());
 
         User generated = userService.save(
                 user.getFirstname(),

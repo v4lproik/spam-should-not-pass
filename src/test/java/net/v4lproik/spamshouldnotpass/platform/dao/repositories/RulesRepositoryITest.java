@@ -55,18 +55,20 @@ public class RulesRepositoryITest {
     @Test
     public void testSave() throws Exception {
 
-        User user = userRepository.save(
-                new User(
-                        userUuid,
-                        "firstname",
-                        "lastname",
-                        "email",
-                        "nickname",
-                        "password",
-                        MemberStatus.ADMIN,
-                        MemberPermission.REGULAR,
-                        DateTime.now()
-                )
+        User user = new User(
+                userUuid,
+                "firstname",
+                "lastname",
+                "email",
+                "nickname",
+                "password",
+                MemberStatus.ADMIN,
+                MemberPermission.REGULAR,
+                DateTime.now()
+        );
+
+        userRepository.save(
+                user
         );
 
         UUID uuid = rulesRepository.save(
