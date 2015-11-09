@@ -29,36 +29,41 @@ public class SchemeService {
         return false;
     }
 
-    public Map<String, Class<?>> transformProperties(Map<String, String> map) throws ClassNotFoundException {
+    public Map<Class<?>, List<String>> transformProperties(Map<String, List<String>> map) throws ClassNotFoundException {
         boolean valid = false;
 
-        Map<String, Class<?>> collect = map.entrySet()
+        Map<Class<?>, List<String>> collect = map.entrySet()
                 .parallelStream()
-                .collect(Collectors.toMap(Map.Entry::getKey, e -> {
+                .collect(Collectors.toMap(e -> {
                     try {
-                        return Class.forName(e.getValue());
+                        return Class.forName(e.getKey());
                     } catch (ClassNotFoundException e1) {
                         e1.printStackTrace();
                     }
                     return null;
-                }));
+                }, e -> e.getValue()));
 
         return collect;
     }
 
-    public static Class generate(String className, Map<String, Class<?>>  properties) throws NotFoundException,
+    public static Class generate(String className, Map<Class<?>, List<String>>  properties) throws NotFoundException,
             CannotCompileException {
 
         ClassPool pool = ClassPool.getDefault();
         CtClass cc = pool.makeClass(className);
 
-        for (Map.Entry<String, Class<?>> entry : properties.entrySet()) {
+        for (Map.Entry<Class<?>, List<String>> entry : properties.entrySet()) {
 
-            cc.addField(new CtField(resolveCtClass(entry.getValue()), entry.getKey(), cc));
+            for (String variableName:entry.getValue()){
+                System.out.println("key => " + entry.getKey());
+                System.out.println("value => " + variableName);
 
-            cc.addMethod(generateGetter(cc, entry.getKey(), entry.getValue()));
+                cc.addField(new CtField(resolveCtClass(entry.getKey()), variableName, cc));
 
-            cc.addMethod(generateSetter(cc, entry.getKey(), entry.getValue()));
+                cc.addMethod(generateGetter(cc, variableName, entry.getKey()));
+
+                cc.addMethod(generateSetter(cc, variableName, entry.getKey()));
+            }
         }
 
         return cc.toClass();

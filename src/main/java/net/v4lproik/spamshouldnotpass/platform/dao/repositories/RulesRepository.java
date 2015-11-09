@@ -2,6 +2,7 @@ package net.v4lproik.spamshouldnotpass.platform.dao.repositories;
 
 import com.querydsl.jpa.hibernate.HibernateQuery;
 import net.v4lproik.spamshouldnotpass.platform.dao.api.RuleDao;
+import net.v4lproik.spamshouldnotpass.platform.models.RuleType;
 import net.v4lproik.spamshouldnotpass.platform.service.api.entities.QRule;
 import net.v4lproik.spamshouldnotpass.platform.service.api.entities.Rule;
 import org.hibernate.Session;
@@ -55,6 +56,24 @@ public class RulesRepository implements RuleDao {
         List<Rule> rules = query.from(qrule)
                 .select(qrule)
                 .where(qrule.userId.eq(userId))
+                .fetch();
+
+        currentSession().flush();
+        tx.commit();
+
+        return rules;
+    }
+
+    @Override
+    public List<Rule> listByUserIdAndType(UUID userId, RuleType type) {
+        Transaction tx = currentSession().beginTransaction();
+
+        HibernateQuery<?> query = new HibernateQuery<Void>(currentSession());
+
+        List<Rule> rules = query.from(qrule)
+                .select(qrule)
+                .where(qrule.userId.eq(userId)
+                        .and(qrule.type.eq(type)))
                 .fetch();
 
         currentSession().flush();

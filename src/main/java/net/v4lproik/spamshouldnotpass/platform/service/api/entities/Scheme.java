@@ -5,10 +5,7 @@ import net.v4lproik.spamshouldnotpass.platform.models.SchemeType;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
@@ -31,6 +28,7 @@ public class Scheme {
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime lastUpdate;
 
+    @Enumerated(EnumType.ORDINAL)
     private SchemeType type;
 
     public Scheme() {

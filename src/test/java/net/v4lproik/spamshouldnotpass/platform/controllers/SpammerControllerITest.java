@@ -1,6 +1,5 @@
 package net.v4lproik.spamshouldnotpass.platform.controllers;
 
-import junit.framework.TestCase;
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.SchemesRepository;
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.UserRepository;
@@ -24,13 +23,14 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.UUID;
 
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {SpringAppConfig.class})
 @WebAppConfiguration
-public class SpammerControllerITest extends TestCase {
+public class SpammerControllerITest {
 
     @Autowired
     private SchemesRepository schemesRepository;

@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.session.SessionRepository;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
@@ -37,6 +39,11 @@ public class SpringAppConfig extends WebMvcConfigurerAdapter {
     }
 
     //=========== MAPPER ===========//
+
+    @Bean
+    public ExpressionParser parser() {
+        return new SpelExpressionParser();
+    }
 
     @Bean
     public ObjectMapper objectMapper() {

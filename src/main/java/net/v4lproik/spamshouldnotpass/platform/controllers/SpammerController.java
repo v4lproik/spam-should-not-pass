@@ -51,7 +51,8 @@ public class SpammerController {
             return new SchemeResponse(null, "The scheme cannot be validated");
         }
 
-        schemesRepository.save(new Scheme(
+        schemesRepository.save(
+                new Scheme(
                         UUID.randomUUID(),
                         objectMapper.writeValueAsString(scheme),
                         userId,

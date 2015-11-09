@@ -5,10 +5,7 @@ import net.v4lproik.spamshouldnotpass.platform.models.RuleType;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.UUID;
 
 @Entity
@@ -22,6 +19,7 @@ public class Rule {
 
     private String rule;
 
+    @Enumerated(EnumType.ORDINAL)
     private RuleType type;
 
     @Column(name = "`userId`")
