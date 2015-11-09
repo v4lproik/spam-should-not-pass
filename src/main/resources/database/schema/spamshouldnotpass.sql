@@ -40,7 +40,7 @@ CREATE TABLE "Rule" (
     date timestamp with time zone,
     "lastUpdate" timestamp with time zone,
     "userId" uuid,
-    type text
+    type integer
 );
 
 
@@ -56,7 +56,7 @@ CREATE TABLE "Scheme" (
     "userId" uuid,
     date timestamp with time zone,
     "lastUpdate" timestamp with time zone,
-    type text
+    type integer
 );
 
 
