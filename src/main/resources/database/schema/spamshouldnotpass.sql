@@ -82,6 +82,30 @@ CREATE TABLE "User" (
 ALTER TABLE "User" OWNER TO root;
 
 --
+-- Data for Name: Rule; Type: TABLE DATA; Schema: public; Owner: root
+--
+
+COPY "Rule" (id, name, rule, date, "lastUpdate", "userId", type) FROM stdin;
+\.
+
+
+--
+-- Data for Name: Scheme; Type: TABLE DATA; Schema: public; Owner: root
+--
+
+COPY "Scheme" (id, properties, "userId", date, "lastUpdate", type) FROM stdin;
+\.
+
+
+--
+-- Data for Name: User; Type: TABLE DATA; Schema: public; Owner: root
+--
+
+COPY "User" (id, firstname, lastname, nickname, email, permission, status, password, date) FROM stdin;
+\.
+
+
+--
 -- Name: Rule_pkey; Type: CONSTRAINT; Schema: public; Owner: root; Tablespace: 
 --
 
