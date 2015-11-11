@@ -1,5 +1,7 @@
 package net.v4lproik.spamshouldnotpass.platform.controllers;
 
+import net.v4lproik.spamshouldnotpass.platform.client.postgres.DatabaseTestConfiguration;
+import net.v4lproik.spamshouldnotpass.platform.client.postgres.SqlDatabaseInitializer;
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.SchemesRepository;
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.UserRepository;
@@ -28,9 +30,13 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {SpringAppConfig.class})
+@ContextConfiguration(classes = {SpringAppConfig.class, DatabaseTestConfiguration.class,
+})
 @WebAppConfiguration
 public class SpammerControllerITest {
+
+    @Autowired
+    SqlDatabaseInitializer databaseInitializer;
 
     @Autowired
     private SchemesRepository schemesRepository;
@@ -47,6 +53,12 @@ public class SpammerControllerITest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(spammerController).build();
+
+        try{
+            databaseInitializer.createDatabase();
+        }catch (Exception e){
+            //
+        }
     }
 
     @Test
@@ -67,7 +79,7 @@ public class SpammerControllerITest {
 
         mockMvc.perform(post("/spammer/create-spammer-document")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"String\":\"test_\"}")
+                        .content("{\"java.lang.String\":\"test\"}")
                         .requestAttr(CacheSessionRepository.MEMBER_KEY, new BasicMember(uuid))
         ).andExpect(status().isOk());
 

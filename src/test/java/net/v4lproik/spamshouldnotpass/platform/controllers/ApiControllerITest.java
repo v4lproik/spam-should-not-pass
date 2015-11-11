@@ -3,6 +3,8 @@ package net.v4lproik.spamshouldnotpass.platform.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Maps;
+import net.v4lproik.spamshouldnotpass.platform.client.postgres.DatabaseTestConfiguration;
+import net.v4lproik.spamshouldnotpass.platform.client.postgres.SqlDatabaseInitializer;
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.RulesRepository;
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.SchemesRepository;
@@ -35,9 +37,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {SpringAppConfig.class})
+@ContextConfiguration(classes = {SpringAppConfig.class, DatabaseTestConfiguration.class})
 @WebAppConfiguration
 public class ApiControllerITest {
+
+    @Autowired
+    SqlDatabaseInitializer databaseInitializer;
 
     @Autowired
     private ApiController apiController;
@@ -64,6 +69,12 @@ public class ApiControllerITest {
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
         mockMvc = MockMvcBuilders.standaloneSetup(apiController).build();
+
+        try{
+            databaseInitializer.createDatabase();
+        }catch (Exception e){
+            //
+        }
     }
 
     @Test
