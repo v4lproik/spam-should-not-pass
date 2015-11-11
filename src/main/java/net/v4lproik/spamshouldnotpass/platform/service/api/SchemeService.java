@@ -13,7 +13,7 @@ public class SchemeService {
     private static Logger log = Logger.getLogger(SchemeService.class);
 
     private final String ALLOW_CHAR_VARIABLES = "^\\w+$";
-    private final List<String> types = Lists.newArrayList("String");
+    private final List<String> types = Lists.newArrayList("java.lang.String");
 
     public boolean isSchemeValid(Map<String, String> map){
 
@@ -55,8 +55,6 @@ public class SchemeService {
         for (Map.Entry<Class<?>, List<String>> entry : properties.entrySet()) {
 
             for (String variableName:entry.getValue()){
-                System.out.println("key => " + entry.getKey());
-                System.out.println("value => " + variableName);
 
                 cc.addField(new CtField(resolveCtClass(entry.getKey()), variableName, cc));
 
