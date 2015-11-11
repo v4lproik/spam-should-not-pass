@@ -1,20 +1,22 @@
 package net.v4lproik.spamshouldnotpass.platform.models.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
 import org.hibernate.validator.constraints.Email;
 import org.hibernate.validator.constraints.NotEmpty;
 
-import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 
 public class UserDTO {
 
     @NotEmpty
-    @Min(value = 2)
+    @Size(min = 2, max = 30)
     private String firstname;
 
     @NotEmpty
-    @Min(value = 2)
+    @Size(min = 2, max = 30)
     private String lastname;
 
     @NotEmpty
@@ -30,13 +32,19 @@ public class UserDTO {
     @NotEmpty
     private MemberPermission permission;
 
-    public UserDTO(String firstname, String lastname, String email, String password, MemberStatus status, MemberPermission permission) {
+    @JsonCreator
+    public UserDTO(@JsonProperty("fistname")String firstname,
+                   @JsonProperty("lastname")String lastname,
+                   @JsonProperty("email")String email,
+                   @JsonProperty("password")String password,
+                   @JsonProperty("status")String status,
+                   @JsonProperty("permission")String permission) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.password = password;
-        this.status = status;
-        this.permission = permission;
+        this.status = MemberStatus.fromString(status);
+        this.permission = MemberPermission.fromString(permission);
     }
 
     public String getFirstname() {

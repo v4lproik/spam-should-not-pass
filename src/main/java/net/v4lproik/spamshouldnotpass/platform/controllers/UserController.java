@@ -126,7 +126,7 @@ public class UserController {
 
         UserResponse response = new UserResponse();
 
-        response.setUser(req.getAttribute(CacheSessionRepository.MEMBER_KEY));
+//        response.setUser(req.getAttribute(CacheSessionRepository.MEMBER_KEY));
 
         return response;
     }

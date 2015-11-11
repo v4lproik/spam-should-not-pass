@@ -1,35 +1,37 @@
 package net.v4lproik.spamshouldnotpass.platform.models.response;
 
+import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
+
 public class UserResponse {
 
-    private Object user;
-    private Object token;
-    private Object error;
+    private User user;
+    private String token;
+    private String error;
 
     public UserResponse() {
     }
 
-    public Object getUser() {
+    public User getUser() {
         return user;
     }
 
-    public void setUser(Object user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
-    public Object getError() {
+    public String getError() {
         return error;
     }
 
-    public void setError(Object error) {
+    public void setError(String error) {
         this.error = error;
     }
 
-    public Object getToken() {
+    public String getToken() {
         return token;
     }
 
-    public void setToken(Object token) {
+    public void setToken(String token) {
         this.token = token;
     }
 }

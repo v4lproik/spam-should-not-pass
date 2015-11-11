@@ -11,4 +11,5 @@ public interface UserDao {
     UUID save(User user);
 
     void delete(UUID id);
+    void deleteByEmail(String email);
 }

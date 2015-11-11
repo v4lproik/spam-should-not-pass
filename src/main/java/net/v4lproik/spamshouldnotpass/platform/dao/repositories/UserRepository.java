@@ -1,5 +1,6 @@
 package net.v4lproik.spamshouldnotpass.platform.dao.repositories;
 
+import com.querydsl.jpa.hibernate.HibernateDeleteClause;
 import com.querydsl.jpa.hibernate.HibernateQuery;
 import net.v4lproik.spamshouldnotpass.platform.dao.api.UserDao;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.QUser;
@@ -45,10 +46,17 @@ public class UserRepository implements UserDao {
     public void delete(UUID id) {
         Transaction tx = currentSession().beginTransaction();
 
-        User toDelete = new User();
-        toDelete.setId(id);
+        new HibernateDeleteClause(currentSession(), quser).where(quser.id.eq(id));
 
-        currentSession().delete(toDelete);
+        currentSession().flush();
+        tx.commit();
+    }
+
+    @Override
+    public void deleteByEmail(String email) {
+        Transaction tx = currentSession().beginTransaction();
+
+        new HibernateDeleteClause(currentSession(), quser).where(quser.email.eq(email));
 
         currentSession().flush();
         tx.commit();

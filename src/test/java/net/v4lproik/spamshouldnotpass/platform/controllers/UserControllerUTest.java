@@ -1,5 +1,12 @@
 package net.v4lproik.spamshouldnotpass.platform.controllers;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import net.v4lproik.spamshouldnotpass.platform.client.postgres.DatabaseTestConfiguration;
+import net.v4lproik.spamshouldnotpass.platform.client.postgres.SqlDatabaseInitializer;
+import net.v4lproik.spamshouldnotpass.platform.dao.repositories.UserRepository;
+import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
+import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
+import net.v4lproik.spamshouldnotpass.platform.models.dto.UserDTO;
 import net.v4lproik.spamshouldnotpass.platform.service.PasswordService;
 import net.v4lproik.spamshouldnotpass.platform.service.UserService;
 import net.v4lproik.spamshouldnotpass.spring.SpringAppConfig;
@@ -9,11 +16,14 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.session.SessionRepository;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,15 +32,24 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = {SpringAppConfig.class})
+@ContextConfiguration(classes = {SpringAppConfig.class, DatabaseTestConfiguration.class})
 @WebAppConfiguration
 public class UserControllerUTest {
 
-    @Mock
-    PasswordService passwordService;
+    @Autowired
+    private SqlDatabaseInitializer databaseInitializer;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @Mock
-    UserService userService;
+    private PasswordService passwordService;
+
+    @Mock
+    private UserService userService;
 
     @Mock
     private HttpServletRequest req;
@@ -59,14 +78,10 @@ public class UserControllerUTest {
         final String permission = "REGULAR";
         final String status = "USER";
 
-        mockMvc.perform(post("/user/create")
-                        .param("firstname", firstname)
-                        .param("lastname", lastname)
-                        .param("status", status)
-                        .param("permission", permission)
-                        .param("email", login)
-                        .param("password", password)
+        MvcResult res = mockMvc.perform(post("/user/create")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new UserDTO(firstname, lastname, login, password, MemberStatus.USER.toString(), MemberPermission.REGULAR.toString())))
         )
-                .andExpect(status().isOk());
+                .andExpect(status().isOk()).andReturn();
     }
 }

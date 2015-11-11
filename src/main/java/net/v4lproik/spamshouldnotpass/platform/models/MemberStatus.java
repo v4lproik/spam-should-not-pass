@@ -14,6 +14,10 @@ public enum MemberStatus {
         this.name = name;
     }
 
+    MemberStatus(String name){
+        this(MemberStatus.fromString(name).getPosition(), name);
+    }
+
     public static String get() {
         Objects.ToStringHelper toString = Objects.toStringHelper("");
         for (MemberStatus status : MemberStatus.values()) {
@@ -35,5 +39,12 @@ public enum MemberStatus {
 
     public int getPosition(){
         return this.position;
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("name", name)
+                .toString();
     }
 }
