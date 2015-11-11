@@ -1,4 +1,4 @@
-package net.v4lproik.spamshouldnotpass.platform.service.api.entities;
+package net.v4lproik.spamshouldnotpass.platform.models.entities;
 
 import com.google.common.base.Objects;
 import net.v4lproik.spamshouldnotpass.platform.models.RuleType;
@@ -50,56 +50,28 @@ public class Rule {
         return id;
     }
 
-    public void setId(UUID id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getRule() {
         return rule;
     }
 
-    public void setRule(String rule) {
-        this.rule = rule;
-    }
-
     public RuleType getType() {
         return type;
-    }
-
-    public void setType(RuleType type) {
-        this.type = type;
-    }
-
-    public DateTime getDate() {
-        return date;
-    }
-
-    public void setDate(DateTime date) {
-        this.date = date;
-    }
-
-    public DateTime getLastUpdate() {
-        return lastUpdate;
-    }
-
-    public void setLastUpdate(DateTime lastUpdate) {
-        this.lastUpdate = lastUpdate;
     }
 
     public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(UUID userId) {
-        this.userId = userId;
+    public DateTime getDate() {
+        return date;
+    }
+
+    public DateTime getLastUpdate() {
+        return lastUpdate;
     }
 
     @Override
@@ -109,6 +81,7 @@ public class Rule {
                 .add("name", name)
                 .add("rule", rule)
                 .add("type", type)
+                .add("userId", userId)
                 .add("date", date)
                 .add("lastUpdate", lastUpdate)
                 .toString();

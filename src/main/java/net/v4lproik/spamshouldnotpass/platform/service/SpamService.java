@@ -1,4 +1,4 @@
-package net.v4lproik.spamshouldnotpass.platform.service.api;
+package net.v4lproik.spamshouldnotpass.platform.service;
 
 import net.v4lproik.spamshouldnotpass.platform.dao.api.UserDao;
 import org.apache.log4j.Logger;

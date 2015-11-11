@@ -1,7 +1,7 @@
 package net.v4lproik.spamshouldnotpass.platform.controllers;
 
-import net.v4lproik.spamshouldnotpass.platform.service.api.PasswordService;
-import net.v4lproik.spamshouldnotpass.platform.service.api.UserService;
+import net.v4lproik.spamshouldnotpass.platform.service.PasswordService;
+import net.v4lproik.spamshouldnotpass.platform.service.UserService;
 import net.v4lproik.spamshouldnotpass.spring.SpringAppConfig;
 import org.junit.Before;
 import org.junit.Test;

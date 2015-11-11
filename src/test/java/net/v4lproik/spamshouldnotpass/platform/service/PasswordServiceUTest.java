@@ -1,4 +1,4 @@
-package net.v4lproik.spamshouldnotpass.platform.service.api;
+package net.v4lproik.spamshouldnotpass.platform.service;
 
 import org.junit.Before;
 import org.junit.Test;

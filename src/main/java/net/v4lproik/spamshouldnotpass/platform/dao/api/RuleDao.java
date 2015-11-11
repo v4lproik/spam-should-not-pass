@@ -1,7 +1,7 @@
 package net.v4lproik.spamshouldnotpass.platform.dao.api;
 
 import net.v4lproik.spamshouldnotpass.platform.models.RuleType;
-import net.v4lproik.spamshouldnotpass.platform.service.api.entities.Rule;
+import net.v4lproik.spamshouldnotpass.platform.models.entities.Rule;
 
 import java.util.List;
 import java.util.UUID;
@@ -9,7 +9,7 @@ import java.util.UUID;
 public interface RuleDao {
     Rule findById(UUID id);
 
-    UUID save(Rule user);
+    UUID save(Rule rule);
 
     void delete(UUID id);
 

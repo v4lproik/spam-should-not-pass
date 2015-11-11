@@ -1,6 +1,6 @@
 package net.v4lproik.spamshouldnotpass.platform.dao.api;
 
-import net.v4lproik.spamshouldnotpass.platform.service.api.entities.User;
+import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
 
 import java.util.UUID;
 

@@ -7,10 +7,10 @@ import net.v4lproik.spamshouldnotpass.platform.dao.repositories.SchemesRepositor
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
 import net.v4lproik.spamshouldnotpass.platform.models.RuleType;
 import net.v4lproik.spamshouldnotpass.platform.models.SchemeType;
+import net.v4lproik.spamshouldnotpass.platform.models.entities.Rule;
+import net.v4lproik.spamshouldnotpass.platform.models.entities.Scheme;
 import net.v4lproik.spamshouldnotpass.platform.models.response.SpamResponse;
-import net.v4lproik.spamshouldnotpass.platform.service.api.SchemeService;
-import net.v4lproik.spamshouldnotpass.platform.service.api.entities.Rule;
-import net.v4lproik.spamshouldnotpass.platform.service.api.entities.Scheme;
+import net.v4lproik.spamshouldnotpass.platform.service.SchemeService;
 import net.v4lproik.spamshouldnotpass.spring.annotation.UserAccess;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +73,7 @@ public class ApiController {
         Map<Class<?>, List<String>> mapClass = schemeService.transformProperties(map);
 
         Class<?> clazz = SchemeService.generate(
-                "net.v4lproik.spamshouldnotpass.platform.service.api.entities.Pojo$Generated", mapClass);
+                "net.v4lproik.spamshouldnotpass.platform.models.entities.Pojo$Generated", mapClass);
 
         Object obj = clazz.newInstance();
 
@@ -136,7 +136,7 @@ public class ApiController {
         Map<Class<?>, List<String>> mapClass = schemeService.transformProperties(map);
 
         Class<?> clazz = SchemeService.generate(
-                "net.v4lproik.spamshouldnotpass.platform.service.api.entities.Pojo$Generated", mapClass);
+                "net.v4lproik.spamshouldnotpass.platform.models.entities.Pojo$Generated", mapClass);
 
         Object obj = clazz.newInstance();
 
@@ -200,7 +200,7 @@ public class ApiController {
         Map<Class<?>, List<String>> mapClass = schemeService.transformProperties(map);
 
         Class<?> clazz = SchemeService.generate(
-                "net.v4lproik.spamshouldnotpass.platform.service.api.entities.Pojo$Generated", mapClass);
+                "net.v4lproik.spamshouldnotpass.platform.models.entities.Pojo$Generated", mapClass);
 
         Object obj = clazz.newInstance();
 

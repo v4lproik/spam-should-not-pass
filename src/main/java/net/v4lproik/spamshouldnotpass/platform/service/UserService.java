@@ -1,9 +1,9 @@
-package net.v4lproik.spamshouldnotpass.platform.service.api;
+package net.v4lproik.spamshouldnotpass.platform.service;
 
 import net.v4lproik.spamshouldnotpass.platform.dao.api.UserDao;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
-import net.v4lproik.spamshouldnotpass.platform.service.api.entities.User;
+import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;

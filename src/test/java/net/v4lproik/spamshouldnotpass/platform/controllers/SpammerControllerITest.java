@@ -6,7 +6,7 @@ import net.v4lproik.spamshouldnotpass.platform.dao.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
-import net.v4lproik.spamshouldnotpass.platform.service.api.entities.User;
+import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
 import net.v4lproik.spamshouldnotpass.spring.SpringAppConfig;
 import org.joda.time.DateTime;
 import org.junit.Before;

@@ -1,4 +1,4 @@
-package net.v4lproik.spamshouldnotpass.platform.service.api.entities;
+package net.v4lproik.spamshouldnotpass.platform.models.entities;
 
 import com.google.common.base.Objects;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;

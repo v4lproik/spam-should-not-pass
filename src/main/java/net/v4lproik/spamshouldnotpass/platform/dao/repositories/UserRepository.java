@@ -2,8 +2,8 @@ package net.v4lproik.spamshouldnotpass.platform.dao.repositories;
 
 import com.querydsl.jpa.hibernate.HibernateQuery;
 import net.v4lproik.spamshouldnotpass.platform.dao.api.UserDao;
-import net.v4lproik.spamshouldnotpass.platform.service.api.entities.QUser;
-import net.v4lproik.spamshouldnotpass.platform.service.api.entities.User;
+import net.v4lproik.spamshouldnotpass.platform.models.entities.QUser;
+import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;

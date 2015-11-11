@@ -1,4 +1,4 @@
-package net.v4lproik.spamshouldnotpass.platform.service.api;
+package net.v4lproik.spamshouldnotpass.platform.service;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Lists;
@@ -39,13 +39,13 @@ public class SchemeServiceUTest {
 
     @Test
     public void generateClass_withValidData_shouldGenerateClass() throws NotFoundException, CannotCompileException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException, ClassNotFoundException {
-        final String className = "net.v4lproik.spamshouldnotpass.platform.service.api.entities.Pojo$Generated";
+        final String className = "net.v4lproik.spamshouldnotpass.platform.models.entities.Pojo$Generated";
 
         Map<Class<?>, List<String>> props = new HashMap<Class<?>, List<String>>();
         props.put(Class.forName("java.lang.String"), Lists.newArrayList("documentId", "object", "content"));
 
         Class<?> clazz = SchemeService.generate(
-                "net.v4lproik.spamshouldnotpass.platform.service.api.entities.Pojo$Generated", props);
+                "net.v4lproik.spamshouldnotpass.platform.models.entities.Pojo$Generated", props);
 
         Object obj = clazz.newInstance();
 

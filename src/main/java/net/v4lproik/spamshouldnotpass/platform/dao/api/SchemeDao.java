@@ -1,7 +1,7 @@
 package net.v4lproik.spamshouldnotpass.platform.dao.api;
 
 import net.v4lproik.spamshouldnotpass.platform.models.SchemeType;
-import net.v4lproik.spamshouldnotpass.platform.service.api.entities.Scheme;
+import net.v4lproik.spamshouldnotpass.platform.models.entities.Scheme;
 
 import java.util.List;
 import java.util.UUID;

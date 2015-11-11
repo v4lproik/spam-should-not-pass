@@ -6,9 +6,9 @@ import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepo
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.SchemesRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
 import net.v4lproik.spamshouldnotpass.platform.models.SchemeType;
+import net.v4lproik.spamshouldnotpass.platform.models.entities.Scheme;
 import net.v4lproik.spamshouldnotpass.platform.models.response.SchemeResponse;
-import net.v4lproik.spamshouldnotpass.platform.service.api.SchemeService;
-import net.v4lproik.spamshouldnotpass.platform.service.api.entities.Scheme;
+import net.v4lproik.spamshouldnotpass.platform.service.SchemeService;
 import net.v4lproik.spamshouldnotpass.spring.annotation.UserAccess;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;

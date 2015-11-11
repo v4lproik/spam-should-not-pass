@@ -1,8 +1,8 @@
 package net.v4lproik.spamshouldnotpass.platform.client.postgres;
 
-import net.v4lproik.spamshouldnotpass.platform.service.api.entities.Rule;
-import net.v4lproik.spamshouldnotpass.platform.service.api.entities.Scheme;
-import net.v4lproik.spamshouldnotpass.platform.service.api.entities.User;
+import net.v4lproik.spamshouldnotpass.platform.models.entities.Rule;
+import net.v4lproik.spamshouldnotpass.platform.models.entities.Scheme;
+import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.postgresql.ds.PGPoolingDataSource;

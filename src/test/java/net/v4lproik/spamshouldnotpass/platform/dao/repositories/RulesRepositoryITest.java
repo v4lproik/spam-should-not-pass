@@ -5,8 +5,8 @@ import net.v4lproik.spamshouldnotpass.platform.client.postgres.SqlDatabaseInitia
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
 import net.v4lproik.spamshouldnotpass.platform.models.RuleType;
-import net.v4lproik.spamshouldnotpass.platform.service.api.entities.Rule;
-import net.v4lproik.spamshouldnotpass.platform.service.api.entities.User;
+import net.v4lproik.spamshouldnotpass.platform.models.entities.Rule;
+import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
 import org.joda.time.DateTime;
 import org.junit.After;
 import org.junit.Before;

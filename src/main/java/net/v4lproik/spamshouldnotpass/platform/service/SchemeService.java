@@ -1,4 +1,4 @@
-package net.v4lproik.spamshouldnotpass.platform.service.api;
+package net.v4lproik.spamshouldnotpass.platform.service;
 
 import com.google.common.collect.Lists;
 import javassist.*;
