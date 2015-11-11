@@ -74,6 +74,34 @@ public class Rule {
         return lastUpdate;
     }
 
+    public void setId(UUID id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setRule(String rule) {
+        this.rule = rule;
+    }
+
+    public void setType(RuleType type) {
+        this.type = type;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
+    }
+
+    public void setDate(DateTime date) {
+        this.date = date;
+    }
+
+    public void setLastUpdate(DateTime lastUpdate) {
+        this.lastUpdate = lastUpdate;
+    }
+
     @Override
     public String toString() {
         return Objects.toStringHelper(this)

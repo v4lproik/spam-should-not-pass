@@ -42,9 +42,7 @@ public class UserService {
         boolean auth;
         try {
             auth = passwordService.validatePassword(password, user.getPassword());
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalArgumentException(String.format("[UserService] Error validating password for user %s", email), e);
-        } catch (InvalidKeySpecException e) {
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new IllegalArgumentException(String.format("[UserService] Error validating password for user %s", email), e);
         }
 
@@ -57,8 +55,8 @@ public class UserService {
 
     public User save(final String firstname,
                      final String lastname,
-                     final String status,
-                     final String permission,
+                     final MemberStatus status,
+                     final MemberPermission permission,
                      final String email,
                      final String password
     ) {
@@ -68,14 +66,6 @@ public class UserService {
         checkNotNull(password);
         checkNotNull(status);
         checkNotNull(email);
-
-        if (MemberStatus.fromString(status) == null){
-            throw new IllegalArgumentException("[UserService] The member status cannot be empty or null");
-        }
-
-        if (MemberPermission.fromString(permission) == null){
-            throw new IllegalArgumentException("[UserService] The member permission cannot be empty or null");
-        }
 
         if (isEmailAlreadyTaken(email)){
             throw new IllegalArgumentException(String.format("[UserService] The email %s is already taken", email));
@@ -97,8 +87,8 @@ public class UserService {
                 email,
                 String.format("%s.%s", firstname, lastname),
                 passwordGenerated,
-                MemberStatus.fromString(status),
-                MemberPermission.fromString(permission),
+                status,
+                permission,
                 DateTime.now()
         );
 

@@ -64,8 +64,8 @@ public class UserServiceUTest extends TestCase {
         User generated = userService.save(
                 user.getFirstname(),
                 user.getLastname(),
-                user.getStatus().toString(),
-                user.getPermission().toString(),
+                user.getStatus(),
+                user.getPermission(),
                 user.getEmail(),
                 user.getPassword()
         );

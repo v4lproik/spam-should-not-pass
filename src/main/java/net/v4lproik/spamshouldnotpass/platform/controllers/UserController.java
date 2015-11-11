@@ -2,6 +2,9 @@ package net.v4lproik.spamshouldnotpass.platform.controllers;
 
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
+import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
+import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
+import net.v4lproik.spamshouldnotpass.platform.models.dto.UserDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
 import net.v4lproik.spamshouldnotpass.platform.models.response.UserResponse;
 import net.v4lproik.spamshouldnotpass.platform.service.UserService;
@@ -14,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.UUID;
 
 @Controller
 @RequestMapping(value = "/user")
@@ -27,11 +31,13 @@ public class UserController {
     @Autowired
     private CacheSessionRepository sessionRepo;
 
-    @RequestMapping(value = "/auth", method = RequestMethod.POST, params = {"login", "password"})
+    @RequestMapping(value = "/auth", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public UserResponse authenticate(@RequestParam(value = "login", required = true) String login,
-                                     @RequestParam(value = "password", required = true) String password) {
+    public UserResponse authenticate(@RequestBody UserDTO userDTO) {
+
+        final String login = userDTO.getEmail();
+        final String password = userDTO.getPassword();
 
         log.debug(String.format("/user/auth?login=%s&password=%s", login, password));
 
@@ -55,15 +61,17 @@ public class UserController {
         return response;
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST, params = {"firstname", "lastname", "email", "password", "status", "permission"})
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public UserResponse create(@RequestParam(value = "firstname", required = true) String firstname,
-                               @RequestParam(value = "lastname", required = true) String lastname,
-                               @RequestParam(value = "email", required = true) String email,
-                               @RequestParam(value = "password", required = true) String password,
-                               @RequestParam(value = "status", required = true) String status,
-                               @RequestParam(value = "permission", required = true) String permission) {
+    public UserResponse create(@RequestBody UserDTO userDTO) {
+
+        final String email = userDTO.getEmail();
+        final String password = userDTO.getPassword();
+        final String firstname = userDTO.getFirstname();
+        final String lastname = userDTO.getLastname();
+        final MemberStatus status = userDTO.getStatus();
+        final MemberPermission permission = userDTO.getPermission();
 
         log.debug(String.format("/user/create?email=%s&password=%s", email, password));
 
@@ -96,15 +104,13 @@ public class UserController {
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public UserResponse delete(HttpServletRequest req) {
+    public UserResponse delete(@RequestBody UUID uuid) {
 
         log.debug(String.format("/user/delete"));
 
         UserResponse response = new UserResponse();
 
-        BasicMember member = (BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY);
-
-        userService.delete(member.getId());
+        userService.delete(uuid);
 
         response.setError("User has been deleted");
         return response;
