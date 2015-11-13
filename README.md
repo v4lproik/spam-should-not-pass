@@ -27,7 +27,7 @@ It provides a powerful JEE platform that performs spam checks
 
 ## Useful curl commands
 1. Create a regular user
-`curl -X POST -d "firstname=spider&lastname=cochon&email=spidercochon2@email.fr&password=spidercochonlikesSushis999&status=USER&permission=REGULAR" http://localhost:8080/user/create`  
+`curl -X POST -H "Content-type: application/json" -H "Accept: application/json" -d "{\"firstname\":\"spider\", \"lastname\":\"cochon\", \"email\":\"spidercochon2@email.fr\", \"permission\":\"REGULAR\", \"status\":\"USER\", \"password\":\"spidercochonlikesSushis999\"}" http://localhost:8080/user/create`
 2. Authenticate with the new created user 
 `curl -X POST -H "Content-type: application/json" -H "Accept: application/json" -d "{\"email\":\"spidercochon2@email.fr\", \"password\":\"spidercochonlikesSushis999\"}" http://localhost:8080/user/auth`
 3. Create a new scheme (Replace <TOKEN> by the one provided in the json response of the command number 2)
