@@ -1,6 +1,7 @@
 package net.v4lproik.spamshouldnotpass.spring;
 
 import net.v4lproik.spamshouldnotpass.platform.client.redis.ConfigRedis;
+import net.v4lproik.spamshouldnotpass.spring.filter.CorsFilter;
 import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
@@ -35,6 +36,9 @@ public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServlet
     private void registerFilters(ServletContext servletContext){
         servletContext.addFilter("springSessionRepositoryFilter", new DelegatingFilterProxy("springSessionRepositoryFilter"))
                 .addMappingForUrlPatterns(null, false, "/*");
+
+        servletContext.addFilter("CorsFilter", new CorsFilter())
+        .addMappingForUrlPatterns(null, false, "/*");
     }
 
     @Override
