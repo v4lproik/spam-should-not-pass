@@ -1,10 +1,10 @@
 package net.v4lproik.spamshouldnotpass.spring.interceptor;
 
-import net.v4lproik.spamshouldnotpass.spring.annotation.AdminAccess;
-import net.v4lproik.spamshouldnotpass.spring.annotation.UserAccess;
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
+import net.v4lproik.spamshouldnotpass.spring.annotation.AdminAccess;
+import net.v4lproik.spamshouldnotpass.spring.annotation.UserAccess;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.annotation.AnnotationUtils;
@@ -12,7 +12,6 @@ import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.security.sasl.AuthenticationException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -52,11 +51,15 @@ public class AuthorisationSessionInterceptor extends HandlerInterceptorAdapter {
         final HttpSession session = req.getSession();
 
         if (session == null){
-            throw new AuthenticationException("[AuthorisationSessionInterceptor] job finished : No x-auth-token found");
+            log.error("[AuthorisationSessionInterceptor] job finished : No x-auth-token found");
+            res.sendError(401);
+            return false;
         }
 
         if (repository.getSession(session.getId()) == null){
-            throw new AuthenticationException(String.format("[AuthorisationSessionInterceptor] job finished : No match for session id %s", session.getId()));
+            log.error(String.format("[AuthorisationSessionInterceptor] job finished : No match for session id %s", session.getId()));
+            res.sendError(403);
+            return false;
         }
 
         req.setAttribute(CacheSessionRepository.MEMBER_KEY, session.getAttribute(CacheSessionRepository.MEMBER_KEY));
@@ -78,7 +81,9 @@ public class AuthorisationSessionInterceptor extends HandlerInterceptorAdapter {
                 return true;
             }
 
-            throw new AuthenticationException(String.format("[AuthorisationSessionInterceptor] job finished : User %s with session id %s is not ADMIN permission", permission, session.getId()));
+            log.error( String.format("[AuthorisationSessionInterceptor] job finished : User %s with session id %s is not ADMIN permission", permission, session.getId()));
+            res.sendError(403);
+            return false;
         }
 
         log.debug("[AuthorisationSessionInterceptor] job finished");
