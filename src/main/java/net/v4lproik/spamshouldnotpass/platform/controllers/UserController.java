@@ -6,6 +6,7 @@ import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.UserDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
+import net.v4lproik.spamshouldnotpass.platform.models.response.BasicUserResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.UserResponse;
 import net.v4lproik.spamshouldnotpass.platform.service.UserService;
 import net.v4lproik.spamshouldnotpass.spring.annotation.UserAccess;
@@ -117,16 +118,35 @@ public class UserController {
     }
 
     @UserAccess
-    @RequestMapping(value = "/info", method = RequestMethod.GET)
+    @RequestMapping(value = "/logout", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public UserResponse profile(HttpServletRequest req) {
+    public UserResponse logout(HttpServletRequest req) {
 
-        log.debug(String.format("/user/info"));
+        log.debug(String.format("/user/logout"));
 
         UserResponse response = new UserResponse();
 
-//        response.setUser(req.getAttribute(CacheSessionRepository.MEMBER_KEY));
+        sessionRepo.delete(req.getSession().toString());
+
+        return response;
+    }
+
+    @UserAccess
+    @RequestMapping(value = "/info", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public BasicUserResponse profile(HttpServletRequest req) {
+
+        log.debug(String.format("/user/info"));
+
+        final BasicMember user = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY));
+
+        BasicUserResponse response = new BasicUserResponse();
+
+        response.setUser(
+                user
+        );
 
         return response;
     }
