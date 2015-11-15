@@ -1,5 +1,7 @@
 package net.v4lproik.spamshouldnotpass.platform.models;
 
+import com.google.common.base.Objects;
+
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -47,4 +49,14 @@ public final class BasicMember implements Serializable {
         return permission;
     }
 
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("id", id)
+                .add("email", email)
+                .add("nickName", nickName)
+                .add("status", status)
+                .add("permission", permission)
+                .toString();
+    }
 }

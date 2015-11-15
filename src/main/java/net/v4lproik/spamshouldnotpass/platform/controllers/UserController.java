@@ -135,12 +135,6 @@ public class UserController {
 
         final BasicMember user = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY));
 
-        BasicUserResponse response = new BasicUserResponse();
-
-        response.setUser(
-                user
-        );
-
-        return response;
+        return new BasicUserResponse(user);
     }
 }
