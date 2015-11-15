@@ -1,12 +1,14 @@
 package net.v4lproik.spamshouldnotpass.platform.controllers;
 
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
+import net.v4lproik.spamshouldnotpass.platform.models.BackendException;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.UserDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
 import net.v4lproik.spamshouldnotpass.platform.models.response.BasicUserResponse;
+import net.v4lproik.spamshouldnotpass.platform.models.response.PlatformResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.UserResponse;
 import net.v4lproik.spamshouldnotpass.platform.service.UserService;
 import net.v4lproik.spamshouldnotpass.spring.annotation.UserAccess;
@@ -43,30 +45,23 @@ public class UserController {
 
         log.debug(String.format("/user/auth?login=%s&password=%s", login, password));
 
-        UserResponse response = new UserResponse();
-
         User user = userService.authenticate(login, password);
         if (user == null){
-            response.setError("The user cannot be authenticated");
-            return response;
+            return new UserResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "Invalid Login or Password");
         }
-
-        response.setUser(user);
 
         Session session = sessionRepo.createSession();
         BasicMember basicMember = new BasicMember(user.getId(), user.getEmail(), user.getNickname(), user.getStatus(), user.getPermission());
         session.setAttribute(CacheSessionRepository.MEMBER_KEY, basicMember);
         sessionRepo.save(session);
 
-        response.setToken(session.getId());
-
-        return response;
+        return new UserResponse(user, session.getId());
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public UserResponse create(@RequestBody UserDTO userDTO) {
+    public UserResponse create(@RequestBody UserDTO userDTO) throws BackendException {
 
         final String email = userDTO.getEmail();
         final String password = userDTO.getPassword();
@@ -78,11 +73,8 @@ public class UserController {
 
         log.debug(String.format("/user/create?email=%s&password=%s", email, password));
 
-        UserResponse response = new UserResponse();
-
         if (userService.isEmailAlreadyTaken(email)){
-            response.setError("Email is already taken");
-            return response;
+            return new UserResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "Email is already taken");
         }
 
         User created = userService.save(
@@ -96,12 +88,10 @@ public class UserController {
         );
 
         if (created == null){
-            response.setError("User has not been created");
-            return response;
+            return new UserResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.UNKNOWN, "User has not been created");
         }
 
-        response.setUser(created);
-        return response;
+        return new UserResponse(created, null);
     }
 
     @UserAccess
@@ -112,12 +102,9 @@ public class UserController {
 
         log.debug(String.format("/user/delete"));
 
-        UserResponse response = new UserResponse();
-
         userService.delete(uuid);
 
-        response.setError("User has been deleted");
-        return response;
+        return new UserResponse(PlatformResponse.Status.OK);
     }
 
     @UserAccess
@@ -128,8 +115,6 @@ public class UserController {
 
         log.debug(String.format("/user/logout"));
 
-        UserResponse response = new UserResponse();
-
         //invalidate session and remove it from cache
         final HttpSession session = req.getSession();
         if (session != null){
@@ -137,7 +122,7 @@ public class UserController {
         }
         sessionRepo.delete(req.getHeader("x-auth-token"));
 
-        return response;
+        return new UserResponse(PlatformResponse.Status.OK);
     }
 
     @UserAccess
