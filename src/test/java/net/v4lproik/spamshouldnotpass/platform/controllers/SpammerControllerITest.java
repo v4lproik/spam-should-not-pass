@@ -73,7 +73,8 @@ public class SpammerControllerITest {
                         "password",
                         MemberStatus.ADMIN,
                         MemberPermission.REGULAR,
-                        DateTime.now()
+                        DateTime.now(),
+                        "corporation"
                 )
         );
 

@@ -79,7 +79,8 @@ public class ApiControllerITest {
 
     @Test
     public void test_checkComment() throws Exception {
-        userId = userRepository.save(new User(
+        userId = userRepository.save(
+                new User(
                         UUID.randomUUID(),
                         "firstname",
                         "lastname",
@@ -88,7 +89,8 @@ public class ApiControllerITest {
                         "password",
                         MemberStatus.ADMIN,
                         MemberPermission.REGULAR,
-                        DateTime.now()
+                        DateTime.now(),
+                        "corporation"
                 )
         );
 

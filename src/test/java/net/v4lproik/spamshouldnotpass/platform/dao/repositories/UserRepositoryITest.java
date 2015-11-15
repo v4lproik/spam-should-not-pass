@@ -52,7 +52,8 @@ public class UserRepositoryITest {
                 "password",
                 MemberStatus.ADMIN,
                 MemberPermission.REGULAR,
-                DateTime.now()
+                DateTime.now(),
+                "corporation"
         );
     }
 

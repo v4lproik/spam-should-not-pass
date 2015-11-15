@@ -37,6 +37,8 @@ public class User {
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime date;
 
+    private String corporation;
+
     public User() {
     }
 
@@ -44,8 +46,7 @@ public class User {
         this.id = id;
     }
 
-    public User(UUID id, String firstname, String lastname, String email, String nickname,
-                String password, MemberStatus status, MemberPermission permission, DateTime date) {
+    public User(UUID id, String firstname, String lastname, String email, String nickname, String password, MemberStatus status, MemberPermission permission, DateTime date, String corporation) {
         this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -55,6 +56,7 @@ public class User {
         this.status = status;
         this.permission = permission;
         this.date = date;
+        this.corporation = corporation;
     }
 
     public UUID getId() {
@@ -129,6 +131,14 @@ public class User {
         this.date = date;
     }
 
+    public String getCorporation() {
+        return corporation;
+    }
+
+    public void setCorporation(String corporation) {
+        this.corporation = corporation;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -155,6 +165,7 @@ public class User {
                 .add("status", status)
                 .add("permission", permission)
                 .add("date", date)
+                .add("corporation", corporation)
                 .toString();
     }
 }

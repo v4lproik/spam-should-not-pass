@@ -75,17 +75,12 @@ CREATE TABLE "User" (
     permission text,
     status text,
     password text,
-    date timestamp with time zone
+    date timestamp with time zone,
+    corporation text
 );
 
 
 ALTER TABLE "User" OWNER TO root;
-
---
--- Data for Name: Rule; Type: TABLE DATA; Schema: public; Owner: root
---
-
-
 
 --
 -- Name: Rule_pkey; Type: CONSTRAINT; Schema: public; Owner: root; Tablespace: 
@@ -116,7 +111,7 @@ ALTER TABLE ONLY "User"
 --
 
 ALTER TABLE ONLY "Scheme"
-    ADD CONSTRAINT "userId" FOREIGN KEY ("userId") REFERENCES "User"(id);
+    ADD CONSTRAINT "idUser" FOREIGN KEY ("userId") REFERENCES "User"(id);
 
 
 --

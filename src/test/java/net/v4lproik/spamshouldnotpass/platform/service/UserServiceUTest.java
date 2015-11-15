@@ -43,7 +43,8 @@ public class UserServiceUTest extends TestCase {
                 "password",
                 MemberStatus.ADMIN,
                 MemberPermission.REGULAR,
-                DateTime.now()
+                DateTime.now(),
+                "corporation"
         );
 
         User userExpected = new User(
@@ -55,7 +56,8 @@ public class UserServiceUTest extends TestCase {
                 "encryptedPassword",
                 MemberStatus.ADMIN,
                 MemberPermission.REGULAR,
-                DateTime.now()
+                DateTime.now(),
+                "corporation"
         );
 
         when(passwordService.generateHash(user.getPassword())).thenReturn("encryptedPassword");
@@ -67,7 +69,8 @@ public class UserServiceUTest extends TestCase {
                 user.getStatus(),
                 user.getPermission(),
                 user.getEmail(),
-                user.getPassword()
+                user.getPassword(),
+                user.getCorporation()
         );
 
         verify(userDao, atLeast(1)).save(any(User.class));

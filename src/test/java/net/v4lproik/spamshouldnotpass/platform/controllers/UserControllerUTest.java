@@ -77,10 +77,11 @@ public class UserControllerUTest {
         final String password = "spider";
         final String permission = "REGULAR";
         final String status = "USER";
+        final String corporation = "google";
 
         MvcResult res = mockMvc.perform(post("/user/create")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new UserDTO(firstname, lastname, login, password, MemberStatus.USER.toString(), MemberPermission.REGULAR.toString())))
+                        .content(objectMapper.writeValueAsString(new UserDTO(firstname, lastname, login, password, MemberStatus.USER.toString(), MemberPermission.REGULAR.toString(), corporation)))
         )
                 .andExpect(status().isOk()).andReturn();
     }

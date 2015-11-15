@@ -74,6 +74,7 @@ public class UserController {
         final String lastname = userDTO.getLastname();
         final MemberStatus status = userDTO.getStatus();
         final MemberPermission permission = userDTO.getPermission();
+        final String corporation = userDTO.getCorporation();
 
         log.debug(String.format("/user/create?email=%s&password=%s", email, password));
 
@@ -90,7 +91,8 @@ public class UserController {
                 status,
                 permission,
                 email,
-                password
+                password,
+                corporation
         );
 
         if (created == null){

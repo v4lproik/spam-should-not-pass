@@ -32,19 +32,26 @@ public class UserDTO {
     @NotEmpty
     private MemberPermission permission;
 
+    @NotEmpty
+    @Size(min = 2, max = 50)
+    private String corporation;
+
     @JsonCreator
     public UserDTO(@JsonProperty("fistname")String firstname,
                    @JsonProperty("lastname")String lastname,
                    @JsonProperty("email")String email,
                    @JsonProperty("password")String password,
                    @JsonProperty("status")String status,
-                   @JsonProperty("permission")String permission) {
+                   @JsonProperty("permission")String permission,
+                   @JsonProperty("corporation")String corporation
+    ) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
         this.password = password;
         this.status = MemberStatus.fromString(status);
         this.permission = MemberPermission.fromString(permission);
+        this.corporation = corporation;
     }
 
     public String getFirstname() {
@@ -69,5 +76,9 @@ public class UserDTO {
 
     public MemberPermission getPermission() {
         return permission;
+    }
+
+    public String getCorporation() {
+        return corporation;
     }
 }

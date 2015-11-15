@@ -58,7 +58,8 @@ public class UserService {
                      final MemberStatus status,
                      final MemberPermission permission,
                      final String email,
-                     final String password
+                     final String password,
+                     final String corporation
     ) {
         checkNotNull(firstname);
         checkNotNull(lastname);
@@ -66,6 +67,7 @@ public class UserService {
         checkNotNull(password);
         checkNotNull(status);
         checkNotNull(email);
+        checkNotNull(corporation);
 
         if (isEmailAlreadyTaken(email)){
             throw new IllegalArgumentException(String.format("[UserService] The email %s is already taken", email));
@@ -89,7 +91,8 @@ public class UserService {
                 passwordGenerated,
                 status,
                 permission,
-                DateTime.now()
+                DateTime.now(),
+                corporation
         );
 
         userDao.save(user);

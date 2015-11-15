@@ -64,7 +64,8 @@ public class RulesRepositoryITest {
                 "password",
                 MemberStatus.ADMIN,
                 MemberPermission.REGULAR,
-                DateTime.now()
+                DateTime.now(),
+                "corporation"
         );
 
         userRepository.save(
