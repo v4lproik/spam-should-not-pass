@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
 
@@ -44,8 +45,9 @@ public class SchemeServiceUTest {
         Map<Class<?>, List<String>> props = new HashMap<Class<?>, List<String>>();
         props.put(Class.forName("java.lang.String"), Lists.newArrayList("documentId", "object", "content"));
 
+        //FIXME getLastUpdate scheme for each corporation and recreate POJO if necessary
         Class<?> clazz = SchemeService.generate(
-                "net.v4lproik.spamshouldnotpass.platform.models.entities.Pojo$Generated", props);
+                "net.v4lproik.spamshouldnotpass.platform.models.entities.Pojo$Generated" + UUID.randomUUID().toString(), props);
 
         Object obj = clazz.newInstance();
 
