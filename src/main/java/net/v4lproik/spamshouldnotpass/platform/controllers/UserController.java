@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.UUID;
 
 @Controller
@@ -127,7 +128,12 @@ public class UserController {
 
         UserResponse response = new UserResponse();
 
-        sessionRepo.delete(req.getSession().toString());
+        //invalidate session and remove it from cache
+        final HttpSession session = req.getSession();
+        if (session != null){
+            session.invalidate();
+        }
+        sessionRepo.delete(req.getHeader("x-auth-token"));
 
         return response;
     }
