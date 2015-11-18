@@ -50,7 +50,7 @@ public class SpamController {
     @RequestMapping(value = "/create-spam-document", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public SchemeResponse createSpammerDocument(HttpServletRequest req, @RequestBody String str) throws IOException {
+    public SchemeResponse createSpamDocument(HttpServletRequest req, @RequestBody String str) throws IOException {
 
 
         log.debug(String.format("/create-spammer-document?%s", str));
