@@ -58,18 +58,8 @@ public class SpamController {
         final Properties properties = objectMapper.readValue(str, Properties.class);
         final SchemeType type = SchemeType.SPAM;
         final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
-        Map<String, List<String>> mapProperties = Maps.newHashMap();
-        for (Property property:properties.getProperties()){
-            List<String> arr = mapProperties.get(property.getVariableType());
+        final Map<String, List<String>> mapProperties = toMap(properties);
 
-            if (arr == null){
-                arr = Lists.newArrayList();
-            }
-
-            arr.add(property.getVariableName());
-
-            mapProperties.put(property.getVariableType(), arr);
-        }
 
         if(!schemeService.isSchemeValid(mapProperties)){
             return new SchemeResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The scheme cannot be validated");
@@ -137,5 +127,23 @@ public class SpamController {
 
 
         return new SchemeResponse(created);
+    }
+
+    private Map<String, List<String>> toMap(Properties properties){
+        Map<String, List<String>> mapProperties = Maps.newHashMap();
+
+        for (Property property:properties.getProperties()){
+            List<String> arr = mapProperties.get(property.getVariableType());
+
+            if (arr == null){
+                arr = Lists.newArrayList();
+            }
+
+            arr.add(property.getVariableName());
+
+            mapProperties.put(property.getVariableType(), arr);
+        }
+
+        return mapProperties;
     }
 }

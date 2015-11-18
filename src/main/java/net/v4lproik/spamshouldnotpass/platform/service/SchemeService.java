@@ -18,8 +18,6 @@ public class SchemeService {
 
     public boolean isSchemeValid(Map<String, List<String>> map){
 
-        log.debug(map.toString());
-
         Map<String, List<String>> collect = map.entrySet()
                 .parallelStream()
                 .filter(x -> types.contains(x.getKey()) && this.matches(x.getValue()).equals(x.getValue()))
