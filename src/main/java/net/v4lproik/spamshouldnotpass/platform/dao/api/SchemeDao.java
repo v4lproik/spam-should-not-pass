@@ -11,6 +11,8 @@ public interface SchemeDao {
 
     UUID save(Scheme scheme);
 
+    void update(Scheme scheme);
+
     void delete(UUID id);
 
     List<Scheme> list();

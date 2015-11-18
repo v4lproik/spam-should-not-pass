@@ -41,27 +41,29 @@ public class SpammerController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public SchemeResponse createSpammerDocument(HttpServletRequest req,
-                                                @RequestBody Map<String, String> scheme) throws ClassNotFoundException, JsonProcessingException {
+                                                @RequestBody Map<String, String> mapScheme) throws ClassNotFoundException, JsonProcessingException {
 
-        log.debug(String.format("/spammer/create-spammer-document?%s", scheme));
+        log.debug(String.format("/spammer/create-spammer-document?%s", mapScheme));
 
         final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
 
-        if(!schemeService.isSchemeValid(scheme)){
-            return new SchemeResponse(null, "The scheme cannot be validated");
-        }
+//        if(!schemeService.isSchemeValid(mapScheme)){
+//            return new SchemeResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The scheme cannot be validated");
+//        }
 
-        schemesRepository.save(
-                new Scheme(
-                        UUID.randomUUID(),
-                        objectMapper.writeValueAsString(scheme),
-                        userId,
-                        DateTime.now(),
-                        DateTime.now(),
-                        SchemeType.SPAMMER
-                )
+        final Scheme scheme = new Scheme(
+                UUID.randomUUID(),
+                objectMapper.writeValueAsString(mapScheme),
+                userId,
+                DateTime.now(),
+                DateTime.now(),
+                SchemeType.SPAM
         );
 
-        return new SchemeResponse("Scheme has been added", null);
+        schemesRepository.save(
+                scheme
+        );
+
+        return new SchemeResponse(scheme);
     }
 }

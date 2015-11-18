@@ -16,10 +16,7 @@ import org.springframework.expression.spel.support.StandardEvaluationContext;
 import java.io.Serializable;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 
@@ -35,7 +32,7 @@ public class SchemeServiceUTest {
 
     @Test
     public void test_isValid() throws Exception{
-        service.isSchemeValid(Maps.newHashMap(ImmutableMap.of("String", "variable")));
+        service.isSchemeValid(Maps.newHashMap(ImmutableMap.of("String", Arrays.asList("variable"))));
     }
 
     @Test

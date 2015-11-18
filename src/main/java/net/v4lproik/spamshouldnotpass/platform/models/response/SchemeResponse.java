@@ -1,20 +1,22 @@
 package net.v4lproik.spamshouldnotpass.platform.models.response;
 
-public class SchemeResponse {
+import net.v4lproik.spamshouldnotpass.platform.models.entities.Scheme;
 
-    private Object scheme;
-    private Object error;
+public class SchemeResponse extends PlatformResponse{
 
-    public SchemeResponse(Object scheme, Object error) {
+    final private Scheme scheme;
+
+    public SchemeResponse(Scheme scheme) {
+        super();
         this.scheme = scheme;
-        this.error = error;
     }
 
-    public Object getScheme() {
+    public SchemeResponse(Status status, Error error, String message) {
+        super(status, error, message);
+        this.scheme = null;
+    }
+
+    public Scheme getScheme() {
         return scheme;
-    }
-
-    public Object getError() {
-        return error;
     }
 }

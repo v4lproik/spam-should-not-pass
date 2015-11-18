@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import javassist.*;
 import org.apache.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -15,11 +16,13 @@ public class SchemeService {
     private final String ALLOW_CHAR_VARIABLES = "^\\w+$";
     private final List<String> types = Lists.newArrayList("java.lang.String");
 
-    public boolean isSchemeValid(Map<String, String> map){
+    public boolean isSchemeValid(Map<String, List<String>> map){
 
-        Map<String, String> collect = map.entrySet()
+        log.debug(map.toString());
+
+        Map<String, List<String>> collect = map.entrySet()
                 .parallelStream()
-                .filter(x -> types.contains(x.getKey()) && x.getValue().matches(ALLOW_CHAR_VARIABLES))
+                .filter(x -> types.contains(x.getKey()) && this.matches(x.getValue()).equals(x.getValue()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         if (map.equals(collect)){
@@ -97,6 +100,14 @@ public class SchemeService {
     private static CtClass resolveCtClass(Class clazz) throws NotFoundException {
         ClassPool pool = ClassPool.getDefault();
         return pool.get(clazz.getName());
+    }
+
+    private List<String> matches(List<String> arr){
+        List<String> allMatches = new ArrayList<String>();
+        for (String str:arr){
+           if (str.matches(ALLOW_CHAR_VARIABLES)) allMatches.add(str);
+        }
+        return allMatches;
     }
 
 }

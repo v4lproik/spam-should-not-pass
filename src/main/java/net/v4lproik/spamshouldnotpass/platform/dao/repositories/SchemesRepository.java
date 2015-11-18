@@ -95,6 +95,16 @@ public class SchemesRepository implements SchemeDao {
     }
 
     @Override
+    public void update(Scheme schemeToSave) {
+        Transaction tx = currentSession().beginTransaction();
+
+        currentSession().update(schemeToSave);
+
+        currentSession().flush();
+        tx.commit();
+    }
+
+    @Override
     public void delete(UUID id) {
         Transaction tx = currentSession().beginTransaction();
 
