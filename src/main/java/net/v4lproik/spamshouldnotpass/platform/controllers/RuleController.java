@@ -49,10 +49,69 @@ public class RuleController {
     }
 
     @UserAccess
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public RulesResponse delete(HttpServletRequest req,
+                                @RequestBody RuleUUIDDTO toGet) {
+
+        log.debug(String.format("/api/v1/delete-rule"));
+
+        final Rule rule = ruleDao.findById(toGet.getId());
+
+        if (rule == null){
+            return new RulesResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The rule does not exist");
+        }
+
+        if (!rule.getUserId().equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
+            return new RulesResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to delete this rule");
+        }
+
+        ruleDao.delete(toGet.getId());
+
+        return new RulesResponse(null);
+    }
+
+    @UserAccess
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public RulesResponse delete(HttpServletRequest req,
+                                @RequestBody RuleDTO toUpdate) {
+
+        log.debug(String.format("/api/v1/update-rule"));
+
+        final Rule rule = ruleDao.findById(toUpdate.getId());
+
+        if (rule == null){
+            return new RulesResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The rule does not exist");
+        }
+
+        if (!rule.getUserId().equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
+            return new RulesResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to update this rule");
+        }
+
+        ruleDao.update(
+                new Rule(
+                        toUpdate.getId(),
+                        toUpdate.getName(),
+                        toUpdate.getRule(),
+                        toUpdate.getType(),
+                        rule.getUserId(),
+                        rule.getDate(),
+                        DateTime.now()
+
+                ));
+
+        return new RulesResponse(null);
+    }
+
+
+    @UserAccess
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public RulesResponse get(HttpServletRequest req) {
+    public RulesResponse list(HttpServletRequest req) {
 
         log.debug(String.format("/api/v1/list-rule"));
 

@@ -4,7 +4,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import net.v4lproik.spamshouldnotpass.platform.models.RuleType;
 import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.annotation.Nullable;
+import java.util.UUID;
+
 public class RuleDTO {
+
+    @Nullable
+    private UUID id;
 
     @NotEmpty
     private String name;
@@ -31,6 +37,11 @@ public class RuleDTO {
 
     public RuleType getType() {
         return type;
+    }
+
+    @Nullable
+    public UUID getId() {
+        return id;
     }
 }
 

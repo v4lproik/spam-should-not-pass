@@ -108,6 +108,16 @@ public class RulesRepository implements RuleDao {
     }
 
     @Override
+    public void update(Rule rule) {
+        Transaction tx = currentSession().beginTransaction();
+
+        currentSession().update(rule);
+
+        currentSession().flush();
+        tx.commit();
+    }
+
+    @Override
     public Rule findById(UUID id) {
         Transaction tx = currentSession().beginTransaction();
 

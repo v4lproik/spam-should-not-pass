@@ -11,6 +11,8 @@ public interface RuleDao {
 
     UUID save(Rule rule);
 
+    void update(Rule rule);
+
     void delete(UUID id);
 
     List<Rule> list();

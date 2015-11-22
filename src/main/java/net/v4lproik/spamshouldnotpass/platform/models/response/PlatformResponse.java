@@ -9,7 +9,8 @@ public class PlatformResponse {
 
     public enum Error{
         UNKNOWN,
-        INVALID_INPUT
+        INVALID_INPUT,
+        INVALID_PERMISSION
     }
 
     private Status status;
