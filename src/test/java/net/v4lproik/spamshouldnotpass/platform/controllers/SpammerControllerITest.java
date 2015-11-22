@@ -80,7 +80,7 @@ public class SpammerControllerITest {
 
         mockMvc.perform(post("/spammer/create-spammer-document")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"java.lang.String\":\"test\"}")
+                        .content("{\"properties\": [{\"variableType\": \"java.lang.String\", \"variableName\": \"test\"}]}")
                         .requestAttr(CacheSessionRepository.MEMBER_KEY, new BasicMember(uuid))
         ).andExpect(status().isOk());
 
