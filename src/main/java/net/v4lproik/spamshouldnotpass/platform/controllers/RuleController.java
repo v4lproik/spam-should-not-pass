@@ -5,7 +5,9 @@ import net.v4lproik.spamshouldnotpass.platform.dao.api.RuleDao;
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.RuleDTO;
+import net.v4lproik.spamshouldnotpass.platform.models.dto.RuleUUIDDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.Rule;
+import net.v4lproik.spamshouldnotpass.platform.models.response.PlatformResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.RulesResponse;
 import net.v4lproik.spamshouldnotpass.spring.annotation.UserAccess;
 import org.apache.log4j.Logger;
@@ -29,10 +31,28 @@ public class RuleController {
     private static Logger log = Logger.getLogger(RuleController.class.getName());
 
     @UserAccess
+    @RequestMapping(value = "/get", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public RulesResponse list(HttpServletRequest req,
+                              @RequestBody RuleUUIDDTO toGet) {
+
+        log.debug(String.format("/api/v1/get-rule"));
+
+        final Rule rule = ruleDao.findById(toGet.getId());
+
+        if (rule == null){
+            return new RulesResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The rule does not exist");
+        }
+
+        return new RulesResponse(Lists.newArrayList(rule));
+    }
+
+    @UserAccess
     @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public RulesResponse list(HttpServletRequest req) {
+    public RulesResponse get(HttpServletRequest req) {
 
         log.debug(String.format("/api/v1/list-rule"));
 
@@ -42,6 +62,7 @@ public class RuleController {
 
         return new RulesResponse(rules);
     }
+
 
     @UserAccess
     @RequestMapping(value = "/create", method = RequestMethod.POST)

@@ -52,8 +52,7 @@ public class SpamController {
     @ResponseBody
     public SchemeResponse createSpamDocument(HttpServletRequest req, @RequestBody String str) throws IOException {
 
-
-        log.debug(String.format("/create-spammer-document?%s", str));
+        log.debug(String.format("/create-spam-document?%s", str));
 
         final Properties properties = objectMapper.readValue(str, Properties.class);
         final SchemeType type = SchemeType.SPAM;
@@ -69,14 +68,14 @@ public class SpamController {
 
         if (created != null){
             created.setLastUpdate(DateTime.now());
-            created.setProperties(objectMapper.writeValueAsString(mapProperties));
+            created.setProperties(objectMapper.writeValueAsString(toList(mapProperties)));
             schemesRepository.update(
                     created
             );
         }else{
             created = new Scheme(
                     UUID.randomUUID(),
-                    objectMapper.writeValueAsString(mapProperties),
+                    objectMapper.writeValueAsString(toList(mapProperties)),
                     userId,
                     DateTime.now(),
                     DateTime.now(),
@@ -88,15 +87,25 @@ public class SpamController {
             );
         }
 
-        return new SchemeResponse(created);
+        return new SchemeResponse(
+                new Scheme(
+                        created.getId(),
+                        objectMapper.writeValueAsString(toList(mapProperties)),
+                        created.getUserId(),
+                        created.getDate(),
+                        created.getLastUpdate(),
+                        created.getType()
+                )
+        );
     }
+
 
     @UserAccess
     @RequestMapping(value = "/all", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public SchemeResponse getAll(HttpServletRequest req,
-                                                @RequestBody UserUUIDDTO userDTO) throws ClassNotFoundException, JsonProcessingException {
+                                 @RequestBody UserUUIDDTO userDTO) throws ClassNotFoundException, IOException {
 
         log.debug(String.format("/spam/all?%s", userDTO));
 
@@ -104,7 +113,20 @@ public class SpamController {
 
         final Scheme scheme = schemesRepository.listByUserIdAndType(userUUID, SchemeType.SPAM);
 
-        return new SchemeResponse(scheme);
+        if (scheme == null){
+            return new SchemeResponse(null);
+        }
+
+        return new SchemeResponse(
+                new Scheme(
+                        scheme.getId(),
+                        scheme.getProperties(),
+                        scheme.getUserId(),
+                        scheme.getDate(),
+                        scheme.getLastUpdate(),
+                        scheme.getType()
+                )
+        );
     }
 
     @RequestMapping(value = "/test", method = RequestMethod.POST)
@@ -145,5 +167,16 @@ public class SpamController {
         }
 
         return mapProperties;
+    }
+
+    private List<Property> toList(Map<String, List<String>> mapProperties){
+        List<Property> propertiesListTmp = Lists.newArrayList();
+        for (Map.Entry<String, List<String>> entry : mapProperties.entrySet()) {
+            for (String val:entry.getValue()){
+                propertiesListTmp.add(new Property(entry.getKey(), val));
+            }
+        }
+
+        return propertiesListTmp;
     }
 }

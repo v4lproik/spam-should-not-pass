@@ -1,6 +1,5 @@
 package net.v4lproik.spamshouldnotpass.platform.controllers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -66,14 +65,14 @@ public class SpammerController {
 
         if (created != null){
             created.setLastUpdate(DateTime.now());
-            created.setProperties(objectMapper.writeValueAsString(mapProperties));
+            created.setProperties(objectMapper.writeValueAsString(toList(mapProperties)));
             schemesRepository.update(
                     created
             );
         }else{
             created = new Scheme(
                     UUID.randomUUID(),
-                    objectMapper.writeValueAsString(mapProperties),
+                    objectMapper.writeValueAsString(toList(mapProperties)),
                     userId,
                     DateTime.now(),
                     DateTime.now(),
@@ -85,7 +84,16 @@ public class SpammerController {
             );
         }
 
-        return new SchemeResponse(created);
+        return new SchemeResponse(
+                new Scheme(
+                        created.getId(),
+                        objectMapper.writeValueAsString(toList(mapProperties)),
+                        created.getUserId(),
+                        created.getDate(),
+                        created.getLastUpdate(),
+                        created.getType()
+                )
+        );
     }
 
     @UserAccess
@@ -93,7 +101,7 @@ public class SpammerController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public SchemeResponse getAll(HttpServletRequest req,
-                                 @RequestBody UserUUIDDTO userDTO) throws ClassNotFoundException, JsonProcessingException {
+                                 @RequestBody UserUUIDDTO userDTO) throws ClassNotFoundException, IOException {
 
         log.debug(String.format("/spammer/all?%s", userDTO));
 
@@ -101,7 +109,20 @@ public class SpammerController {
 
         final Scheme scheme = schemesRepository.listByUserIdAndType(userUUID, SchemeType.SPAMMER);
 
-        return new SchemeResponse(scheme);
+        if (scheme == null){
+            return new SchemeResponse(null);
+        }
+
+        return new SchemeResponse(
+                new Scheme(
+                        scheme.getId(),
+                        scheme.getProperties(),
+                        scheme.getUserId(),
+                        scheme.getDate(),
+                        scheme.getLastUpdate(),
+                        scheme.getType()
+                )
+        );
     }
 
     private Map<String, List<String>> toMap(Properties properties){
@@ -120,5 +141,16 @@ public class SpammerController {
         }
 
         return mapProperties;
+    }
+
+    private List<Property> toList(Map<String, List<String>> mapProperties){
+        List<Property> propertiesListTmp = Lists.newArrayList();
+        for (Map.Entry<String, List<String>> entry : mapProperties.entrySet()) {
+            for (String val:entry.getValue()){
+                propertiesListTmp.add(new Property(entry.getKey(), val));
+            }
+        }
+
+        return propertiesListTmp;
     }
 }
