@@ -1,12 +1,12 @@
 package net.v4lproik.spamshouldnotpass.platform.models.response;
 
-import net.v4lproik.spamshouldnotpass.platform.models.entities.Scheme;
+import net.v4lproik.spamshouldnotpass.platform.models.dto.SchemeDTO;
 
 public class SchemeResponse extends PlatformResponse{
 
-    final private Scheme scheme;
+    final private SchemeDTO scheme;
 
-    public SchemeResponse(Scheme scheme) {
+    public SchemeResponse(SchemeDTO scheme) {
         super();
         this.scheme = scheme;
     }
@@ -16,7 +16,7 @@ public class SchemeResponse extends PlatformResponse{
         this.scheme = null;
     }
 
-    public Scheme getScheme() {
+    public SchemeDTO getScheme() {
         return scheme;
     }
 }

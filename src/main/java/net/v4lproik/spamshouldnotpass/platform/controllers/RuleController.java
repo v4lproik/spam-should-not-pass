@@ -5,7 +5,8 @@ import net.v4lproik.spamshouldnotpass.platform.dao.api.RuleDao;
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.RuleDTO;
-import net.v4lproik.spamshouldnotpass.platform.models.dto.RuleUUIDDTO;
+import net.v4lproik.spamshouldnotpass.platform.models.dto.toCreateRuleDTO;
+import net.v4lproik.spamshouldnotpass.platform.models.dto.toGetRuleDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.Rule;
 import net.v4lproik.spamshouldnotpass.platform.models.response.PlatformResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.RulesResponse;
@@ -35,7 +36,7 @@ public class RuleController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public RulesResponse list(HttpServletRequest req,
-                              @RequestBody RuleUUIDDTO toGet) {
+                              @RequestBody toGetRuleDTO toGet) {
 
         log.debug(String.format("/api/v1/get-rule"));
 
@@ -45,7 +46,11 @@ public class RuleController {
             return new RulesResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The rule does not exist");
         }
 
-        return new RulesResponse(Lists.newArrayList(rule));
+        return new RulesResponse(
+                Lists.newArrayList(
+                        convertToDTO(rule, false)
+                )
+        );
     }
 
     @UserAccess
@@ -53,7 +58,7 @@ public class RuleController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public RulesResponse delete(HttpServletRequest req,
-                                @RequestBody RuleUUIDDTO toGet) {
+                                @RequestBody toGetRuleDTO toGet) {
 
         log.debug(String.format("/api/v1/delete-rule"));
 
@@ -77,7 +82,7 @@ public class RuleController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public RulesResponse delete(HttpServletRequest req,
-                                @RequestBody RuleDTO toUpdate) {
+                                @RequestBody toCreateRuleDTO toUpdate) {
 
         log.debug(String.format("/api/v1/update-rule"));
 
@@ -119,7 +124,14 @@ public class RuleController {
 
         List<Rule> rules = ruleDao.listByUserId(userId);
 
-        return new RulesResponse(rules);
+        List<RuleDTO> rulesDTO = Lists.newArrayList();
+        for (Rule rule: rules){
+            rulesDTO.add(
+                    convertToDTO(rule, false)
+            );
+        }
+
+        return new RulesResponse(rulesDTO);
     }
 
 
@@ -128,7 +140,7 @@ public class RuleController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public RulesResponse create(HttpServletRequest req,
-                                @RequestBody RuleDTO toCreate) {
+                                @RequestBody toCreateRuleDTO toCreate) {
 
         log.debug(String.format("/rule/create"));
         log.info(String.format("/rule/create" + toCreate.toString()));
@@ -146,6 +158,23 @@ public class RuleController {
 
         ruleDao.save(create);
 
-        return new RulesResponse(Lists.newArrayList(create));
+        return new RulesResponse(
+                Lists.newArrayList(
+                        convertToDTO(create, false)
+                )
+        );
+    }
+
+    private RuleDTO convertToDTO(Rule entity, boolean isContexts){
+        return new RuleDTO(
+                entity.getId(),
+                entity.getName(),
+                entity.getRule(),
+                entity.getType(),
+                entity.getUserId(),
+                entity.getDate(),
+                entity.getLastUpdate(),
+                isContexts ? entity.getContexts() : null
+        );
     }
 }

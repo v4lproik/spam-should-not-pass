@@ -6,13 +6,13 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import java.util.UUID;
 
-public class RuleUUIDDTO {
+public class toGetRuleDTO {
 
     @NotEmpty
     private UUID id;
 
     @JsonCreator
-    public RuleUUIDDTO(@JsonProperty("id") UUID id) {
+    public toGetRuleDTO(@JsonProperty("id") UUID id) {
         this.id = id;
     }
 

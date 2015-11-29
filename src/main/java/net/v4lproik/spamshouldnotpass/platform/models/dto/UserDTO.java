@@ -1,84 +1,123 @@
 package net.v4lproik.spamshouldnotpass.platform.models.dto;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.joda.time.DateTime;
 
-import javax.validation.constraints.Size;
+import java.util.UUID;
 
 public class UserDTO {
 
-    @NotEmpty
-    @Size(min = 2, max = 30)
+    private UUID id;
+
     private String firstname;
 
-    @NotEmpty
-    @Size(min = 2, max = 30)
     private String lastname;
 
-    @NotEmpty
-    @Email
     private String email;
 
-    @NotEmpty
+    private String nickname;
+
     private String password;
 
-    @NotEmpty
-    private MemberStatus status;
+    private DateTime date;
 
-    @NotEmpty
-    private MemberPermission permission;
-
-    @NotEmpty
-    @Size(min = 2, max = 50)
     private String corporation;
 
-    @JsonCreator
-    public UserDTO(@JsonProperty("fistname")String firstname,
-                   @JsonProperty("lastname")String lastname,
-                   @JsonProperty("email")String email,
-                   @JsonProperty("password")String password,
-                   @JsonProperty("status")String status,
-                   @JsonProperty("permission")String permission,
-                   @JsonProperty("corporation")String corporation
-    ) {
+    private MemberStatus status;
+
+    private MemberPermission permission;
+
+    public UserDTO(UUID id, String firstname, String lastname, String email, String nickname, String password, DateTime date, String corporation, MemberStatus status, MemberPermission permission) {
+        this.id = id;
         this.firstname = firstname;
         this.lastname = lastname;
         this.email = email;
+        this.nickname = nickname;
         this.password = password;
-        this.status = MemberStatus.fromString(status);
-        this.permission = MemberPermission.fromString(permission);
+        this.date = date;
         this.corporation = corporation;
+        this.status = status;
+        this.permission = permission;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 
     public String getFirstname() {
         return firstname;
     }
 
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
     public String getLastname() {
         return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
     }
 
     public String getEmail() {
         return email;
     }
 
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
     public String getPassword() {
         return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public DateTime getDate() {
+        return date;
+    }
+
+    public void setDate(DateTime date) {
+        this.date = date;
+    }
+
+    public String getCorporation() {
+        return corporation;
+    }
+
+    public void setCorporation(String corporation) {
+        this.corporation = corporation;
     }
 
     public MemberStatus getStatus() {
         return status;
     }
 
+    public void setStatus(MemberStatus status) {
+        this.status = status;
+    }
+
     public MemberPermission getPermission() {
         return permission;
     }
 
-    public String getCorporation() {
-        return corporation;
+    public void setPermission(MemberPermission permission) {
+        this.permission = permission;
     }
 }

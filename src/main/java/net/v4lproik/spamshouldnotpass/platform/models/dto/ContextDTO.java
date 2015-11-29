@@ -1,22 +1,16 @@
 package net.v4lproik.spamshouldnotpass.platform.models.dto;
 
-import net.v4lproik.spamshouldnotpass.platform.models.RuleType;
-import net.v4lproik.spamshouldnotpass.platform.models.entities.Context;
 import org.joda.time.DateTime;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class RuleDTO {
+public class ContextDTO {
 
     private UUID id;
 
     private String name;
-
-    private String rule;
-
-    private RuleType type;
 
     private UUID userId;
 
@@ -24,17 +18,15 @@ public class RuleDTO {
 
     private DateTime lastUpdate;
 
-    private List<Context> contexts = new ArrayList<>();
+    private List<RuleDTO> rules = new ArrayList<>();
 
-    public RuleDTO(UUID id, String name, String rule, RuleType type, UUID userId, DateTime date, DateTime lastUpdate, List<Context> contexts) {
+    public ContextDTO(UUID id, String name, UUID userId, DateTime date, DateTime lastUpdate, List<RuleDTO> rules) {
         this.id = id;
         this.name = name;
-        this.rule = rule;
-        this.type = type;
         this.userId = userId;
         this.date = date;
         this.lastUpdate = lastUpdate;
-        this.contexts = contexts;
+        this.rules = rules;
     }
 
     public UUID getId() {
@@ -51,22 +43,6 @@ public class RuleDTO {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getRule() {
-        return rule;
-    }
-
-    public void setRule(String rule) {
-        this.rule = rule;
-    }
-
-    public RuleType getType() {
-        return type;
-    }
-
-    public void setType(RuleType type) {
-        this.type = type;
     }
 
     public UUID getUserId() {
@@ -93,11 +69,11 @@ public class RuleDTO {
         this.lastUpdate = lastUpdate;
     }
 
-    public List<Context> getContexts() {
-        return contexts;
+    public List<RuleDTO> getRules() {
+        return rules;
     }
 
-    public void setContexts(List<Context> contexts) {
-        this.contexts = contexts;
+    public void setRules(List<RuleDTO> rules) {
+        this.rules = rules;
     }
 }

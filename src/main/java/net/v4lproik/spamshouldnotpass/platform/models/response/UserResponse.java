@@ -1,10 +1,10 @@
 package net.v4lproik.spamshouldnotpass.platform.models.response;
 
-import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
+import net.v4lproik.spamshouldnotpass.platform.models.dto.BasicUserDTO;
 
 final public class UserResponse extends PlatformResponse {
 
-    private User user;
+    private BasicUserDTO user;
     private String token;
 
     public UserResponse(Status status, Error error, String message) {
@@ -15,13 +15,13 @@ final public class UserResponse extends PlatformResponse {
         super(status, null, null);
     }
 
-    public UserResponse(User user, String token) {
+    public UserResponse(BasicUserDTO user, String token) {
         super();
         this.user = user;
         this.token = token;
     }
 
-    public User getUser() {
+    public BasicUserDTO getUser() {
         return user;
     }
 

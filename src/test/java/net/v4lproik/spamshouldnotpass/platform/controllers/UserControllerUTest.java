@@ -6,7 +6,7 @@ import net.v4lproik.spamshouldnotpass.platform.client.postgres.SqlDatabaseInitia
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
-import net.v4lproik.spamshouldnotpass.platform.models.dto.UserDTO;
+import net.v4lproik.spamshouldnotpass.platform.models.dto.toCreateUserDTO;
 import net.v4lproik.spamshouldnotpass.platform.service.PasswordService;
 import net.v4lproik.spamshouldnotpass.platform.service.UserService;
 import net.v4lproik.spamshouldnotpass.spring.SpringAppConfig;
@@ -81,7 +81,7 @@ public class UserControllerUTest {
 
         MvcResult res = mockMvc.perform(post("/user/create")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(new UserDTO(firstname, lastname, login, password, MemberStatus.USER.toString(), MemberPermission.REGULAR.toString(), corporation)))
+                        .content(objectMapper.writeValueAsString(new toCreateUserDTO(firstname, lastname, login, password, MemberStatus.USER.toString(), MemberPermission.REGULAR.toString(), corporation)))
         )
                 .andExpect(status().isOk()).andReturn();
     }

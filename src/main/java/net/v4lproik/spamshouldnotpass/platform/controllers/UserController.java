@@ -5,7 +5,8 @@ import net.v4lproik.spamshouldnotpass.platform.models.BackendException;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
-import net.v4lproik.spamshouldnotpass.platform.models.dto.UserDTO;
+import net.v4lproik.spamshouldnotpass.platform.models.dto.BasicUserDTO;
+import net.v4lproik.spamshouldnotpass.platform.models.dto.toCreateUserDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
 import net.v4lproik.spamshouldnotpass.platform.models.response.BasicUserResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.PlatformResponse;
@@ -38,10 +39,10 @@ public class UserController {
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public UserResponse authenticate(@RequestBody UserDTO userDTO) {
+    public UserResponse authenticate(@RequestBody toCreateUserDTO toCreateUserDTO) {
 
-        final String login = userDTO.getEmail();
-        final String password = userDTO.getPassword();
+        final String login = toCreateUserDTO.getEmail();
+        final String password = toCreateUserDTO.getPassword();
 
         log.debug(String.format("/user/auth?login=%s&password=%s", login, password));
 
@@ -55,21 +56,24 @@ public class UserController {
         session.setAttribute(CacheSessionRepository.MEMBER_KEY, basicMember);
         sessionRepo.save(session);
 
-        return new UserResponse(user, session.getId());
+        return new UserResponse(
+                convertUserToBasicUserDTO(user),
+                session.getId()
+        );
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public UserResponse create(@RequestBody UserDTO userDTO) throws BackendException {
+    public UserResponse create(@RequestBody toCreateUserDTO toCreateUserDTO) throws BackendException {
 
-        final String email = userDTO.getEmail();
-        final String password = userDTO.getPassword();
-        final String firstname = userDTO.getFirstname();
-        final String lastname = userDTO.getLastname();
-        final MemberStatus status = userDTO.getStatus();
-        final MemberPermission permission = userDTO.getPermission();
-        final String corporation = userDTO.getCorporation();
+        final String email = toCreateUserDTO.getEmail();
+        final String password = toCreateUserDTO.getPassword();
+        final String firstname = toCreateUserDTO.getFirstname();
+        final String lastname = toCreateUserDTO.getLastname();
+        final MemberStatus status = toCreateUserDTO.getStatus();
+        final MemberPermission permission = toCreateUserDTO.getPermission();
+        final String corporation = toCreateUserDTO.getCorporation();
 
         log.debug(String.format("/user/create?email=%s&password=%s", email, password));
 
@@ -91,7 +95,10 @@ public class UserController {
             return new UserResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.UNKNOWN, "User has not been created");
         }
 
-        return new UserResponse(created, null);
+        return new UserResponse(
+                convertUserToBasicUserDTO(created),
+                null
+        );
     }
 
     @UserAccess
@@ -135,6 +142,28 @@ public class UserController {
 
         final BasicMember user = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY));
 
-        return new BasicUserResponse(user);
+        return new BasicUserResponse(
+                convertBasicUserToDTO(user)
+        );
+    }
+
+    private BasicUserDTO convertUserToBasicUserDTO(User entity){
+        return new BasicUserDTO(
+                entity.getId(),
+                entity.getEmail(),
+                entity.getNickname(),
+                entity.getStatus(),
+                entity.getPermission()
+        );
+    }
+
+    private BasicUserDTO convertBasicUserToDTO(BasicMember entity){
+        return new BasicUserDTO(
+                entity.getId(),
+                entity.getEmail(),
+                entity.getNickName(),
+                entity.getStatus(),
+                entity.getPermission()
+        );
     }
 }

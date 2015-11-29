@@ -1,12 +1,12 @@
 package net.v4lproik.spamshouldnotpass.platform.models.response;
 
-import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
+import net.v4lproik.spamshouldnotpass.platform.models.dto.BasicUserDTO;
 
 public class BasicUserResponse extends PlatformResponse {
 
-    private BasicMember user;
+    private BasicUserDTO user;
 
-    public BasicUserResponse(BasicMember user) {
+    public BasicUserResponse(BasicUserDTO user) {
         this.user = user;
     }
 
@@ -14,7 +14,7 @@ public class BasicUserResponse extends PlatformResponse {
         super(status, error, message);
     }
 
-    public BasicMember getUser() {
+    public BasicUserDTO getUser() {
         return user;
     }
 }

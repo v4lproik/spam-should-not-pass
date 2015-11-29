@@ -1,8 +1,6 @@
 package net.v4lproik.spamshouldnotpass.platform.client.postgres;
 
-import net.v4lproik.spamshouldnotpass.platform.models.entities.Rule;
-import net.v4lproik.spamshouldnotpass.platform.models.entities.Scheme;
-import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
+import net.v4lproik.spamshouldnotpass.platform.models.entities.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.postgresql.ds.PGPoolingDataSource;
@@ -54,6 +52,9 @@ public class Config {
         c.addAnnotatedClass(User.class);
         c.addAnnotatedClass(Rule.class);
         c.addAnnotatedClass(Scheme.class);
+        c.addAnnotatedClass(Context.class);
+        c.addAnnotatedClass(RuleInContext.class);
+        c.addAnnotatedClass(CompositePKRulesInContext.class);
 
         c.setProperty("connection.provider_class", "org.hibernate.connection.C3P0ConnectionProvider");
         c.setProperty("c3p0.min_size", "5");

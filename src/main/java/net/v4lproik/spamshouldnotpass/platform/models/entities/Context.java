@@ -1,7 +1,6 @@
 package net.v4lproik.spamshouldnotpass.platform.models.entities;
 
 import com.google.common.base.Objects;
-import net.v4lproik.spamshouldnotpass.platform.models.RuleType;
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
@@ -11,18 +10,13 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name="`Rule`")
-public class Rule {
+@Table(name="`Context`")
+public class Context {
 
     @Id
     private UUID id;
 
     private String name;
-
-    private String rule;
-
-    @Enumerated(EnumType.ORDINAL)
-    private RuleType type;
 
     @Column(name = "`userId`")
     private UUID userId;
@@ -36,19 +30,15 @@ public class Rule {
     private DateTime lastUpdate;
 
     @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "`RulesInContext`",
-            joinColumns = @JoinColumn(name = "`idRule`"), inverseJoinColumns = @JoinColumn(name = "`idContext`")
-    )
-    private List<Context> contexts = new ArrayList<>();
+    @JoinTable(name = "`RulesInContext`", joinColumns = @JoinColumn(name = "`idContext`"), inverseJoinColumns = @JoinColumn(name = "`idRule`"))
+    private List<Rule> rules = new ArrayList<>();
 
-    public Rule() {
+    public Context() {
     }
 
-    public Rule(UUID id, String name, String rule, RuleType type, UUID userId, DateTime date, DateTime lastUpdate) {
+    public Context(UUID id, String name, UUID userId, DateTime date, DateTime lastUpdate) {
         this.id = id;
         this.name = name;
-        this.rule = rule;
-        this.type = type;
         this.userId = userId;
         this.date = date;
         this.lastUpdate = lastUpdate;
@@ -60,14 +50,6 @@ public class Rule {
 
     public String getName() {
         return name;
-    }
-
-    public String getRule() {
-        return rule;
-    }
-
-    public RuleType getType() {
-        return type;
     }
 
     public UUID getUserId() {
@@ -90,14 +72,6 @@ public class Rule {
         this.name = name;
     }
 
-    public void setRule(String rule) {
-        this.rule = rule;
-    }
-
-    public void setType(RuleType type) {
-        this.type = type;
-    }
-
     public void setUserId(UUID userId) {
         this.userId = userId;
     }
@@ -110,12 +84,12 @@ public class Rule {
         this.lastUpdate = lastUpdate;
     }
 
-    public List<Context> getContexts() {
-        return contexts;
+    public List<Rule> getRules() {
+        return rules;
     }
 
-    public void setContexts(List<Context> contexts) {
-        this.contexts = contexts;
+    public void setRules(List<Rule> rules) {
+        this.rules = rules;
     }
 
     @Override
@@ -123,21 +97,19 @@ public class Rule {
         return Objects.toStringHelper(this)
                 .add("id", id)
                 .add("name", name)
-                .add("rule", rule)
-                .add("type", type)
                 .add("userId", userId)
                 .add("date", date)
                 .add("lastUpdate", lastUpdate)
-                .add("contexts", contexts)
+                .add("rules", rules)
                 .toString();
     }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Rule)) return false;
-        Rule rule = (Rule) o;
-        return Objects.equal(getId(), rule.getId());
+        if (!(o instanceof Context)) return false;
+        Context context = (Context) o;
+        return Objects.equal(getId(), context.getId());
     }
 
     @Override

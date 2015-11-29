@@ -1,14 +1,14 @@
 package net.v4lproik.spamshouldnotpass.platform.models.response;
 
-import net.v4lproik.spamshouldnotpass.platform.models.entities.Rule;
+import net.v4lproik.spamshouldnotpass.platform.models.dto.RuleDTO;
 
 import java.util.List;
 
 public class RulesResponse extends PlatformResponse{
 
-    private List<Rule> rules;
+    private List<RuleDTO> rules;
 
-    public RulesResponse(List<Rule> rules) {
+    public RulesResponse(List<RuleDTO> rules) {
         super();
         this.rules = rules;
     }
@@ -18,7 +18,7 @@ public class RulesResponse extends PlatformResponse{
         this.rules = null;
     }
 
-    public List<Rule> getRules() {
+    public List<RuleDTO> getRules() {
         return rules;
     }
 }

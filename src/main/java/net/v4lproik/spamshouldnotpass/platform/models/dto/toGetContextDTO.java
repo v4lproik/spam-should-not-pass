@@ -6,13 +6,13 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import java.util.UUID;
 
-public class UserUUIDDTO {
+public class toGetContextDTO {
 
     @NotEmpty
     private UUID id;
 
     @JsonCreator
-    public UserUUIDDTO(@JsonProperty("id") UUID id) {
+    public toGetContextDTO(@JsonProperty("id") UUID id) {
         this.id = id;
     }
 

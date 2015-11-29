@@ -9,7 +9,8 @@ import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
 import net.v4lproik.spamshouldnotpass.platform.models.SchemeType;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.Properties;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.Property;
-import net.v4lproik.spamshouldnotpass.platform.models.dto.UserUUIDDTO;
+import net.v4lproik.spamshouldnotpass.platform.models.dto.SchemeDTO;
+import net.v4lproik.spamshouldnotpass.platform.models.dto.toGetUserDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.Scheme;
 import net.v4lproik.spamshouldnotpass.platform.models.response.PlatformResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.SchemeResponse;
@@ -85,13 +86,15 @@ public class SpammerController {
         }
 
         return new SchemeResponse(
-                new Scheme(
-                        created.getId(),
-                        objectMapper.writeValueAsString(toList(mapProperties)),
-                        created.getUserId(),
-                        created.getDate(),
-                        created.getLastUpdate(),
-                        created.getType()
+                convertToDTO(
+                        new Scheme(
+                                created.getId(),
+                                objectMapper.writeValueAsString(toList(mapProperties)),
+                                created.getUserId(),
+                                created.getDate(),
+                                created.getLastUpdate(),
+                                created.getType()
+                        )
                 )
         );
     }
@@ -101,7 +104,7 @@ public class SpammerController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public SchemeResponse getAll(HttpServletRequest req,
-                                 @RequestBody UserUUIDDTO userDTO) throws ClassNotFoundException, IOException {
+                                 @RequestBody toGetUserDTO userDTO) throws ClassNotFoundException, IOException {
 
         log.debug(String.format("/spammer/all?%s", userDTO));
 
@@ -114,14 +117,7 @@ public class SpammerController {
         }
 
         return new SchemeResponse(
-                new Scheme(
-                        scheme.getId(),
-                        scheme.getProperties(),
-                        scheme.getUserId(),
-                        scheme.getDate(),
-                        scheme.getLastUpdate(),
-                        scheme.getType()
-                )
+                convertToDTO(scheme)
         );
     }
 
@@ -152,5 +148,16 @@ public class SpammerController {
         }
 
         return propertiesListTmp;
+    }
+
+    private SchemeDTO convertToDTO(Scheme entity){
+        return new SchemeDTO(
+                entity.getId(),
+                entity.getProperties(),
+                entity.getUserId(),
+                entity.getDate(),
+                entity.getLastUpdate(),
+                entity.getType()
+        );
     }
 }

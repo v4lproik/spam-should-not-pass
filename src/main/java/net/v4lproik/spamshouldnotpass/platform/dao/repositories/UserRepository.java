@@ -46,7 +46,10 @@ public class UserRepository implements UserDao {
     public void delete(UUID id) {
         Transaction tx = currentSession().beginTransaction();
 
-        new HibernateDeleteClause(currentSession(), quser).where(quser.id.eq(id));
+        User toDelete = new User();
+        toDelete.setId(id);
+
+        currentSession().delete(toDelete);
 
         currentSession().flush();
         tx.commit();
