@@ -14,7 +14,7 @@ public class SchemeService {
     private static Logger log = Logger.getLogger(SchemeService.class);
 
     private final String ALLOW_CHAR_VARIABLES = "^\\w+$";
-    private final List<String> types = Lists.newArrayList("java.lang.String");
+    private final List<String> types = Lists.newArrayList("java.lang.String", "java.lang.Integer", "java.lang.Boolean");
 
     public boolean isSchemeValid(Map<String, List<String>> map){
 
