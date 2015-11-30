@@ -30,6 +30,21 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: Context; Type: TABLE; Schema: public; Owner: root; Tablespace: 
+--
+
+CREATE TABLE "Context" (
+    id uuid NOT NULL,
+    name text,
+    "lastUpdate" timestamp with time zone,
+    date timestamp with time zone,
+    "userId" uuid
+);
+
+
+ALTER TABLE "Context" OWNER TO root;
+
+--
 -- Name: Rule; Type: TABLE; Schema: public; Owner: root; Tablespace: 
 --
 
@@ -45,6 +60,18 @@ CREATE TABLE "Rule" (
 
 
 ALTER TABLE "Rule" OWNER TO root;
+
+--
+-- Name: RulesInContext; Type: TABLE; Schema: public; Owner: root; Tablespace: 
+--
+
+CREATE TABLE "RulesInContext" (
+    "idRule" uuid,
+    "idContext" uuid
+);
+
+
+ALTER TABLE "RulesInContext" OWNER TO root;
 
 --
 -- Name: Scheme; Type: TABLE; Schema: public; Owner: root; Tablespace: 
@@ -83,6 +110,54 @@ CREATE TABLE "User" (
 ALTER TABLE "User" OWNER TO root;
 
 --
+-- Data for Name: Context; Type: TABLE DATA; Schema: public; Owner: root
+--
+
+COPY "Context" (id, name, "lastUpdate", date, "userId") FROM stdin;
+\.
+
+
+--
+-- Data for Name: Rule; Type: TABLE DATA; Schema: public; Owner: root
+--
+
+COPY "Rule" (id, name, rule, date, "lastUpdate", "userId", type) FROM stdin;
+\.
+
+
+--
+-- Data for Name: RulesInContext; Type: TABLE DATA; Schema: public; Owner: root
+--
+
+COPY "RulesInContext" ("idRule", "idContext") FROM stdin;
+\.
+
+
+--
+-- Data for Name: Scheme; Type: TABLE DATA; Schema: public; Owner: root
+--
+
+COPY "Scheme" (id, properties, "userId", date, "lastUpdate", type) FROM stdin;
+\.
+
+
+--
+-- Data for Name: User; Type: TABLE DATA; Schema: public; Owner: root
+--
+
+COPY "User" (id, firstname, lastname, nickname, email, permission, status, password, date, corporation) FROM stdin;
+\.
+
+
+--
+-- Name: Context_pkey; Type: CONSTRAINT; Schema: public; Owner: root; Tablespace: 
+--
+
+ALTER TABLE ONLY "Context"
+    ADD CONSTRAINT "Context_pkey" PRIMARY KEY (id);
+
+
+--
 -- Name: Rule_pkey; Type: CONSTRAINT; Schema: public; Owner: root; Tablespace: 
 --
 
@@ -104,6 +179,30 @@ ALTER TABLE ONLY "Scheme"
 
 ALTER TABLE ONLY "User"
     ADD CONSTRAINT untitled_table_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: Context_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY "Context"
+    ADD CONSTRAINT "Context_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"(id);
+
+
+--
+-- Name: RulesInContext_idContext_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY "RulesInContext"
+    ADD CONSTRAINT "RulesInContext_idContext_fkey" FOREIGN KEY ("idContext") REFERENCES "Context"(id);
+
+
+--
+-- Name: RulesInContext_idRule_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY "RulesInContext"
+    ADD CONSTRAINT "RulesInContext_idRule_fkey" FOREIGN KEY ("idRule") REFERENCES "Rule"(id);
 
 
 --
