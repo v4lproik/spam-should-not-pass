@@ -1,5 +1,7 @@
 package net.v4lproik.spamshouldnotpass.platform.models.response;
 
+import com.google.common.base.Objects;
+
 public class PlatformResponse {
 
     public enum Status{
@@ -39,5 +41,14 @@ public class PlatformResponse {
 
     public String getMessage() {
         return message;
+    }
+
+    @Override
+    public String toString() {
+        return Objects.toStringHelper(this)
+                .add("status", status)
+                .add("error", error)
+                .add("message", message)
+                .toString();
     }
 }

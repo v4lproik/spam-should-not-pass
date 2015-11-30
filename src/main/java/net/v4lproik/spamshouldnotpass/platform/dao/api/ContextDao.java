@@ -10,6 +10,7 @@ public interface ContextDao {
     Context findById(UUID id);
     Context findByIdWithRules(UUID id);
     Context findByName(String name);
+    Context findByNameWithRules(String name);
     UUID save(Context rule);
     void update(Context rule);
     void delete(UUID id);

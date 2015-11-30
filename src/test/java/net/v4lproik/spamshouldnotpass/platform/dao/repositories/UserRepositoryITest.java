@@ -40,7 +40,7 @@ public class UserRepositoryITest {
         try{
             databaseInitializer.createDatabase();
         }catch (Exception e){
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
         user = new User(

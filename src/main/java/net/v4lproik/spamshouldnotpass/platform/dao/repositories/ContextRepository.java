@@ -124,7 +124,9 @@ public class ContextRepository implements ContextDao {
                 .where(qcontext.id.eq(id))
                 .fetchOne();
 
-        Hibernate.initialize(context.getRules());
+        if (context != null) {
+            Hibernate.initialize(context.getRules());
+        }
 
         currentSession().flush();
         tx.commit();
@@ -142,6 +144,27 @@ public class ContextRepository implements ContextDao {
                 .select(qcontext)
                 .where(qcontext.name.eq(name))
                 .fetchFirst();
+
+        currentSession().flush();
+        tx.commit();
+
+        return context;
+    }
+
+    @Override
+    public Context findByNameWithRules(String name) {
+        Transaction tx = currentSession().beginTransaction();
+
+        HibernateQuery<?> query = new HibernateQuery<Void>(currentSession());
+
+        Context context = query.from(qcontext)
+                .select(qcontext)
+                .where(qcontext.name.eq(name))
+                .fetchFirst();
+
+        if (context != null) {
+            Hibernate.initialize(context.getRules());
+        }
 
         currentSession().flush();
         tx.commit();

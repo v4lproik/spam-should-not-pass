@@ -57,7 +57,7 @@ public class ContextRepositoryITest {
         try{
             databaseInitializer.createDatabase();
         }catch (Exception e){
-            e.printStackTrace();
+//            e.printStackTrace();
         }
 
         user = new User(
@@ -211,11 +211,8 @@ public class ContextRepositoryITest {
 
         //then
         Context toGet = contextRepository.findByIdWithRules(context.getId());
-        List<Rule> toGetRules = toGet.getRules();
 
         assertEquals(toGet, null);
-        assertEquals(toGetRules.size(), 0);
-        assertEquals(toGetRules.contains(rule1), false);
     }
 
 
