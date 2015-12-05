@@ -165,10 +165,10 @@ public class ContextController {
 
         final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
 
-        if (contextDao.findByName(toCreate.getName()) != null){
+        if (contextDao.findByName(toCreate.getName(), userId) != null){
             return new ContextsResponse(PlatformResponse.Status.NOK,
                     PlatformResponse.Error.INVALID_INPUT,
-                    String.format("Context's name %s has alredy been created", toCreate.getName()));
+                    String.format("Context's name [%s] has already been created", toCreate.getName()));
         }
 
         Context context = new Context(

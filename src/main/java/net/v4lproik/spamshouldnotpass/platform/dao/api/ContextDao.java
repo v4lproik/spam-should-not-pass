@@ -9,11 +9,14 @@ import java.util.UUID;
 public interface ContextDao {
     Context findById(UUID id);
     Context findByIdWithRules(UUID id);
-    Context findByName(String name);
-    Context findByNameWithRules(String name);
+
+    Context findByName(String name, UUID userId);
+    Context findByNameWithRules(String name, UUID userId);
+
     UUID save(Context rule);
     void update(Context rule);
     void delete(UUID id);
+
     List<Context> listByUserId(UUID userId);
 
     void addRule(RuleInContext ruleInContext);

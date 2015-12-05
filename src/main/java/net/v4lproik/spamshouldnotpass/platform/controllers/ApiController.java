@@ -102,7 +102,6 @@ public class ApiController {
         final Map<String, List<String>> map = objectMapper.readValue(scheme.getProperties(), Map.class);
         final Map<Class<?>, List<String>> mapClass = schemeService.transformProperties(map);
 
-        //FIXME lastupdate scheme is really important here
         final Class<?> clazz = getOrGenerateClass(userId, lastUpdate, mapClass);
         final Object obj = clazz.newInstance();
 

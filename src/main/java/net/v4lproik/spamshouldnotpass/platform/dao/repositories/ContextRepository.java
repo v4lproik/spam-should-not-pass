@@ -135,14 +135,14 @@ public class ContextRepository implements ContextDao {
     }
 
     @Override
-    public Context findByName(String name) {
+    public Context findByName(String name, UUID userId) {
         Transaction tx = currentSession().beginTransaction();
 
         HibernateQuery<?> query = new HibernateQuery<Void>(currentSession());
 
         Context context = query.from(qcontext)
                 .select(qcontext)
-                .where(qcontext.name.eq(name))
+                .where(qcontext.name.eq(name).and(qcontext.userId.eq(userId)))
                 .fetchFirst();
 
         currentSession().flush();
@@ -152,14 +152,14 @@ public class ContextRepository implements ContextDao {
     }
 
     @Override
-    public Context findByNameWithRules(String name) {
+    public Context findByNameWithRules(String name, UUID userId) {
         Transaction tx = currentSession().beginTransaction();
 
         HibernateQuery<?> query = new HibernateQuery<Void>(currentSession());
 
         Context context = query.from(qcontext)
                 .select(qcontext)
-                .where(qcontext.name.eq(name))
+                .where(qcontext.name.eq(name).and(qcontext.userId.eq(userId)))
                 .fetchFirst();
 
         if (context != null) {
