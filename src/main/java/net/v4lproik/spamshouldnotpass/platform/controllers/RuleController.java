@@ -7,6 +7,7 @@ import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.RuleDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.toCreateRuleDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.toGetRuleDTO;
+import net.v4lproik.spamshouldnotpass.platform.models.dto.toUpdateRuleDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.Rule;
 import net.v4lproik.spamshouldnotpass.platform.models.response.PlatformResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.RulesResponse;
@@ -81,8 +82,8 @@ public class RuleController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public RulesResponse delete(HttpServletRequest req,
-                                @RequestBody toCreateRuleDTO toUpdate) {
+    public RulesResponse update(HttpServletRequest req,
+                                @RequestBody toUpdateRuleDTO toUpdate) {
 
         log.debug(String.format("/api/v1/update-rule"));
 

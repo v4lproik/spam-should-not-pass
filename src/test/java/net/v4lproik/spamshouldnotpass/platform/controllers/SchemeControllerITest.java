@@ -82,13 +82,13 @@ public class SchemeControllerITest {
         mockMvc.perform(post("/scheme/create/user")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("{\"properties\": [{\"variableType\": \"java.lang.String\", \"variableName\": \"test\", \"position\": \"0\", \"visibility\": \"true\" }]}")
-                        .requestAttr(CacheSessionRepository.MEMBER_KEY, new BasicMember(uuid))
+                        .requestAttr(CacheSessionRepository.MEMBER_KEY, new BasicMember(uuid, "email", "nickname", MemberStatus.ADMIN, MemberPermission.REGULAR, "corporation"))
         ).andExpect(status().isOk());
 
         MvcResult result = mockMvc.perform(post("/scheme/get/user")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"id\":\"2823ef37-7265-459d-8df4-8a66729ecf19\"}")
-                .requestAttr(CacheSessionRepository.MEMBER_KEY, new BasicMember(uuid)))
+                .requestAttr(CacheSessionRepository.MEMBER_KEY, new BasicMember(uuid, "email", "nickname", MemberStatus.ADMIN, MemberPermission.REGULAR, "corporation")))
                 .andExpect(status().isOk())
                 .andReturn();
 

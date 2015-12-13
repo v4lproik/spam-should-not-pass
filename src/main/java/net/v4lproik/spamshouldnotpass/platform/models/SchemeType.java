@@ -1,8 +1,8 @@
 package net.v4lproik.spamshouldnotpass.platform.models;
 
 public enum SchemeType {
-    SPAMMER(0, "SPAMMER"),
-    SPAM(1, "SPAM");
+    SPAMMER(0, "USER"),
+    SPAM(1, "DOCUMENT");
 
     private final int position;
     private final String name;

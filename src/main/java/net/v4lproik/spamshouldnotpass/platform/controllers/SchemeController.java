@@ -195,7 +195,7 @@ public class SchemeController {
                 arr = Lists.newArrayList();
             }
 
-            arr.add(new PropertyJSON(property.getVariableName(), property.getPosition(), property.getVisibility()));
+            arr.add(new PropertyJSON(property.getVariableName(), property.getPosition(), property.isLocked(), property.isProvided()));
 
             mapProperties.put(property.getVariableType(), arr);
         }
@@ -207,7 +207,7 @@ public class SchemeController {
         List<Property> propertiesListTmp = Lists.newArrayList();
         for (Map.Entry<String, List<PropertyJSON>> entry : mapProperties.entrySet()) {
             for (PropertyJSON val:entry.getValue()){
-                propertiesListTmp.add(new Property(entry.getKey(), val.getName(), val.getPosition(), val.getVisibility()));
+                propertiesListTmp.add(new Property(entry.getKey(), val.getName(), val.getPosition(), val.isLocked(), val.isProvided()));
             }
         }
 

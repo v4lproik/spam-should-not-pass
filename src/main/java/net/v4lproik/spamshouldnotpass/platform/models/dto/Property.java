@@ -10,21 +10,19 @@ public class Property {
 
     private Integer position;
 
-    private Boolean visibility;
+    private Boolean locked;
+
+    private Boolean provided;
 
     public Property() {
     }
 
-    public Property(String variableType, String variableName) {
-        this.variableType = variableType;
-        this.variableName = variableName;
-    }
-
-    public Property(String variableType, String variableName, Integer position, Boolean visibility) {
+    public Property(String variableType, String variableName, Integer position, Boolean locked, Boolean provided) {
         this.variableType = variableType;
         this.variableName = variableName;
         this.position = position;
-        this.visibility = visibility;
+        this.locked = locked;
+        this.provided = provided;
     }
 
     public String getVariableType() {
@@ -51,12 +49,20 @@ public class Property {
         this.position = position;
     }
 
-    public Boolean getVisibility() {
-        return visibility;
+    public Boolean isLocked() {
+        return locked;
     }
 
-    public void setVisibility(Boolean visibility) {
-        this.visibility = visibility;
+    public void setLocked(Boolean locked) {
+        this.locked = locked;
+    }
+
+    public Boolean isProvided() {
+        return provided;
+    }
+
+    public void setProvided(Boolean provided) {
+        this.provided = provided;
     }
 
     @Override
@@ -65,7 +71,8 @@ public class Property {
                 .add("variableType", variableType)
                 .add("variableName", variableName)
                 .add("position", position)
-                .add("visibility", visibility)
+                .add("locked", locked)
+                .add("provided", provided)
                 .toString();
     }
 }

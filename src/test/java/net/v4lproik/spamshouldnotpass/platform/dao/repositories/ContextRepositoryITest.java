@@ -109,7 +109,7 @@ public class ContextRepositoryITest {
                 rule1Id,
                 "new rule arf !!!!!!!!!!!!!!",
                 "firsname.equals('spidercochon')",
-                RuleType.SPAMMER,
+                RuleType.USER,
                 user.getId(),
                 DateTime.now(),
                 DateTime.now()
@@ -143,7 +143,7 @@ public class ContextRepositoryITest {
                 rule1Id,
                 "new rule arf !!!!!!!!!!!!!!",
                 "firsname.equals('spidercochon')",
-                RuleType.SPAMMER,
+                RuleType.USER,
                 user.getId(),
                 DateTime.now(),
                 DateTime.now()
@@ -160,7 +160,7 @@ public class ContextRepositoryITest {
                 rule2Id,
                 "new rule 2 arf ???????????????????????????????",
                 "firsname.equals('spidercochon')",
-                RuleType.SPAMMER,
+                RuleType.USER,
                 user.getId(),
                 DateTime.now(),
                 DateTime.now()
@@ -194,7 +194,7 @@ public class ContextRepositoryITest {
                 rule1Id,
                 "new rule arf !!!!!!!!!!!!!!",
                 "firsname.equals('spidercochon')",
-                RuleType.SPAMMER,
+                RuleType.USER,
                 user.getId(),
                 DateTime.now(),
                 DateTime.now()

@@ -77,7 +77,7 @@ public class RulesRepositoryITest {
                         ruleUuid,
                         "new rule",
                         "firsname.equals('spidercochon')",
-                        RuleType.SPAMMER,
+                        RuleType.USER,
                         user.getId(),
                         DateTime.now(),
                         DateTime.now()

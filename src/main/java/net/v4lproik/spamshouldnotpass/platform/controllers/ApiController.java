@@ -1,18 +1,18 @@
 package net.v4lproik.spamshouldnotpass.platform.controllers;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import javassist.CannotCompileException;
 import javassist.NotFoundException;
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.ContextRepository;
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.RulesRepository;
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.SchemesRepository;
+import net.v4lproik.spamshouldnotpass.platform.dao.repositories.*;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
-import net.v4lproik.spamshouldnotpass.platform.models.RuleType;
 import net.v4lproik.spamshouldnotpass.platform.models.SchemeType;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.APIInformationDTO;
+import net.v4lproik.spamshouldnotpass.platform.models.dto.PropertyJSON;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.toGetApiDTO;
+import net.v4lproik.spamshouldnotpass.platform.models.entities.AuthorInfo;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.Context;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.Rule;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.Scheme;
@@ -30,7 +30,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -57,9 +56,14 @@ public class ApiController {
     @Autowired
     private RulesRepository rulesRepository;
 
+    @Autowired
+    private AuthorInfoRepository authorInfoRepository;
+
     private static Logger log = Logger.getLogger(ApiController.class.getName());
     private static Map<UUID, DateTime> lastGeneratedTime = Maps.newHashMap();
     private static Map<UUID, Class<?>> lastGeneratedClass = Maps.newHashMap();
+
+    private static String NumberOfDocumentsSubmittedInTheLast5min = "numberOfDocumentsSubmittedInTheLast5min";
 
     @UserAccess
     @RequestMapping(value = "/check", method = RequestMethod.POST)
@@ -69,62 +73,91 @@ public class ApiController {
 
         log.debug(String.format("/api/v1/check?values=%s", toGet.toString()));
 
-        final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
+        final BasicMember basicMember = (BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY);
+
+        final UUID userId = basicMember.getId();
+        final String corporation = basicMember.getCorporation();
 
         boolean spam = false;
         String reason = null;
 
-        //grab info
-        Map<String, String> values = getMap(toGet.getInformation());
-        if (values.isEmpty()){
+        //grab info given by the user
+        Map<String, String> userInformation = getMap(toGet.getInformation());
+        completeUserInformation(userInformation, corporation);
+        if (userInformation.isEmpty()){
             return new SpamResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "Information is missing or invalid");
         }
 
-        //grab context
+        //grab context given by the user
         final String contextName = toGet.getContext();
         if (contextName == null){
             return new SpamResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The context is missing or invalid");
         }
 
+        //check if there are rules bound to this context and if the user has enough permission
         final Context context = contextRepository.findByIdWithRules(UUID.fromString(contextName));
         if (context == null){
             return new SpamResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The context is missing or invalid");
         }
+        if (!context.getUserId().equals(userId)){
+            return new SpamResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "You don't have the permission to query this context");
+        }
+        final List<Rule> rules = context.getRules();
+        if (rules.size() == 0){
+            return new SpamResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "This context has an emtpy rules set");
+        }
 
         //grab the scheme
-        final Scheme scheme = schemesRepository.listByUserIdAndType(userId, SchemeType.SPAM);
+        final List<Scheme> scheme = schemesRepository.listByUserId(userId);
         if (scheme == null){
             log.error(String.format("[ApiController] No scheme repository available for user %s and type %s", userId, SchemeType.SPAM));
             return new SpamResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The scheme is missing or invalid");
         }
 
-        final DateTime lastUpdate = scheme.getLastUpdate();
-        final Map<String, List<String>> map = objectMapper.readValue(scheme.getProperties(), Map.class);
-        final Map<Class<?>, List<String>> mapClass = schemeService.transformProperties(map);
+        if (scheme.size() != 2){
+            log.error(String.format("[ApiController] Scheme list size should not be bigger than 2 for user %s", userId));
+            return new SpamResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The scheme is missing or invalid");
+        }
+
+        final Scheme userScheme = scheme.get(0).getType().equals(SchemeType.SPAMMER) ? scheme.get(0) : scheme.get(1);
+        final Scheme documentScheme = scheme.get(0).getType().equals(SchemeType.SPAM) ? scheme.get(0) : scheme.get(1);
+
+        //transform the scheme
+        final DateTime lastUpdate = userScheme.getLastUpdate();
+        Map<String, List<String>> mapProperties = getStringListMap(userScheme, documentScheme);
+
+        final Map<Class<?>, List<String>> mapClass = schemeService.transformProperties(mapProperties);
 
         final Class<?> clazz = getOrGenerateClass(userId, lastUpdate, mapClass);
         final Object obj = clazz.newInstance();
 
-        mapClass.entrySet()
-                .parallelStream()
-                .forEach(x -> {
-                            for (String variableName:x.getValue()){
-                                try {
-                                    clazz.getMethod(String.format("set%s", Character.toUpperCase(variableName.charAt(0)) + variableName.substring(1)), x.getKey()).invoke(obj, values.get(variableName));
-                                } catch (IllegalAccessException e) {
-                                    e.printStackTrace();
-                                } catch (InvocationTargetException e) {
-                                    e.printStackTrace();
-                                } catch (NoSuchMethodException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                );
+        for (Map.Entry<Class<?>, List<String>> entry : mapClass.entrySet()) {
+            for (String val:entry.getValue()){
+                if (entry.getKey().equals(Integer.class)){
+                    clazz.getMethod(
+                            String.format("set%s", Character.toUpperCase(val.charAt(0)) + val.substring(1)), entry.getKey()).invoke(obj, Integer.parseInt(userInformation.get(val)));
+
+                }else{
+                    clazz.getMethod(
+                            String.format("set%s", Character.toUpperCase(val.charAt(0)) + val.substring(1)), entry.getKey()).invoke(obj, userInformation.get(val));
+
+                }
+            }
+        }
+//            mapClass.entrySet()
+//                .parallelStream()
+//                .forEach(x -> {
+//                            for (String variableName : x.getValue()) {
+//                                try {
+//                                    clazz.getMethod(String.format("set%s", Character.toUpperCase(variableName.charAt(0)) + variableName.substring(1)), x.getKey()).invoke(obj, userInformation.get(variableName));
+//                                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+//                                    e.printStackTrace();
+//                                }
+//                            }
+//                        }
+//                );
 
         StandardEvaluationContext contextEv = new StandardEvaluationContext(obj);
-
-        final List<Rule> rules = rulesRepository.listByUserIdAndType(userId, RuleType.SPAM);
 
         for (Rule rule:rules){
             spam = apply(contextEv, rule.getRule());
@@ -135,73 +168,77 @@ public class ApiController {
             }
         }
 
+        //store information
+        storeInformation(userInformation, corporation);
+
         return new SpamResponse(String.valueOf(spam), reason);
     }
 
+    /**
+     * This function add the information provides by spam slap
+     * @param userInformation
+     */
+    private void completeUserInformation(Map<String, String> userInformation, String corporation) {
+        Integer nbOfCommentsLast5Min = authorInfoRepository.getNumberOfDocumentsSubmittedInTheLast5min(userInformation.get("email"), corporation);
 
-    @UserAccess
-    @RequestMapping(value = "/submit-comment-as-spam", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    @ResponseBody
-    public SpamResponse submitCommentAsSpam(HttpServletRequest req,
-                                     @RequestBody Map<String, String> values) throws Exception {
+        userInformation.put(NumberOfDocumentsSubmittedInTheLast5min, String.valueOf(nbOfCommentsLast5Min));
+    }
 
-        log.debug(String.format("/api/v1/submit-comment-as-spam?values=%s", values.toString()));
+    /**
+     * This function stores the information provided by the user
+     * @param userInformation
+     */
+    private void storeInformation(Map<String, String> userInformation, String corporation) {
+        authorInfoRepository.store(
+                new AuthorInfo(
+                        userInformation.get("email"),
+                        corporation,
+                        Lists.newArrayList("test"),
+                        Integer.parseInt(userInformation.get(NumberOfDocumentsSubmittedInTheLast5min)) + 1
+                )
+        );
+    }
 
-        final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
+    /**
+     * This function merges doc/user schemes
+     * @param userScheme
+     * @param documentScheme
+     * @return
+     * @throws java.io.IOException
+     */
+    private Map<String, List<String>> getStringListMap(Scheme userScheme, Scheme documentScheme) throws java.io.IOException {
+        Map<String, List<PropertyJSON>> mapUser = objectMapper.readValue(userScheme.getProperties(), new TypeReference<Map<String, List<PropertyJSON>>>() {
+        });
+        Map<String, List<PropertyJSON>> mapDocument = objectMapper.readValue(documentScheme.getProperties(), new TypeReference<Map<String, List<PropertyJSON>>>() {});
+        Map<String, List<String>> mapProperties = Maps.newHashMap();
 
-        boolean spam = false;
-        String reason = null;
-
-        //grab the scheme
-        final Scheme scheme = schemesRepository.listByUserIdAndType(userId, SchemeType.SPAM);
-
-        if (scheme == null){
-            throw new Exception(String.format("[ApiController] No scheme repository available for user %s and type %s", userId, SchemeType.SPAM));
-        }
-
-        Map<String, List<String>> map = objectMapper.readValue(scheme.getProperties(), Map.class);
-
-        Map<Class<?>, List<String>> mapClass = schemeService.transformProperties(map);
-
-        Class<?> clazz = SchemeService.generate(
-                "net.v4lproik.spamshouldnotpass.platform.models.entities.Pojo$Generated", mapClass);
-
-        Object obj = clazz.newInstance();
-
-        mapClass.entrySet()
-                .parallelStream()
-                .forEach(x -> {
-                            for (String variableName:x.getValue()){
-                                try {
-                                    clazz.getMethod(String.format("set%s", Character.toUpperCase(variableName.charAt(0)) + variableName.substring(1)), x.getKey()).invoke(obj, values.get(variableName));
-                                } catch (IllegalAccessException e) {
-                                    e.printStackTrace();
-                                } catch (InvocationTargetException e) {
-                                    e.printStackTrace();
-                                } catch (NoSuchMethodException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                );
-
-        StandardEvaluationContext context = new StandardEvaluationContext(obj);
-
-        final List<Rule> rules = rulesRepository.listByUserIdAndType(userId, RuleType.SPAM);
-
-        for (Rule rule:rules){
-            spam = apply(context, rule.getRule());
-            if (spam){
-                reason = rule.getName();
-
-                break;
+        for (Map.Entry<String, List<PropertyJSON>> entry : mapUser.entrySet()) {
+            List<String> propertiesListTmp = Lists.newArrayList();
+            for (PropertyJSON val:entry.getValue()){
+                propertiesListTmp.add(val.getName());
             }
+            mapProperties.put(entry.getKey(), propertiesListTmp);
         }
 
-        return new SpamResponse(String.valueOf(spam), reason);
+        for (Map.Entry<String, List<PropertyJSON>> entry : mapDocument.entrySet()) {
+            List<String> propertiesListTmp = mapProperties.get(entry.getKey());
+
+            for (PropertyJSON val:entry.getValue()){
+                propertiesListTmp.add(val.getName());
+            }
+            mapProperties.put(entry.getKey(), propertiesListTmp);
+        }
+
+
+        return mapProperties;
     }
 
+    /**
+     * Applying a rule against the object filled of information from doc/user schemes
+     * @param context
+     * @param rule
+     * @return
+     */
     private boolean apply(StandardEvaluationContext context, String rule){
 
         boolean resultRule = false;
@@ -213,6 +250,11 @@ public class ApiController {
         return resultRule;
     }
 
+    /**
+     * This map contains a variableName -> variableValue for spel context
+     * @param list
+     * @return
+     */
     private Map<String, String> getMap(List<APIInformationDTO> list){
         Map<String, String> map = Maps.newHashMap();
         for (APIInformationDTO info:list){
@@ -222,6 +264,15 @@ public class ApiController {
         return map;
     }
 
+    /**
+     * Create a new object each time the schemes have changed otherwise it doesn't
+     * @param userId
+     * @param lastUpdate
+     * @param mapClass
+     * @return
+     * @throws NotFoundException
+     * @throws CannotCompileException
+     */
     private Class<?> getOrGenerateClass(final UUID userId, final DateTime lastUpdate, final Map<Class<?>, List<String>> mapClass) throws NotFoundException, CannotCompileException {
         Class<?> clazz = null;
 

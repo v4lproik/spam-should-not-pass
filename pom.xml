@@ -14,6 +14,7 @@
         <spring-session.version>1.0.2.RELEASE</spring-session.version>
         <spring-session-data-redis.version>1.0.2.RELEASE</spring-session-data-redis.version>
         <querydsl.version>4.0.6</querydsl.version>
+        <dynamodb-sdk.version>1.10.40</dynamodb-sdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
@@ -282,5 +283,11 @@
             <artifactId>javassist</artifactId>
             <version>3.20.0-GA</version>
         </dependency>
+        <dependency>
+            <groupId>com.amazonaws</groupId>
+            <artifactId>aws-java-sdk-dynamodb</artifactId>
+            <version>${dynamodb-sdk.version}</version>
+        </dependency>
+
     </dependencies>
 </project>

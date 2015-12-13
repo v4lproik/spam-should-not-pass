@@ -52,7 +52,7 @@ public class UserController {
         }
 
         Session session = sessionRepo.createSession();
-        BasicMember basicMember = new BasicMember(user.getId(), user.getEmail(), user.getNickname(), user.getStatus(), user.getPermission());
+        BasicMember basicMember = new BasicMember(user.getId(), user.getEmail(), user.getNickname(), user.getStatus(), user.getPermission(), user.getCorporation());
         session.setAttribute(CacheSessionRepository.MEMBER_KEY, basicMember);
         sessionRepo.save(session);
 

@@ -103,7 +103,7 @@ public class ContextController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public ContextsResponse delete(HttpServletRequest req,
+    public ContextsResponse update(HttpServletRequest req,
                                    @RequestBody toCreateRuleDTO toUpdate) {
 
         log.debug(String.format("/context/update"));
@@ -126,6 +126,47 @@ public class ContextController {
                         context.getDate(),
                         DateTime.now()
                 ));
+
+        return new ContextsResponse(null);
+    }
+
+    @UserAccess
+    @RequestMapping(value = "/update-and-rules", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public ContextsResponse updateAndRules(HttpServletRequest req,
+                                   @RequestBody toUpdateContextDTO toUpdate) {
+
+        log.debug(String.format("/context/update-and-rules"));
+
+        final Context context = contextDao.findById(toUpdate.getId());
+
+        if (context == null){
+            return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The context does not exist");
+        }
+
+        if (!context.getUserId().equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
+            return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to update this context");
+        }
+
+        contextDao.update(
+                new Context(
+                        toUpdate.getId(),
+                        toUpdate.getName(),
+                        context.getUserId(),
+                        context.getDate(),
+                        DateTime.now()
+                ));
+
+        if (toUpdate.getRulesId() != null){
+            for (UUID ruleId:toUpdate.getRulesId()){
+                contextDao.addRule(
+                        new RuleInContext(
+                                new CompositePKRulesInContext(ruleId, toUpdate.getId())
+                        )
+                );
+            }
+        }
 
         return new ContextsResponse(null);
     }
