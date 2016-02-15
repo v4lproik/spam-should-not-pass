@@ -39,8 +39,6 @@ public class RuleController {
     public RulesResponse list(HttpServletRequest req,
                               @RequestBody toGetRuleDTO toGet) {
 
-        log.debug(String.format("/api/v1/get-rule"));
-
         final Rule rule = ruleDao.findById(toGet.getId());
 
         if (rule == null){
@@ -60,8 +58,6 @@ public class RuleController {
     @ResponseBody
     public RulesResponse delete(HttpServletRequest req,
                                 @RequestBody toGetRuleDTO toGet) {
-
-        log.debug(String.format("/api/v1/delete-rule"));
 
         final Rule rule = ruleDao.findById(toGet.getId());
 
@@ -84,8 +80,6 @@ public class RuleController {
     @ResponseBody
     public RulesResponse update(HttpServletRequest req,
                                 @RequestBody toUpdateRuleDTO toUpdate) {
-
-        log.debug(String.format("/api/v1/update-rule"));
 
         final Rule rule = ruleDao.findById(toUpdate.getId());
 
@@ -115,8 +109,6 @@ public class RuleController {
     @ResponseBody
     public RulesResponse list(HttpServletRequest req) {
 
-        log.debug(String.format("/api/v1/list-rule"));
-
         final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
 
         List<Rule> rules = ruleDao.listByUserId(userId);
@@ -138,8 +130,6 @@ public class RuleController {
     @ResponseBody
     public RulesResponse create(HttpServletRequest req,
                                 @RequestBody toCreateRuleDTO toCreate) {
-
-        log.debug(String.format("/rule/create" + toCreate.toString()));
 
         final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
 

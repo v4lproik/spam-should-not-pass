@@ -187,14 +187,11 @@ public class RuleControllerITest {
                 .andReturn();
 
 
-
-        mockRuleMvc.perform(post("/rule/update")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(
-                        new toUpdateRuleDTO(rule.getId(),rule.getName(), rule.getName(), rule.getType())
-                        )
-                )
-                .requestAttr(CacheSessionRepository.MEMBER_KEY, member)
+        mockRuleMvc.perform(
+                post("/rule/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(new toUpdateRuleDTO(rule.getId(),rule.getName(), rule.getName(), rule.getType())))
+                        .requestAttr(CacheSessionRepository.MEMBER_KEY, member)
 
         )
                 .andExpect(status().isOk())

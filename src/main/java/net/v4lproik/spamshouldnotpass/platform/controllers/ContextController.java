@@ -39,8 +39,6 @@ public class ContextController {
     public ContextsResponse get(HttpServletRequest req,
                                 @RequestBody toGetContextDTO toGet) {
 
-        log.debug(String.format("/context/get"));
-
         final Context context = contextDao.findById(toGet.getId());
 
         if (context == null){
@@ -59,8 +57,6 @@ public class ContextController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public ContextsResponse getAndRules(@RequestBody toGetContextDTO toGet) {
-
-        log.debug(String.format("/context/get"));
 
         final Context context = contextDao.findByIdWithRules(toGet.getId());
 
@@ -81,8 +77,6 @@ public class ContextController {
     @ResponseBody
     public ContextsResponse delete(HttpServletRequest req,
                                    @RequestBody toGetContextDTO toGet) {
-
-        log.debug(String.format("/context/delete"));
 
         final Context context = contextDao.findById(toGet.getId());
 
@@ -105,8 +99,6 @@ public class ContextController {
     @ResponseBody
     public ContextsResponse update(HttpServletRequest req,
                                    @RequestBody toCreateRuleDTO toUpdate) {
-
-        log.debug(String.format("/context/update"));
 
         final Context context = contextDao.findById(toUpdate.getId());
 
@@ -136,8 +128,6 @@ public class ContextController {
     @ResponseBody
     public ContextsResponse updateAndRules(HttpServletRequest req,
                                    @RequestBody toUpdateContextDTO toUpdate) {
-
-        log.debug(String.format("/context/update-and-rules"));
 
         final Context context = contextDao.findById(toUpdate.getId());
 
@@ -178,8 +168,6 @@ public class ContextController {
     @ResponseBody
     public ContextsResponse list(HttpServletRequest req) {
 
-        log.debug(String.format("/context/list"));
-
         final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
 
         List<Context> contexts = contextDao.listByUserId(userId);
@@ -201,8 +189,6 @@ public class ContextController {
     @ResponseBody
     public ContextsResponse create(HttpServletRequest req,
                                    @RequestBody toCreateContextDTO toCreate) {
-
-        log.debug(String.format("/context/create"));
 
         final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
 
@@ -235,8 +221,6 @@ public class ContextController {
     @ResponseBody
     public ContextsResponse addRules(HttpServletRequest req,
                                      @RequestBody RulesInContextDTO toCreate) {
-
-        log.debug(String.format("/context/add-rules"));
 
         final Context context = contextDao.findById(toCreate.getIdContext());
 

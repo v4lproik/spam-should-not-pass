@@ -71,8 +71,6 @@ public class ApiController {
     @ResponseBody
     public SpamResponse check(HttpServletRequest req, @RequestBody toGetApiDTO toGet) throws Exception {
 
-        log.debug(String.format("/api/v1/check?values=%s", toGet.toString()));
-
         final BasicMember basicMember = (BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY);
 
         final UUID userId = basicMember.getId();

@@ -120,8 +120,6 @@ public class UserController {
     @ResponseBody
     public UserResponse logout(HttpServletRequest req) {
 
-        log.debug(String.format("/user/logout"));
-
         //invalidate session and remove it from cache
         final HttpSession session = req.getSession();
         if (session != null){
@@ -137,8 +135,6 @@ public class UserController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public BasicUserResponse profile(HttpServletRequest req) {
-
-        log.debug(String.format("/user/info"));
 
         final BasicMember user = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY));
 

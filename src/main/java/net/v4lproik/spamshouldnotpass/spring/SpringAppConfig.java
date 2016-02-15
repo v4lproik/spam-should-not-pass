@@ -8,6 +8,7 @@ import net.v4lproik.spamshouldnotpass.platform.service.PasswordService;
 import net.v4lproik.spamshouldnotpass.platform.service.SchemeService;
 import net.v4lproik.spamshouldnotpass.platform.service.UserService;
 import net.v4lproik.spamshouldnotpass.spring.interceptor.AuthorisationSessionInterceptor;
+import net.v4lproik.spamshouldnotpass.spring.interceptor.LoggerEndpointInterceptor;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -58,6 +59,11 @@ public class SpringAppConfig extends WebMvcConfigurerAdapter {
         return new AuthorisationSessionInterceptor();
     }
 
+    @Bean
+    public LoggerEndpointInterceptor loggerEndpointInterceptor() {
+        return new LoggerEndpointInterceptor();
+    }
+
 
 
     //=========== DAO ===========//
@@ -88,6 +94,7 @@ public class SpringAppConfig extends WebMvcConfigurerAdapter {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(loggerEndpointInterceptor());
         registry.addInterceptor(authenticationInterceptor());
     }
 }

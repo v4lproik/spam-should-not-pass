@@ -47,7 +47,6 @@ public class SchemeController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public SchemeResponse createDocumentModel(HttpServletRequest req, @RequestBody String str) throws IOException {
-        log.debug(String.format("/create-document?%s", str));
 
         final Properties properties = objectMapper.readValue(str, Properties.class);
         final SchemeType type = SchemeType.SPAM;
@@ -67,8 +66,6 @@ public class SchemeController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public SchemeResponse createUserModel(HttpServletRequest req, @RequestBody String str) throws IOException {
-
-        log.debug(String.format("/create-spammer-document?%s", str));
 
         final Properties properties = objectMapper.readValue(str, Properties.class);
         final SchemeType type = SchemeType.SPAMMER;
@@ -128,8 +125,6 @@ public class SchemeController {
     public SchemeResponse getDoc(HttpServletRequest req,
                                  @RequestBody toGetUserDTO userDTO) throws ClassNotFoundException, IOException {
 
-        log.debug(String.format("/scheme/get/document?%s", userDTO));
-
         final UUID userUUID = userDTO.getId();
 
         final Scheme scheme = schemesRepository.listByUserIdAndType(userUUID, SchemeType.SPAM);
@@ -150,8 +145,6 @@ public class SchemeController {
     @ResponseBody
     public SchemeResponse getUser(HttpServletRequest req,
                                   @RequestBody toGetUserDTO userDTO) throws ClassNotFoundException, IOException {
-
-        log.debug(String.format("/scheme/get/user?%s", userDTO));
 
         final UUID userUUID = userDTO.getId();
 

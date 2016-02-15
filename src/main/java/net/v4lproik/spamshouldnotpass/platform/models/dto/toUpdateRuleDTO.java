@@ -1,5 +1,6 @@
 package net.v4lproik.spamshouldnotpass.platform.models.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import net.v4lproik.spamshouldnotpass.platform.models.RuleType;
 import org.hibernate.validator.constraints.NotEmpty;
@@ -20,11 +21,16 @@ public class toUpdateRuleDTO {
     @NotEmpty
     private RuleType type;
 
+    @JsonCreator
     public toUpdateRuleDTO(@JsonProperty("id") UUID id, @JsonProperty("name") String name, @JsonProperty("rule") String rule, @JsonProperty("type") RuleType type) {
         this.id = id;
         this.name = name;
         this.rule = rule;
         this.type = type;
+    }
+
+    public toUpdateRuleDTO(String name, String rule, RuleType type) {
+        this(null, name, rule, type);
     }
 
     public String getName() {
