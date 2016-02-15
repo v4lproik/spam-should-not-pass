@@ -47,7 +47,7 @@ public class SchemeController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public SchemeResponse createDocumentModel(HttpServletRequest req, @RequestBody String str) throws IOException {
-        log.debug(String.format("/create-spammer-document?%s", str));
+        log.debug(String.format("/create-document?%s", str));
 
         final Properties properties = objectMapper.readValue(str, Properties.class);
         final SchemeType type = SchemeType.SPAM;

@@ -97,17 +97,13 @@ public class RuleController {
             return new RulesResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to update this rule");
         }
 
-        ruleDao.update(
-                new Rule(
-                        toUpdate.getId(),
-                        toUpdate.getName(),
-                        toUpdate.getRule(),
-                        toUpdate.getType(),
-                        rule.getUserId(),
-                        rule.getDate(),
-                        DateTime.now()
+        rule.setId(toUpdate.getId());
+        rule.setName(toUpdate.getName());
+        rule.setRule(toUpdate.getRule());
+        rule.setType(toUpdate.getType());
+        rule.setLastUpdate(DateTime.now());
 
-                ));
+        ruleDao.update(rule);
 
         return new RulesResponse(null);
     }
@@ -143,12 +139,12 @@ public class RuleController {
     public RulesResponse create(HttpServletRequest req,
                                 @RequestBody toCreateRuleDTO toCreate) {
 
-        log.debug(String.format("/rule/create"));
-        log.info(String.format("/rule/create" + toCreate.toString()));
+        log.debug(String.format("/rule/create" + toCreate.toString()));
 
         final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
 
-        Rule create = new Rule(UUID.randomUUID(),
+        Rule create = new Rule(
+                toCreate.getId() != null ? toCreate.getId() : UUID.randomUUID(),
                 toCreate.getName(),
                 toCreate.getRule(),
                 toCreate.getType(),
