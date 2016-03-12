@@ -60,7 +60,7 @@ public class ApiController {
     private static Map<UUID, DateTime> lastGeneratedTime = Maps.newHashMap();
     private static Map<UUID, Class<?>> lastGeneratedClass = Maps.newHashMap();
 
-    private static String docSubmittedLast5Min = "docSubmittedLast5Min";
+    private static String nbDocSubmittedLast5Min = "nbDocSubmittedLast5Min";
 
     @UserAccess
     @RequestMapping(value = "/check", method = RequestMethod.POST)
@@ -179,7 +179,7 @@ public class ApiController {
     private void completeUserInformation(Map<String, String> userInformation, String corporation) {
         Integer nbOfCommentsLast5Min = authorInfoRepository.getNumberOfDocumentsSubmittedInTheLast5min(userInformation.get("email"), corporation);
 
-        userInformation.put(docSubmittedLast5Min, String.valueOf(nbOfCommentsLast5Min));
+        userInformation.put(nbDocSubmittedLast5Min, String.valueOf(nbOfCommentsLast5Min));
     }
 
     /**
@@ -192,7 +192,7 @@ public class ApiController {
                         userInformation.get("email"),
                         corporation,
                         Lists.newArrayList("test"),
-                        Integer.parseInt(userInformation.get(docSubmittedLast5Min)) + 1
+                        Integer.parseInt(userInformation.get(nbDocSubmittedLast5Min)) + 1
                 )
         );
     }

@@ -129,7 +129,7 @@ public class ApiControllerITest {
         schemeId2 = schemesRepository.save(
                 new Scheme(
                         UUID.randomUUID(),
-                        "{\"java.lang.Boolean\":[{\"name\":\"isPremium\",\"position\":4,\"locked\":true,\"provided\":false}],\"java.lang.String\":[{\"name\":\"userId\",\"position\":1,\"locked\":true,\"provided\":false},{\"name\":\"email\",\"position\":2,\"locked\":true,\"provided\":false},{\"name\":\"firstname\",\"position\":3,\"locked\":true,\"provided\":false},{\"name\":\"lastname\",\"position\":3,\"locked\":true,\"provided\":false},{\"name\":\"NumberOfDocumentsSubmittedInTheLast5min\",\"position\":5,\"locked\":true,\"provided\":true}]}",
+                        "{\"java.lang.Boolean\":[{\"name\":\"isPremium\",\"position\":4,\"locked\":true,\"provided\":false}],\"java.lang.String\":[{\"name\":\"userId\",\"position\":1,\"locked\":true,\"provided\":false},{\"name\":\"email\",\"position\":2,\"locked\":true,\"provided\":false},{\"name\":\"firstname\",\"position\":3,\"locked\":true,\"provided\":false},{\"name\":\"lastname\",\"position\":3,\"locked\":true,\"provided\":false},{\"name\":\"nbDocSubmittedLast5Min\",\"position\":5,\"locked\":true,\"provided\":true}]}",
                         user.getId(),
                         DateTime.now(),
                         DateTime.now(),
@@ -217,7 +217,7 @@ public class ApiControllerITest {
         schemeId2 = schemesRepository.save(
                 new Scheme(
                         UUID.randomUUID(),
-                        "{\"java.lang.Integer\":[{\"name\":\"numberOfDocumentsSubmittedInTheLast5min\",\"position\":5,\"locked\":true,\"provided\":true}],\"java.lang.Boolean\":[{\"name\":\"isPremium\",\"position\":4,\"locked\":true,\"provided\":false}],\"java.lang.String\":[{\"name\":\"userId\",\"position\":1,\"locked\":true,\"provided\":false},{\"name\":\"email\",\"position\":2,\"locked\":true,\"provided\":false},{\"name\":\"firstname\",\"position\":3,\"locked\":true,\"provided\":false},{\"name\":\"lastname\",\"position\":3,\"locked\":true,\"provided\":false}]}",
+                        "{\"java.lang.Integer\":[{\"name\":\"nbDocSubmittedLast5Min\",\"position\":5,\"locked\":true,\"provided\":true}],\"java.lang.Boolean\":[{\"name\":\"isPremium\",\"position\":4,\"locked\":true,\"provided\":false}],\"java.lang.String\":[{\"name\":\"userId\",\"position\":1,\"locked\":true,\"provided\":false},{\"name\":\"email\",\"position\":2,\"locked\":true,\"provided\":false},{\"name\":\"firstname\",\"position\":3,\"locked\":true,\"provided\":false},{\"name\":\"lastname\",\"position\":3,\"locked\":true,\"provided\":false}]}",
                         userId,
                         DateTime.now(),
                         DateTime.now(),
@@ -228,7 +228,7 @@ public class ApiControllerITest {
         Rule rule = new Rule(
                 UUID.randomUUID(),
                 "Same message submitted 3 times within 5 minutes",
-                "numberOfDocumentsSubmittedInTheLast5min >= 3",
+                "nbDocSubmittedLast5Min >= 3",
                 RuleType.DOCUMENT,
                 userId,
                 DateTime.now(),
@@ -273,7 +273,7 @@ public class ApiControllerITest {
 
         SpamResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), SpamResponse.class);
 
-        assertEquals(response.getIsSpam().toString(), "false");
+        assertEquals(response.getIsSpam(), "false");
 
 
         //2 msg submit
@@ -286,7 +286,7 @@ public class ApiControllerITest {
 
         response = objectMapper.readValue(result.getResponse().getContentAsString(), SpamResponse.class);
 
-        assertEquals(response.getIsSpam().toString(), "false");
+        assertEquals(response.getIsSpam(), "false");
 
 
         //3 msg submit
@@ -299,7 +299,7 @@ public class ApiControllerITest {
 
         response = objectMapper.readValue(result.getResponse().getContentAsString(), SpamResponse.class);
 
-        assertEquals(response.getIsSpam().toString(), "false");
+        assertEquals(response.getIsSpam(), "false");
 
 
         //4 msg submit
@@ -312,7 +312,7 @@ public class ApiControllerITest {
 
         response = objectMapper.readValue(result.getResponse().getContentAsString(), SpamResponse.class);
 
-        assertEquals(response.getIsSpam().toString(), "true");
+        assertEquals(response.getIsSpam(), "true");
         assertEquals(response.getReason(), rule.getName());
     }
 
