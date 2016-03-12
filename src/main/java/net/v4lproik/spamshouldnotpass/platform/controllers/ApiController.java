@@ -54,22 +54,19 @@ public class ApiController {
     private ContextRepository contextRepository;
 
     @Autowired
-    private RulesRepository rulesRepository;
-
-    @Autowired
     private AuthorInfoRepository authorInfoRepository;
 
     private static Logger log = Logger.getLogger(ApiController.class.getName());
     private static Map<UUID, DateTime> lastGeneratedTime = Maps.newHashMap();
     private static Map<UUID, Class<?>> lastGeneratedClass = Maps.newHashMap();
 
-    private static String NumberOfDocumentsSubmittedInTheLast5min = "numberOfDocumentsSubmittedInTheLast5min";
+    private static String docSubmittedLast5Min = "docSubmittedLast5Min";
 
     @UserAccess
     @RequestMapping(value = "/check", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public SpamResponse check(HttpServletRequest req, @RequestBody toGetApiDTO toGet) throws Exception {
+    public PlatformResponse check(HttpServletRequest req, @RequestBody toGetApiDTO toGet) throws Exception {
 
         final BasicMember basicMember = (BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY);
 
@@ -131,14 +128,17 @@ public class ApiController {
 
         for (Map.Entry<Class<?>, List<String>> entry : mapClass.entrySet()) {
             for (String val:entry.getValue()){
-                if (entry.getKey().equals(Integer.class)){
-                    clazz.getMethod(
-                            String.format("set%s", Character.toUpperCase(val.charAt(0)) + val.substring(1)), entry.getKey()).invoke(obj, Integer.parseInt(userInformation.get(val)));
 
-                }else{
-                    clazz.getMethod(
-                            String.format("set%s", Character.toUpperCase(val.charAt(0)) + val.substring(1)), entry.getKey()).invoke(obj, userInformation.get(val));
+                final String value = userInformation.get(val);
+                if (value != null) {
+                    if (entry.getKey().equals(Integer.class)) {
+                        clazz.getMethod(
+                                String.format("set%s", Character.toUpperCase(val.charAt(0)) + val.substring(1)), entry.getKey()).invoke(obj, Integer.parseInt(value));
 
+                    } else {
+                        clazz.getMethod(
+                                String.format("set%s", Character.toUpperCase(val.charAt(0)) + val.substring(1)), entry.getKey()).invoke(obj, value);
+                    }
                 }
             }
         }
@@ -179,7 +179,7 @@ public class ApiController {
     private void completeUserInformation(Map<String, String> userInformation, String corporation) {
         Integer nbOfCommentsLast5Min = authorInfoRepository.getNumberOfDocumentsSubmittedInTheLast5min(userInformation.get("email"), corporation);
 
-        userInformation.put(NumberOfDocumentsSubmittedInTheLast5min, String.valueOf(nbOfCommentsLast5Min));
+        userInformation.put(docSubmittedLast5Min, String.valueOf(nbOfCommentsLast5Min));
     }
 
     /**
@@ -192,7 +192,7 @@ public class ApiController {
                         userInformation.get("email"),
                         corporation,
                         Lists.newArrayList("test"),
-                        Integer.parseInt(userInformation.get(NumberOfDocumentsSubmittedInTheLast5min)) + 1
+                        Integer.parseInt(userInformation.get(docSubmittedLast5Min)) + 1
                 )
         );
     }

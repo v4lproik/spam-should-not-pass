@@ -22,12 +22,6 @@ public class toCreateRuleDTO {
     @NotEmpty
     private RuleType type;
 
-//    public toCreateRuleDTO(@JsonProperty("name") String name, @JsonProperty("rule") String rule, @JsonProperty("type") RuleType type) {
-//        this.name = name;
-//        this.rule = rule;
-//        this.type = type;
-//    }
-
     public toCreateRuleDTO(@JsonProperty("id") UUID id, @JsonProperty("name") String name, @JsonProperty("rule") String rule, @JsonProperty("type") RuleType type) {
         this.id = id;
         this.name = name;

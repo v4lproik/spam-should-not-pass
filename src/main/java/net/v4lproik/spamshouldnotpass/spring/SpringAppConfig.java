@@ -1,12 +1,16 @@
 package net.v4lproik.spamshouldnotpass.spring;
 
+import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.v4lproik.spamshouldnotpass.platform.client.dynamodb.DynamoDBTablesInitializer;
+import net.v4lproik.spamshouldnotpass.platform.client.dynamodb.DynamoDBTestConfiguration;
 import net.v4lproik.spamshouldnotpass.platform.dao.api.UserDao;
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.platform.service.PasswordService;
 import net.v4lproik.spamshouldnotpass.platform.service.SchemeService;
 import net.v4lproik.spamshouldnotpass.platform.service.UserService;
+import net.v4lproik.spamshouldnotpass.spring.initializer.DynamoDBInitializer;
 import net.v4lproik.spamshouldnotpass.spring.interceptor.AuthorisationSessionInterceptor;
 import net.v4lproik.spamshouldnotpass.spring.interceptor.LoggerEndpointInterceptor;
 import org.hibernate.SessionFactory;
@@ -28,6 +32,9 @@ public class SpringAppConfig extends WebMvcConfigurerAdapter {
 
     @Autowired
     SessionFactory sessionFactory;
+
+    @Autowired
+    DynamoDB dynamoDB;
 
     //=========== REPOSITORY ===========//
 
@@ -90,6 +97,21 @@ public class SpringAppConfig extends WebMvcConfigurerAdapter {
     @Bean
     public UserService userService(UserDao userDao, PasswordService passwordService){
         return new UserService(userDao, passwordService);
+    }
+
+
+    //=========== INITIALIZER ===========//
+
+    @Bean
+    public DynamoDBInitializer dynamoDBInitializer(){
+        return new DynamoDBInitializer(new DynamoDBTablesInitializer(dynamoDB));
+    }
+
+
+    //=========== TEST ===========//
+    @Bean
+    public DynamoDBTestConfiguration dynamoDBTestConfiguration(){
+        return new DynamoDBTestConfiguration(dynamoDB);
     }
 
     @Override

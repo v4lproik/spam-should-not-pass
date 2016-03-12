@@ -12,7 +12,6 @@ import net.v4lproik.spamshouldnotpass.platform.models.entities.Rule;
 import net.v4lproik.spamshouldnotpass.platform.models.response.PlatformResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.RulesResponse;
 import net.v4lproik.spamshouldnotpass.spring.annotation.UserAccess;
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,14 +29,12 @@ public class RuleController {
     @Autowired
     private RuleDao ruleDao;
 
-    private static Logger log = Logger.getLogger(RuleController.class.getName());
-
     @UserAccess
     @RequestMapping(value = "/get", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public RulesResponse list(HttpServletRequest req,
-                              @RequestBody toGetRuleDTO toGet) {
+    public PlatformResponse list(HttpServletRequest req,
+                                 @RequestBody toGetRuleDTO toGet) {
 
         final Rule rule = ruleDao.findById(toGet.getId());
 
@@ -53,33 +50,31 @@ public class RuleController {
     }
 
     @UserAccess
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public RulesResponse delete(HttpServletRequest req,
-                                @RequestBody toGetRuleDTO toGet) {
+    public PlatformResponse list(HttpServletRequest req) {
 
-        final Rule rule = ruleDao.findById(toGet.getId());
+        final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
 
-        if (rule == null){
-            return new RulesResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The rule does not exist");
+        List<Rule> rules = ruleDao.listByUserId(userId);
+
+        List<RuleDTO> rulesDTO = Lists.newArrayList();
+        for (Rule rule: rules){
+            rulesDTO.add(
+                    convertToDTO(rule, false)
+            );
         }
 
-        if (!rule.getUserId().equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
-            return new RulesResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to delete this rule");
-        }
-
-        ruleDao.delete(toGet.getId());
-
-        return new RulesResponse(null);
+        return new RulesResponse(rulesDTO);
     }
 
     @UserAccess
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public RulesResponse update(HttpServletRequest req,
-                                @RequestBody toUpdateRuleDTO toUpdate) {
+    public PlatformResponse update(HttpServletRequest req,
+                                   @RequestBody toUpdateRuleDTO toUpdate) {
 
         final Rule rule = ruleDao.findById(toUpdate.getId());
 
@@ -99,28 +94,7 @@ public class RuleController {
 
         ruleDao.update(rule);
 
-        return new RulesResponse(null);
-    }
-
-
-    @UserAccess
-    @RequestMapping(value = "/list", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    @ResponseBody
-    public RulesResponse list(HttpServletRequest req) {
-
-        final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
-
-        List<Rule> rules = ruleDao.listByUserId(userId);
-
-        List<RuleDTO> rulesDTO = Lists.newArrayList();
-        for (Rule rule: rules){
-            rulesDTO.add(
-                    convertToDTO(rule, false)
-            );
-        }
-
-        return new RulesResponse(rulesDTO);
+        return PlatformResponse.ok();
     }
 
 
@@ -128,8 +102,8 @@ public class RuleController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public RulesResponse create(HttpServletRequest req,
-                                @RequestBody toCreateRuleDTO toCreate) {
+    public PlatformResponse create(HttpServletRequest req,
+                                   @RequestBody toCreateRuleDTO toCreate) {
 
         final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
 
@@ -145,11 +119,29 @@ public class RuleController {
 
         ruleDao.save(create);
 
-        return new RulesResponse(
-                Lists.newArrayList(
-                        convertToDTO(create, false)
-                )
-        );
+        return PlatformResponse.ok();
+    }
+
+    @UserAccess
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public PlatformResponse delete(HttpServletRequest req,
+                                   @RequestBody toGetRuleDTO toGet) {
+
+        final Rule rule = ruleDao.findById(toGet.getId());
+
+        if (rule == null){
+            return new RulesResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The rule does not exist");
+        }
+
+        if (!rule.getUserId().equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
+            return new RulesResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to delete this rule");
+        }
+
+        ruleDao.delete(toGet.getId());
+
+        return PlatformResponse.ok();
     }
 
     private RuleDTO convertToDTO(Rule entity, boolean isContexts){

@@ -14,7 +14,6 @@ import net.v4lproik.spamshouldnotpass.platform.models.response.PlatformResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.SchemeResponse;
 import net.v4lproik.spamshouldnotpass.platform.service.SchemeService;
 import net.v4lproik.spamshouldnotpass.spring.annotation.UserAccess;
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,13 +39,11 @@ public class SchemeController {
     @Autowired
     private SchemesRepository schemesRepository;
 
-    private static Logger log = Logger.getLogger(SchemeController.class.getName());
-
     @UserAccess
     @RequestMapping(value = "/create/document", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public SchemeResponse createDocumentModel(HttpServletRequest req, @RequestBody String str) throws IOException {
+    public PlatformResponse createDocumentModel(HttpServletRequest req, @RequestBody String str) throws IOException {
 
         final Properties properties = objectMapper.readValue(str, Properties.class);
         final SchemeType type = SchemeType.SPAM;
@@ -65,14 +62,14 @@ public class SchemeController {
     @RequestMapping(value = "/create/user", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public SchemeResponse createUserModel(HttpServletRequest req, @RequestBody String str) throws IOException {
+    public PlatformResponse createUserModel(HttpServletRequest req, @RequestBody String str) throws IOException {
 
         final Properties properties = objectMapper.readValue(str, Properties.class);
         final SchemeType type = SchemeType.SPAMMER;
         final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
         final Map<String, List<PropertyJSON>> mapPropertiesJSON = toMapJSON(properties);
 
-
+System.out.println("\n");
         if(!schemeService.isSchemeValid(toMap(properties))){
             return new SchemeResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The scheme cannot be validated");
         }
@@ -122,7 +119,7 @@ public class SchemeController {
     @RequestMapping(value = "/get/document", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public SchemeResponse getDoc(HttpServletRequest req,
+    public PlatformResponse getDoc(HttpServletRequest req,
                                  @RequestBody toGetUserDTO userDTO) throws ClassNotFoundException, IOException {
 
         final UUID userUUID = userDTO.getId();
@@ -143,7 +140,7 @@ public class SchemeController {
     @RequestMapping(value = "/get/user", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public SchemeResponse getUser(HttpServletRequest req,
+    public PlatformResponse getUser(HttpServletRequest req,
                                   @RequestBody toGetUserDTO userDTO) throws ClassNotFoundException, IOException {
 
         final UUID userUUID = userDTO.getId();

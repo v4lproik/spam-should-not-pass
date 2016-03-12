@@ -39,7 +39,7 @@ public class UserController {
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public UserResponse authenticate(@RequestBody toCreateUserDTO toCreateUserDTO) {
+    public PlatformResponse authenticate(@RequestBody toCreateUserDTO toCreateUserDTO) {
 
         final String login = toCreateUserDTO.getEmail();
         final String password = toCreateUserDTO.getPassword();
@@ -62,10 +62,23 @@ public class UserController {
         );
     }
 
+    @UserAccess
+    @RequestMapping(value = "/info", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public PlatformResponse profile(HttpServletRequest req) {
+
+        final BasicMember user = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY));
+
+        return new BasicUserResponse(
+                convertBasicUserToDTO(user)
+        );
+    }
+
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public UserResponse create(@RequestBody toCreateUserDTO toCreateUserDTO) throws BackendException {
+    public PlatformResponse create(@RequestBody toCreateUserDTO toCreateUserDTO) throws BackendException {
 
         final String email = toCreateUserDTO.getEmail();
         final String password = toCreateUserDTO.getPassword();
@@ -105,20 +118,20 @@ public class UserController {
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public UserResponse delete(@RequestBody UUID uuid) {
+    public PlatformResponse delete(@RequestBody UUID uuid) {
 
         log.debug(String.format("/user/delete"));
 
         userService.delete(uuid);
 
-        return new UserResponse(PlatformResponse.Status.OK);
+        return PlatformResponse.ok();
     }
 
     @UserAccess
     @RequestMapping(value = "/logout", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public UserResponse logout(HttpServletRequest req) {
+    public PlatformResponse logout(HttpServletRequest req) {
 
         //invalidate session and remove it from cache
         final HttpSession session = req.getSession();
@@ -127,20 +140,7 @@ public class UserController {
         }
         sessionRepo.delete(req.getHeader("x-auth-token"));
 
-        return new UserResponse(PlatformResponse.Status.OK);
-    }
-
-    @UserAccess
-    @RequestMapping(value = "/info", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    @ResponseBody
-    public BasicUserResponse profile(HttpServletRequest req) {
-
-        final BasicMember user = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY));
-
-        return new BasicUserResponse(
-                convertBasicUserToDTO(user)
-        );
+        return PlatformResponse.ok();
     }
 
     private BasicUserDTO convertUserToBasicUserDTO(User entity){

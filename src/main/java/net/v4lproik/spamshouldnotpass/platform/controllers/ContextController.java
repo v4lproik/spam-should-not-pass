@@ -12,7 +12,6 @@ import net.v4lproik.spamshouldnotpass.platform.models.entities.RuleInContext;
 import net.v4lproik.spamshouldnotpass.platform.models.response.ContextsResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.PlatformResponse;
 import net.v4lproik.spamshouldnotpass.spring.annotation.UserAccess;
-import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,13 +29,11 @@ public class ContextController {
     @Autowired
     private ContextDao contextDao;
 
-    private static Logger log = Logger.getLogger(ContextController.class.getName());
-
     @UserAccess
     @RequestMapping(value = "/get", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public ContextsResponse get(HttpServletRequest req,
+    public PlatformResponse get(HttpServletRequest req,
                                 @RequestBody toGetContextDTO toGet) {
 
         final Context context = contextDao.findById(toGet.getId());
@@ -56,7 +53,7 @@ public class ContextController {
     @RequestMapping(value = "/get-and-rules", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public ContextsResponse getAndRules(@RequestBody toGetContextDTO toGet) {
+    public PlatformResponse getAndRules(@RequestBody toGetContextDTO toGet) {
 
         final Context context = contextDao.findByIdWithRules(toGet.getId());
 
@@ -72,35 +69,67 @@ public class ContextController {
     }
 
     @UserAccess
-    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @RequestMapping(value = "/list", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public ContextsResponse delete(HttpServletRequest req,
-                                   @RequestBody toGetContextDTO toGet) {
+    public PlatformResponse list(HttpServletRequest req) {
 
-        final Context context = contextDao.findById(toGet.getId());
+        final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
 
-        if (context == null){
-            return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The context does not exist");
+        List<Context> contexts = contextDao.listByUserId(userId);
+
+        List<ContextDTO> contextsDTO = Lists.newArrayList();
+        for (Context context: contexts){
+            contextsDTO.add(
+                    convertToDTO(context, false)
+            );
         }
 
-        if (!context.getUserId().equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
-            return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to delete this context");
+        return new ContextsResponse(contextsDTO);
+    }
+
+
+    @UserAccess
+    @RequestMapping(value = "/create", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public PlatformResponse create(HttpServletRequest req,
+                                   @RequestBody toCreateContextDTO toCreate) {
+
+        final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
+
+        if (contextDao.findByName(toCreate.getName(), userId) != null){
+            return new ContextsResponse(PlatformResponse.Status.NOK,
+                    PlatformResponse.Error.INVALID_INPUT,
+                    String.format("Context's name [%s] has already been created", toCreate.getName()));
         }
 
-        contextDao.delete(toGet.getId());
+        UUID contextId = toCreate.getId();
+        if (toCreate.getId() == null){
+            contextId = UUID.randomUUID();
+        }
 
-        return new ContextsResponse(null);
+        final Context context = new Context(
+                contextId,
+                toCreate.getName(),
+                userId,
+                DateTime.now(),
+                DateTime.now()
+        );
+
+        contextDao.save(context);
+
+        return PlatformResponse.ok();
     }
 
     @UserAccess
-    @RequestMapping(value = "/update", method = RequestMethod.POST)
+    @RequestMapping(value = "/add-rules", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public ContextsResponse update(HttpServletRequest req,
-                                   @RequestBody toCreateRuleDTO toUpdate) {
+    public PlatformResponse addRules(HttpServletRequest req,
+                                     @RequestBody RulesInContextDTO toCreate) {
 
-        final Context context = contextDao.findById(toUpdate.getId());
+        final Context context = contextDao.findById(toCreate.getIdContext());
 
         if (context == null){
             return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The context does not exist");
@@ -110,24 +139,23 @@ public class ContextController {
             return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to update this context");
         }
 
-        contextDao.update(
-                new Context(
-                        toUpdate.getId(),
-                        toUpdate.getName(),
-                        context.getUserId(),
-                        context.getDate(),
-                        DateTime.now()
-                ));
+        for (toGetRuleDTO ruleId:toCreate.getListRules()){
+            contextDao.addRule(
+                    new RuleInContext(
+                            new CompositePKRulesInContext(ruleId.getId(), context.getId())
+                    )
+            );
+        }
 
-        return new ContextsResponse(null);
+        return PlatformResponse.ok();
     }
 
     @UserAccess
     @RequestMapping(value = "/update-and-rules", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public ContextsResponse updateAndRules(HttpServletRequest req,
-                                   @RequestBody toUpdateContextDTO toUpdate) {
+    public PlatformResponse updateAndRules(HttpServletRequest req,
+                                           @RequestBody toUpdateContextDTO toUpdate) {
 
         final Context context = contextDao.findById(toUpdate.getId());
 
@@ -158,71 +186,17 @@ public class ContextController {
             }
         }
 
-        return new ContextsResponse(null);
-    }
-
-
-    @UserAccess
-    @RequestMapping(value = "/list", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    @ResponseBody
-    public ContextsResponse list(HttpServletRequest req) {
-
-        final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
-
-        List<Context> contexts = contextDao.listByUserId(userId);
-
-        List<ContextDTO> contextsDTO = Lists.newArrayList();
-        for (Context context: contexts){
-            contextsDTO.add(
-                    convertToDTO(context, false)
-            );
-        }
-
-        return new ContextsResponse(contextsDTO);
-    }
-
-
-    @UserAccess
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    @ResponseStatus(value = HttpStatus.OK)
-    @ResponseBody
-    public ContextsResponse create(HttpServletRequest req,
-                                   @RequestBody toCreateContextDTO toCreate) {
-
-        final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
-
-        if (contextDao.findByName(toCreate.getName(), userId) != null){
-            return new ContextsResponse(PlatformResponse.Status.NOK,
-                    PlatformResponse.Error.INVALID_INPUT,
-                    String.format("Context's name [%s] has already been created", toCreate.getName()));
-        }
-
-        Context context = new Context(
-                UUID.randomUUID(),
-                toCreate.getName(),
-                userId,
-                DateTime.now(),
-                DateTime.now()
-        );
-
-        contextDao.save(context);
-
-        return new ContextsResponse(
-                Lists.newArrayList(
-                        convertToDTO(context, false)
-                )
-        );
+        return PlatformResponse.ok();
     }
 
     @UserAccess
-    @RequestMapping(value = "/add-rules", method = RequestMethod.POST)
+    @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public ContextsResponse addRules(HttpServletRequest req,
-                                     @RequestBody RulesInContextDTO toCreate) {
+    public PlatformResponse update(HttpServletRequest req,
+                                   @RequestBody toCreateRuleDTO toUpdate) {
 
-        final Context context = contextDao.findById(toCreate.getIdContext());
+        final Context context = contextDao.findById(toUpdate.getId());
 
         if (context == null){
             return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The context does not exist");
@@ -232,15 +206,38 @@ public class ContextController {
             return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to update this context");
         }
 
-        for (toGetRuleDTO ruleId:toCreate.getListRules()){
-            contextDao.addRule(
-                    new RuleInContext(
-                            new CompositePKRulesInContext(ruleId.getId(), context.getId())
-                    )
-            );
+        contextDao.update(
+                new Context(
+                        toUpdate.getId(),
+                        toUpdate.getName(),
+                        context.getUserId(),
+                        context.getDate(),
+                        DateTime.now()
+                ));
+
+        return ContextsResponse.ok();
+    }
+
+    @UserAccess
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public PlatformResponse delete(HttpServletRequest req,
+                                   @RequestBody toGetContextDTO toGet) {
+
+        final Context context = contextDao.findById(toGet.getId());
+
+        if (context == null){
+            return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The context does not exist");
         }
 
-        return new ContextsResponse(null);
+        if (!context.getUserId().equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
+            return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to delete this context");
+        }
+
+        contextDao.delete(toGet.getId());
+
+        return PlatformResponse.ok();
     }
 
     private ContextDTO convertToDTO(Context entity, boolean isRules){

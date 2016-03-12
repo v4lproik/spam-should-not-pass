@@ -180,7 +180,8 @@ public class ApiControllerITest {
 
         SpamResponse response = objectMapper.readValue(result.getResponse().getContentAsString(), SpamResponse.class);
 
-        assertEquals(response.getIsSpam().toString(), "true");
+        assertEquals(response.getError(), null);
+        assertEquals(response.getIsSpam(), "true");
         assertEquals(response.getReason(), rule.getName());
     }
 
@@ -260,6 +261,7 @@ public class ApiControllerITest {
         list.add(new APIInformationDTO("object", "title"));
         toGet.setInformation(list);
 
+        System.out.println(objectMapper.writeValueAsString(toGet));
 
         //1 msg submit
         MvcResult result = mockMvc.perform(post("/api/v1/check")

@@ -25,10 +25,23 @@ public class PlatformResponse {
         this.message = null;
     }
 
+    public PlatformResponse(Error error, String message) {
+        this.error = error;
+        this.message = message;
+    }
+
     public PlatformResponse(Status status, Error error, String message) {
         this.status = status;
         this.error = error;
         this.message = message;
+    }
+
+    public static PlatformResponse ok(){
+        return new PlatformResponse();
+    }
+
+    public static PlatformResponse nok(Error error, String message){
+        return new PlatformResponse(error, message);
     }
 
     public Status getStatus() {

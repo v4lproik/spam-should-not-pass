@@ -13,6 +13,10 @@
         <spring.version>4.1.6.RELEASE</spring.version>
         <spring-session.version>1.0.2.RELEASE</spring-session.version>
         <spring-session-data-redis.version>1.0.2.RELEASE</spring-session-data-redis.version>
+        <jetty-servlets>9.3.0.M2</jetty-servlets>
+        <junit>4.11</junit>
+        <mockito-all>1.10.19</mockito-all>
+        <hibernate-jpa-2.1-api>1.0.0.Final</hibernate-jpa-2.1-api>
         <querydsl.version>4.0.6</querydsl.version>
         <dynamodb-sdk.version>1.10.40</dynamodb-sdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -21,6 +25,20 @@
     <build>
         <finalName>spam-should-not-pass</finalName>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.3</version>
+                <configuration>
+                    <verbose>true</verbose>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                    <showWarnings>true</showWarnings>
+                    <fork>true</fork>
+                    <meminitial>512m</meminitial>
+                    <maxmem>2048m</maxmem>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>com.mysema.maven</groupId>
                 <artifactId>apt-maven-plugin</artifactId>
@@ -46,20 +64,6 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.3</version>
-                <configuration>
-                    <verbose>true</verbose>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <showWarnings>true</showWarnings>
-		    		<fork>true</fork>
-		            <meminitial>512m</meminitial>
-		            <maxmem>2048m</maxmem>
-                </configuration>
-            </plugin>
-            <plugin>
                 <groupId>org.eclipse.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <version>9.3.5.v20151012</version>
@@ -75,23 +79,23 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlets</artifactId>
-            <version>9.3.0.M2</version>
+            <version>${jetty-servlets}</version>
         </dependency>
         <dependency>
             <groupId>org.hibernate.javax.persistence</groupId>
             <artifactId>hibernate-jpa-2.1-api</artifactId>
-            <version>1.0.0.Final</version>
+            <version>${hibernate-jpa-2.1-api}</version>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>4.11</version>
+            <version>${junit}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>1.10.19</version>
+            <version>${mockito-all}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
