@@ -1,20 +1,18 @@
 package net.v4lproik.spamshouldnotpass.platform.models.entities;
 
-import java.util.List;
-
-public class AuthorInfo {
+public class AuthorMessageInfo {
     private String authorId;
     private String corporation;
-    private List<String> messages;
+    private String message;
     private Integer numberOfDocumentsSubmittedInTheLast5min;
 
-    public AuthorInfo() {
+    public AuthorMessageInfo() {
     }
 
-    public AuthorInfo(String authorId, String corporation, List<String> messages, Integer numberOfDocumentsSubmittedInTheLast5min) {
+    public AuthorMessageInfo(String authorId, String corporation, String message, Integer numberOfDocumentsSubmittedInTheLast5min) {
         this.authorId = authorId;
         this.corporation = corporation;
-        this.messages = messages;
+        this.message = message;
         this.numberOfDocumentsSubmittedInTheLast5min = numberOfDocumentsSubmittedInTheLast5min;
     }
 
@@ -26,8 +24,8 @@ public class AuthorInfo {
         return corporation;
     }
 
-    public List<String> getMessages() {
-        return messages;
+    public String getMessage() {
+        return message;
     }
 
     public Integer getNumberOfDocumentsSubmittedInTheLast5min() {

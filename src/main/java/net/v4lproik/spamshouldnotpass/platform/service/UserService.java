@@ -7,6 +7,7 @@ import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.NoSuchAlgorithmException;
@@ -15,12 +16,12 @@ import java.util.UUID;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+@Service
 public class UserService {
 
     private static Logger log = Logger.getLogger(UserService.class);
 
     private final UserDao userDao;
-
     private final PasswordService passwordService;
 
     @Autowired

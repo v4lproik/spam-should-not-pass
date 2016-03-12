@@ -21,7 +21,6 @@ public class SqlDatabaseInitializer {
     @NotNull
     private final Environment env;
 
-
     public SqlDatabaseInitializer(final DataSource postgresDataSource, final Environment env){
         this.postgresDataSource = postgresDataSource;
         this.env = env;

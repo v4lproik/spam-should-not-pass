@@ -16,6 +16,7 @@ public final class AuthorMessageTableInitializer {
     public static final String TABLE_NAME = "AuthorMessages";
     public static final String HASH_NAME = "id";
     public static final String RANGE_NAME = "date_corp";
+    public static final String MESSAGE_NAME = "messages";
     public static final String INFO_NAME = "info";
 
     public AuthorMessageTableInitializer(DynamoDB dynamoDB) {

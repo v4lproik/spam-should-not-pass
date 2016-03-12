@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
@@ -16,14 +15,17 @@ import org.springframework.core.env.Environment;
 import javax.sql.DataSource;
 
 
-@Configuration
 @PropertySources(@PropertySource("classpath:properties/app-${spring.profiles.active}.properties"))
 public class Config {
 
     private static final Logger log = LoggerFactory.getLogger(Config.class);
 
+    private final Environment env;
+
     @Autowired
-    private Environment env;
+    public Config(Environment env) {
+        this.env = env;
+    }
 
     @Bean(destroyMethod = "close")
     public SessionFactory sessionFactoryConfig() {

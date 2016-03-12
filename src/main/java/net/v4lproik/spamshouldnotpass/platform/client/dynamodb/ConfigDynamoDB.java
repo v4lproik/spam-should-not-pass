@@ -5,20 +5,20 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
 
-@Configuration
 @PropertySources(@PropertySource("classpath:properties/app-${spring.profiles.active}.properties"))
 public class ConfigDynamoDB {
 
-    @Autowired
     private Environment env;
 
-    @Bean
+    @Autowired
+    public ConfigDynamoDB(Environment env) {
+        this.env = env;
+    }
+
     public DynamoDB dynamoDB() {
 
         final String ACCESS_KEY = env.getRequiredProperty("aws.dynamodb.accessKey");

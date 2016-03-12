@@ -9,19 +9,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
 
-@Configuration
 @PropertySources(@PropertySource("classpath:properties/app-${spring.profiles.active}.properties"))
 public class ConfigES {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigES.class);
 
+    private final Environment env;
+
     @Autowired
-    private Environment env;
+    public ConfigES(Environment env) {
+        this.env = env;
+    }
 
     @Bean(destroyMethod = "close")
     public TransportClient node() {

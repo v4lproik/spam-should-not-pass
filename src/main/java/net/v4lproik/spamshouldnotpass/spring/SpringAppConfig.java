@@ -2,14 +2,13 @@ package net.v4lproik.spamshouldnotpass.spring;
 
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import net.v4lproik.spamshouldnotpass.platform.client.dynamodb.ConfigDynamoDB;
 import net.v4lproik.spamshouldnotpass.platform.client.dynamodb.DynamoDBTablesInitializer;
 import net.v4lproik.spamshouldnotpass.platform.client.dynamodb.DynamoDBTestConfiguration;
-import net.v4lproik.spamshouldnotpass.platform.dao.api.UserDao;
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.UserRepository;
-import net.v4lproik.spamshouldnotpass.platform.service.PasswordService;
-import net.v4lproik.spamshouldnotpass.platform.service.SchemeService;
-import net.v4lproik.spamshouldnotpass.platform.service.UserService;
+import net.v4lproik.spamshouldnotpass.platform.client.elasticsearch.ConfigES;
+import net.v4lproik.spamshouldnotpass.platform.client.elasticsearch.ElasticsearchTestConfiguration;
+import net.v4lproik.spamshouldnotpass.platform.client.postgres.Config;
+import net.v4lproik.spamshouldnotpass.platform.client.postgres.DatabaseTestConfiguration;
 import net.v4lproik.spamshouldnotpass.spring.initializer.DynamoDBInitializer;
 import net.v4lproik.spamshouldnotpass.spring.interceptor.AuthorisationSessionInterceptor;
 import net.v4lproik.spamshouldnotpass.spring.interceptor.LoggerEndpointInterceptor;
@@ -18,9 +17,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 import org.springframework.expression.ExpressionParser;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
-import org.springframework.session.SessionRepository;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
@@ -31,23 +30,36 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 public class SpringAppConfig extends WebMvcConfigurerAdapter {
 
     @Autowired
-    SessionFactory sessionFactory;
+    public Environment env;
 
-    @Autowired
-    DynamoDB dynamoDB;
-
-    //=========== REPOSITORY ===========//
-
-    @Autowired
-    SessionRepository sessionRepository;
-
+    //=========== CLIENT ===========//
     @Bean
-    public CacheSessionRepository cacheSessionRepository(SessionRepository sessionRepository){
-        return new CacheSessionRepository(sessionRepository);
+    public Config config(){
+        return new Config(env);
     }
 
-    //=========== MAPPER ===========//
+    @Bean
+    public SessionFactory sessionFactory(Config config){
+        return config.sessionFactoryConfig();
+    }
 
+    @Bean
+    public ConfigES configES(){
+        return new ConfigES(env);
+    }
+
+    @Bean
+    public ConfigDynamoDB configDynamoDB(){
+        return new ConfigDynamoDB(env);
+    }
+
+    @Bean
+    public DynamoDB dynamoDB(ConfigDynamoDB configDynamoDB){
+        return configDynamoDB.dynamoDB();
+    }
+
+
+    //=========== MAPPER ===========//
     @Bean
     public ExpressionParser parser() {
         return new SpelExpressionParser();
@@ -60,7 +72,6 @@ public class SpringAppConfig extends WebMvcConfigurerAdapter {
 
 
     //=========== INTERCEPTOR ===========//
-
     @Bean
     public AuthorisationSessionInterceptor authenticationInterceptor() {
         return new AuthorisationSessionInterceptor();
@@ -72,46 +83,27 @@ public class SpringAppConfig extends WebMvcConfigurerAdapter {
     }
 
 
-
-    //=========== DAO ===========//
-
-    @Bean
-    public UserDao userDao() {
-        return new UserRepository(sessionFactory);
-    }
-
-
-
-    //=========== SERVICE ===========//
-
-    @Bean
-    PasswordService passwordService() {
-        return new PasswordService();
-    }
-
-    @Bean
-    SchemeService schemeService() {
-        return new SchemeService();
-    }
-
-    @Bean
-    public UserService userService(UserDao userDao, PasswordService passwordService){
-        return new UserService(userDao, passwordService);
-    }
-
-
     //=========== INITIALIZER ===========//
-
     @Bean
-    public DynamoDBInitializer dynamoDBInitializer(){
+    public DynamoDBInitializer dynamoDBInitializer(DynamoDB dynamoDB){
         return new DynamoDBInitializer(new DynamoDBTablesInitializer(dynamoDB));
     }
 
 
     //=========== TEST ===========//
     @Bean
-    public DynamoDBTestConfiguration dynamoDBTestConfiguration(){
+    public DynamoDBTestConfiguration dynamoDBTestConfiguration(DynamoDB dynamoDB){
         return new DynamoDBTestConfiguration(dynamoDB);
+    }
+
+    @Bean
+    public DatabaseTestConfiguration databaseTestConfiguration(){
+        return new DatabaseTestConfiguration(env);
+    }
+
+    @Bean
+    public ElasticsearchTestConfiguration elasticsearchTestConfiguration(){
+        return new ElasticsearchTestConfiguration();
     }
 
     @Override

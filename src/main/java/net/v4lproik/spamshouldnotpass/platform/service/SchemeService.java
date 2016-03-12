@@ -3,12 +3,14 @@ package net.v4lproik.spamshouldnotpass.platform.service;
 import com.google.common.collect.Lists;
 import javassist.*;
 import org.apache.log4j.Logger;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Service
 public class SchemeService {
 
     private static Logger log = Logger.getLogger(SchemeService.class);

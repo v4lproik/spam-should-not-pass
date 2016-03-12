@@ -12,7 +12,7 @@ import net.v4lproik.spamshouldnotpass.platform.models.SchemeType;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.APIInformationDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.PropertyJSON;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.toGetApiDTO;
-import net.v4lproik.spamshouldnotpass.platform.models.entities.AuthorInfo;
+import net.v4lproik.spamshouldnotpass.platform.models.entities.AuthorMessageInfo;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.Context;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.Rule;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.Scheme;
@@ -61,6 +61,7 @@ public class ApiController {
     private static Map<UUID, Class<?>> lastGeneratedClass = Maps.newHashMap();
 
     private static String nbDocSubmittedLast5Min = "nbDocSubmittedLast5Min";
+    private static String nbSameDocSubmittedLast5Min = "nbSameDocSubmittedLast5Min";
 
     @UserAccess
     @RequestMapping(value = "/check", method = RequestMethod.POST)
@@ -142,18 +143,6 @@ public class ApiController {
                 }
             }
         }
-//            mapClass.entrySet()
-//                .parallelStream()
-//                .forEach(x -> {
-//                            for (String variableName : x.getValue()) {
-//                                try {
-//                                    clazz.getMethod(String.format("set%s", Character.toUpperCase(variableName.charAt(0)) + variableName.substring(1)), x.getKey()).invoke(obj, userInformation.get(variableName));
-//                                } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-//                                    e.printStackTrace();
-//                                }
-//                            }
-//                        }
-//                );
 
         StandardEvaluationContext contextEv = new StandardEvaluationContext(obj);
 
@@ -177,9 +166,11 @@ public class ApiController {
      * @param userInformation
      */
     private void completeUserInformation(Map<String, String> userInformation, String corporation) {
-        Integer nbOfCommentsLast5Min = authorInfoRepository.getNumberOfDocumentsSubmittedInTheLast5min(userInformation.get("email"), corporation);
+        Integer nbOfCommentsLast5Min = authorInfoRepository.getNumberOfDocumentsSubmittedInTheLast5min(userInformation.getOrDefault("email", ""), corporation);
+        Integer nbOfSameCommentsLast5Min = authorInfoRepository.getNumberOfSameDocumentsSubmittedInTheLast5min(userInformation.getOrDefault("email", ""), corporation, userInformation.getOrDefault("content", ""));
 
         userInformation.put(nbDocSubmittedLast5Min, String.valueOf(nbOfCommentsLast5Min));
+        userInformation.put(nbSameDocSubmittedLast5Min, String.valueOf(nbOfCommentsLast5Min));
     }
 
     /**
@@ -188,10 +179,10 @@ public class ApiController {
      */
     private void storeInformation(Map<String, String> userInformation, String corporation) {
         authorInfoRepository.store(
-                new AuthorInfo(
-                        userInformation.get("email"),
+                new AuthorMessageInfo(
+                        userInformation.getOrDefault("email", ""),
                         corporation,
-                        Lists.newArrayList("test"),
+                        userInformation.getOrDefault("content", ""),
                         Integer.parseInt(userInformation.get(nbDocSubmittedLast5Min)) + 1
                 )
         );

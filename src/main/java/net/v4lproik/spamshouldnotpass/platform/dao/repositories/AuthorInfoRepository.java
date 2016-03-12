@@ -6,8 +6,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterators;
+import com.google.common.collect.Lists;
 import net.v4lproik.spamshouldnotpass.platform.client.dynamodb.AuthorMessageTableInitializer;
-import net.v4lproik.spamshouldnotpass.platform.models.entities.AuthorInfo;
+import net.v4lproik.spamshouldnotpass.platform.models.entities.AuthorMessageInfo;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Repository;
 import javax.annotation.Nullable;
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -38,19 +40,20 @@ public class AuthorInfoRepository {
         this.objectMapper = checkNotNull(objectMapper);
     }
 
-    public void store(AuthorInfo authorInfo){
-        checkNotNull(authorInfo);
-        checkNotNull(authorInfo.getAuthorId());
-//        checkNotNull(authorInfo.getMessages());
-        checkNotNull(authorInfo.getNumberOfDocumentsSubmittedInTheLast5min());
+    public void store(AuthorMessageInfo authorMessageInfo){
+        checkNotNull(authorMessageInfo);
+        checkNotNull(authorMessageInfo.getAuthorId());
+        checkNotNull(authorMessageInfo.getMessage());
+        checkNotNull(authorMessageInfo.getNumberOfDocumentsSubmittedInTheLast5min());
 
         final Table table = dynamoDB.getTable(tableName);
 
         try {
             Item item = new Item()
-                    .withPrimaryKey(AuthorMessageTableInitializer.HASH_NAME, authorInfo.getAuthorId())
-                    .withString(AuthorMessageTableInitializer.RANGE_NAME, String.format("%s_%s", DateTime.now().toDateTime(DateTimeZone.UTC), authorInfo.getCorporation()))
-                    .withJSON(AuthorMessageTableInitializer.INFO_NAME, this.objectMapper.writeValueAsString(authorInfo));
+                    .withPrimaryKey(AuthorMessageTableInitializer.HASH_NAME, authorMessageInfo.getAuthorId())
+                    .withString(AuthorMessageTableInitializer.RANGE_NAME, String.format("%s_%s", DateTime.now().toDateTime(DateTimeZone.UTC), authorMessageInfo.getCorporation()))
+                    .withString(AuthorMessageTableInitializer.MESSAGE_NAME, authorMessageInfo.getMessage())
+                    .withJSON(AuthorMessageTableInitializer.INFO_NAME, this.objectMapper.writeValueAsString(authorMessageInfo));
 
             table.putItem(item);
         } catch (JsonProcessingException e) {
@@ -58,7 +61,7 @@ public class AuthorInfoRepository {
         }
     }
 
-    public Optional<AuthorInfo> get(String authorId) {
+    public Optional<AuthorMessageInfo> get(String authorId) {
         checkNotNull(authorId);
 
         final Table table = dynamoDB.getTable(tableName);
@@ -68,7 +71,7 @@ public class AuthorInfoRepository {
 
         ItemCollection<QueryOutcome> items = table.query(query);
 
-        Iterator<AuthorInfo> transform = parseResult(items);
+        Iterator<AuthorMessageInfo> transform = parseResult(items);
 
         if (transform.hasNext()){
             return Optional.of(transform.next());
@@ -104,16 +107,37 @@ public class AuthorInfoRepository {
         return Iterators.size(parseResult(items));
     }
 
-    private Iterator<AuthorInfo> parseResult(ItemCollection<QueryOutcome> items){
+    public Integer getNumberOfSameDocumentsSubmittedInTheLast5min(String authorId, String corporation, String content) {
+        checkNotNull(authorId);
 
-        return Iterators.transform(items.iterator(), new Function<Item, AuthorInfo>() {
+        final Table table = dynamoDB.getTable(tableName);
+
+        RangeKeyCondition rangeKeyCondition = new RangeKeyCondition(AuthorMessageTableInitializer.RANGE_NAME);
+        rangeKeyCondition = rangeKeyCondition.ge(DateTime.now().minusMinutes(5).toDateTime(DateTimeZone.UTC).toString());
+
+        List<QueryFilter> queryFilters = Lists.newArrayList();
+        queryFilters.add(new QueryFilter(AuthorMessageTableInitializer.MESSAGE_NAME).eq(content));
+
+        QuerySpec query = new QuerySpec()
+                .withHashKey(AuthorMessageTableInitializer.HASH_NAME, authorId)
+                .withRangeKeyCondition(rangeKeyCondition)
+                .withQueryFilters(queryFilters.toArray(new QueryFilter[queryFilters.size()]));
+
+        ItemCollection<QueryOutcome> items = table.query(query);
+
+        return Iterators.size(parseResult(items));
+    }
+
+    private Iterator<AuthorMessageInfo> parseResult(ItemCollection<QueryOutcome> items){
+
+        return Iterators.transform(items.iterator(), new Function<Item, AuthorMessageInfo>() {
 
             @Nullable
             @Override
-            public AuthorInfo apply(Item item) {
-                AuthorInfo result = null;
+            public AuthorMessageInfo apply(Item item) {
+                AuthorMessageInfo result = null;
                 try {
-                    result = objectMapper.readValue(item.getJSON(AuthorMessageTableInitializer.INFO_NAME), AuthorInfo.class);
+                    result = objectMapper.readValue(item.getJSON(AuthorMessageTableInitializer.INFO_NAME), AuthorMessageInfo.class);
                 } catch (IOException e) {
                     log.error("Unable to deserialize the properties for author info.", e);
                 }
