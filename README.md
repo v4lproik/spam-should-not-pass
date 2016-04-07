@@ -1,6 +1,5 @@
 # Spam Should Not Pass
-[![Circle CI](https://circleci.com/gh/v4lproik/spam-should-not-pass.svg?style=svg)](https://circleci.com/gh/v4lproik/spam-should-not-pass)
-
+[![Circle CI](https://circleci.com/gh/v4lproik/spam-should-not-pass/tree/master.svg?style=svg&circle-token=9ffca1e5226209ebb2be4b03a1218288b9eb7ce1)](https://circleci.com/gh/v4lproik/spam-should-not-pass/tree/master)
 ## Features implemented
 
 It provides a powerful JEE platform that performs spam checks
