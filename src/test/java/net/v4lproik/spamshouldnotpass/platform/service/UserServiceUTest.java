@@ -1,7 +1,7 @@
 package net.v4lproik.spamshouldnotpass.platform.service;
 
 import junit.framework.TestCase;
-import net.v4lproik.spamshouldnotpass.platform.dao.api.UserDao;
+import net.v4lproik.spamshouldnotpass.platform.dao.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 public class UserServiceUTest extends TestCase {
 
     @Mock
-    private UserDao userDao;
+    private UserRepository userRepository;
 
     @Mock
     private PasswordService passwordService;
@@ -61,7 +61,7 @@ public class UserServiceUTest extends TestCase {
         );
 
         when(passwordService.generateHash(user.getPassword())).thenReturn("encryptedPassword");
-        when(userDao.save(userExpected)).thenReturn(userExpected.getId());
+        when(userRepository.save(userExpected)).thenReturn(userExpected.getId());
 
         User generated = userService.save(
                 user.getFirstname(),
@@ -73,6 +73,6 @@ public class UserServiceUTest extends TestCase {
                 user.getCorporation()
         );
 
-        verify(userDao, atLeast(1)).save(any(User.class));
+        verify(userRepository, atLeast(1)).save(any(User.class));
     }
 }

@@ -4,12 +4,11 @@ import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.v4lproik.spamshouldnotpass.platform.client.dynamodb.ConfigDynamoDB;
 import net.v4lproik.spamshouldnotpass.platform.client.dynamodb.DynamoDBTablesInitializer;
-import net.v4lproik.spamshouldnotpass.platform.client.dynamodb.DynamoDBTestConfiguration;
 import net.v4lproik.spamshouldnotpass.platform.client.elasticsearch.ConfigES;
-import net.v4lproik.spamshouldnotpass.platform.client.elasticsearch.ElasticsearchTestConfiguration;
 import net.v4lproik.spamshouldnotpass.platform.client.postgres.Config;
-import net.v4lproik.spamshouldnotpass.platform.client.postgres.DatabaseTestConfiguration;
+import net.v4lproik.spamshouldnotpass.platform.dao.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.spring.initializer.DynamoDBInitializer;
+import net.v4lproik.spamshouldnotpass.spring.interceptor.AuthorisationApiKeyInterceptor;
 import net.v4lproik.spamshouldnotpass.spring.interceptor.AuthorisationSessionInterceptor;
 import net.v4lproik.spamshouldnotpass.spring.interceptor.LoggerEndpointInterceptor;
 import org.hibernate.SessionFactory;
@@ -31,6 +30,9 @@ public class SpringAppConfig extends WebMvcConfigurerAdapter {
 
     @Autowired
     public Environment env;
+
+    @Autowired
+    public UserRepository userRepository;
 
     //=========== CLIENT ===========//
     @Bean
@@ -82,6 +84,11 @@ public class SpringAppConfig extends WebMvcConfigurerAdapter {
         return new LoggerEndpointInterceptor();
     }
 
+    @Bean
+    public AuthorisationApiKeyInterceptor authorisationApiKeyInterceptor(UserRepository userRepository){
+        return new AuthorisationApiKeyInterceptor(userRepository);
+    }
+
 
     //=========== INITIALIZER ===========//
     @Bean
@@ -90,25 +97,10 @@ public class SpringAppConfig extends WebMvcConfigurerAdapter {
     }
 
 
-    //=========== TEST ===========//
-    @Bean
-    public DynamoDBTestConfiguration dynamoDBTestConfiguration(DynamoDB dynamoDB){
-        return new DynamoDBTestConfiguration(dynamoDB);
-    }
-
-    @Bean
-    public DatabaseTestConfiguration databaseTestConfiguration(){
-        return new DatabaseTestConfiguration(env);
-    }
-
-    @Bean
-    public ElasticsearchTestConfiguration elasticsearchTestConfiguration(){
-        return new ElasticsearchTestConfiguration();
-    }
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(loggerEndpointInterceptor());
+        registry.addInterceptor(authorisationApiKeyInterceptor(userRepository));
         registry.addInterceptor(authenticationInterceptor());
     }
 }

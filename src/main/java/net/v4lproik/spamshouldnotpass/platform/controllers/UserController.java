@@ -1,7 +1,7 @@
 package net.v4lproik.spamshouldnotpass.platform.controllers;
 
 import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
-import net.v4lproik.spamshouldnotpass.platform.models.BackendException;
+import net.v4lproik.spamshouldnotpass.platform.dao.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
@@ -11,6 +11,7 @@ import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
 import net.v4lproik.spamshouldnotpass.platform.models.response.BasicUserResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.PlatformResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.UserResponse;
+import net.v4lproik.spamshouldnotpass.platform.service.ApiKeyService;
 import net.v4lproik.spamshouldnotpass.platform.service.UserService;
 import net.v4lproik.spamshouldnotpass.spring.annotation.UserAccess;
 import org.apache.log4j.Logger;
@@ -32,6 +33,12 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ApiKeyService apiKeyService;
 
     @Autowired
     private CacheSessionRepository sessionRepo;
@@ -78,7 +85,7 @@ public class UserController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public PlatformResponse create(@RequestBody toCreateUserDTO toCreateUserDTO) throws BackendException {
+    public PlatformResponse create(@RequestBody toCreateUserDTO toCreateUserDTO){
 
         final String email = toCreateUserDTO.getEmail();
         final String password = toCreateUserDTO.getPassword();
@@ -115,12 +122,24 @@ public class UserController {
     }
 
     @UserAccess
+    @RequestMapping(value = "/create-api-key", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public PlatformResponse create_api_key(HttpServletRequest req) {
+
+        final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
+        final String apiKey = apiKeyService.generate();
+
+        userRepository.saveApiKey(userId, apiKey);
+
+        return PlatformResponse.ok();
+    }
+
+    @UserAccess
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public PlatformResponse delete(@RequestBody UUID uuid) {
-
-        log.debug(String.format("/user/delete"));
 
         userService.delete(uuid);
 

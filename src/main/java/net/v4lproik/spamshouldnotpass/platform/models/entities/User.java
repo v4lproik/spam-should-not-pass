@@ -33,6 +33,9 @@ public class User {
 
     private MemberPermission permission;
 
+    @Column(name = "api_key")
+    private String apiKey;
+
     @Column
     @Type(type="org.jadira.usertype.dateandtime.joda.PersistentDateTime")
     private DateTime date;
@@ -44,6 +47,20 @@ public class User {
 
     public User(UUID id) {
         this.id = id;
+    }
+
+    public User(UUID id, String firstname, String lastname, String email, String nickname, String password, MemberStatus status, MemberPermission permission, String apiKey, DateTime date, String corporation) {
+        this.id = id;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.nickname = nickname;
+        this.password = password;
+        this.status = status;
+        this.permission = permission;
+        this.apiKey = apiKey;
+        this.date = date;
+        this.corporation = corporation;
     }
 
     public User(UUID id, String firstname, String lastname, String email, String nickname, String password, MemberStatus status, MemberPermission permission, DateTime date, String corporation) {
@@ -139,6 +156,14 @@ public class User {
         this.corporation = corporation;
     }
 
+    public String getApiKey() {
+        return apiKey;
+    }
+
+    public void setApiKey(String apiKey) {
+        this.apiKey = apiKey;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -164,6 +189,7 @@ public class User {
                 .add("password", password)
                 .add("status", status)
                 .add("permission", permission)
+                .add("apiKey", apiKey)
                 .add("date", date)
                 .add("corporation", corporation)
                 .toString();

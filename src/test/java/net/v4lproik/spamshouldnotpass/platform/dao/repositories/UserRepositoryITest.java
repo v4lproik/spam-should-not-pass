@@ -66,6 +66,15 @@ public class UserRepositoryITest {
         assertEquals(userRepository.findById(user.getId()), user);
     }
 
+    @Test
+    public void generateApiKey() throws Exception {
+        userRepository.save(user);
+        userRepository.saveApiKey(user.getId(), "test");
+        assertEquals(userRepository.findById(user.getId()), user);
+        assertEquals(userRepository.findById(user.getId()).getApiKey(), "test");
+    }
+
+
     @After
     public void cleanUp() throws Exception {
         userRepository.delete(user.getId());

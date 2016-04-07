@@ -2,7 +2,7 @@ package net.v4lproik.spamshouldnotpass.platform.dao.repositories;
 
 import com.querydsl.jpa.hibernate.HibernateDeleteClause;
 import com.querydsl.jpa.hibernate.HibernateQuery;
-import net.v4lproik.spamshouldnotpass.platform.dao.api.UserDao;
+import com.querydsl.jpa.hibernate.HibernateUpdateClause;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.QUser;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
 import org.hibernate.Session;
@@ -16,7 +16,7 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public class UserRepository implements UserDao {
+public class UserRepository {
 
     private static final Logger log = LoggerFactory.getLogger(UserRepository.class);
 
@@ -30,7 +30,6 @@ public class UserRepository implements UserDao {
         this.sessionFactory = sessionFactory;
     }
 
-    @Override
     public UUID save(User user) {
         Transaction tx = currentSession().beginTransaction();
 
@@ -42,7 +41,18 @@ public class UserRepository implements UserDao {
         return uuid;
     }
 
-    @Override
+    public void saveApiKey(UUID userId, String apiKey) {
+        Transaction tx = currentSession().beginTransaction();
+
+        new HibernateUpdateClause(currentSession(), quser)
+                .set(quser.apiKey, apiKey)
+                .where(quser.id.eq(userId))
+                .execute();
+
+        currentSession().flush();
+        tx.commit();
+    }
+
     public void delete(UUID id) {
         Transaction tx = currentSession().beginTransaction();
 
@@ -55,7 +65,6 @@ public class UserRepository implements UserDao {
         tx.commit();
     }
 
-    @Override
     public void deleteByEmail(String email) {
         Transaction tx = currentSession().beginTransaction();
 
@@ -65,7 +74,6 @@ public class UserRepository implements UserDao {
         tx.commit();
     }
 
-    @Override
     public User findById(UUID id) {
         Transaction tx = currentSession().beginTransaction();
 
@@ -82,7 +90,22 @@ public class UserRepository implements UserDao {
         return user;
     }
 
-    @Override
+    public User findByApiKey(String token) {
+        Transaction tx = currentSession().beginTransaction();
+
+        HibernateQuery<?> query = new HibernateQuery<Void>(currentSession());
+
+        User user = query.from(quser)
+                .select(quser)
+                .where(quser.apiKey.eq(token))
+                .fetchFirst();
+
+        currentSession().flush();
+        tx.commit();
+
+        return user;
+    }
+
     public User findByEmail(String email) {
         Transaction tx = currentSession().beginTransaction();
 
@@ -102,5 +125,4 @@ public class UserRepository implements UserDao {
     private Session currentSession() {
         return sessionFactory.getCurrentSession();
     }
-
 }

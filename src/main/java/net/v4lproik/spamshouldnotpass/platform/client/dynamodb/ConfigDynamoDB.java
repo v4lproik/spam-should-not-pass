@@ -5,6 +5,7 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.PropertySources;
 import org.springframework.core.env.Environment;
@@ -19,6 +20,7 @@ public class ConfigDynamoDB {
         this.env = env;
     }
 
+    @Bean
     public DynamoDB dynamoDB() {
 
         final String ACCESS_KEY = env.getRequiredProperty("aws.dynamodb.accessKey");
@@ -32,9 +34,7 @@ public class ConfigDynamoDB {
             client.setEndpoint(ENDPOINT);
         }
 
-        DynamoDB dynamoDB = new DynamoDB(client);
-
-        return  dynamoDB;
+        return new DynamoDB(client);
     }
 }
 

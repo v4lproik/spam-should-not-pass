@@ -6,8 +6,9 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import javassist.CannotCompileException;
 import javassist.NotFoundException;
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.*;
-import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
+import net.v4lproik.spamshouldnotpass.platform.dao.repositories.AuthorInfoRepository;
+import net.v4lproik.spamshouldnotpass.platform.dao.repositories.ContextRepository;
+import net.v4lproik.spamshouldnotpass.platform.dao.repositories.SchemesRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.SchemeType;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.APIInformationDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.PropertyJSON;
@@ -19,7 +20,7 @@ import net.v4lproik.spamshouldnotpass.platform.models.entities.Scheme;
 import net.v4lproik.spamshouldnotpass.platform.models.response.PlatformResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.SpamResponse;
 import net.v4lproik.spamshouldnotpass.platform.service.SchemeService;
-import net.v4lproik.spamshouldnotpass.spring.annotation.UserAccess;
+import net.v4lproik.spamshouldnotpass.spring.annotation.ApiAccess;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,16 +64,14 @@ public class ApiController {
     private static String nbDocSubmittedLast5Min = "nbDocSubmittedLast5Min";
     private static String nbSameDocSubmittedLast5Min = "nbSameDocSubmittedLast5Min";
 
-    @UserAccess
+    @ApiAccess
     @RequestMapping(value = "/check", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public PlatformResponse check(HttpServletRequest req, @RequestBody toGetApiDTO toGet) throws Exception {
 
-        final BasicMember basicMember = (BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY);
-
-        final UUID userId = basicMember.getId();
-        final String corporation = basicMember.getCorporation();
+        final UUID userId = (UUID) req.getAttribute("userId");
+        final String corporation = (String) req.getAttribute("userCorporation");
 
         boolean spam = false;
         String reason = null;
@@ -170,7 +169,7 @@ public class ApiController {
         Integer nbOfSameCommentsLast5Min = authorInfoRepository.getNumberOfSameDocumentsSubmittedInTheLast5min(userInformation.getOrDefault("email", ""), corporation, userInformation.getOrDefault("content", ""));
 
         userInformation.put(nbDocSubmittedLast5Min, String.valueOf(nbOfCommentsLast5Min));
-        userInformation.put(nbSameDocSubmittedLast5Min, String.valueOf(nbOfCommentsLast5Min));
+        userInformation.put(nbSameDocSubmittedLast5Min, String.valueOf(nbOfSameCommentsLast5Min));
     }
 
     /**

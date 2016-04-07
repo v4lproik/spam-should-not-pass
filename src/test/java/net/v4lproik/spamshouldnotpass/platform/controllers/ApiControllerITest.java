@@ -172,9 +172,10 @@ public class ApiControllerITest {
         toGet.setInformation(list);
 
         MvcResult result = mockMvc.perform(post("/api/v1/check")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(toGet))
-                        .requestAttr(CacheSessionRepository.MEMBER_KEY, new BasicMember(userId, "email", "nickname", MemberStatus.ADMIN, MemberPermission.REGULAR, "corporation"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(toGet))
+                .requestAttr("userId", user.getId())
+                .requestAttr("userCorporation", user.getCorporation())
         ).andExpect(status().isOk())
                 .andReturn();
 
@@ -188,20 +189,7 @@ public class ApiControllerITest {
 
     @Test
     public void test_check3Comments() throws Exception {
-        userId = userRepository.save(
-                new User(
-                        UUID.randomUUID(),
-                        "firstname",
-                        "lastname",
-                        "email",
-                        "nickname",
-                        "password",
-                        MemberStatus.ADMIN,
-                        MemberPermission.REGULAR,
-                        DateTime.now(),
-                        "corporation"
-                )
-        );
+        userId = userRepository.save(user);
 
         schemeId = schemesRepository.save(
                 new Scheme(
@@ -261,13 +249,12 @@ public class ApiControllerITest {
         list.add(new APIInformationDTO("object", "title"));
         toGet.setInformation(list);
 
-        System.out.println(objectMapper.writeValueAsString(toGet));
-
         //1 msg submit
         MvcResult result = mockMvc.perform(post("/api/v1/check")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(toGet))
-                        .requestAttr(CacheSessionRepository.MEMBER_KEY, new BasicMember(userId, "email", "nickname", MemberStatus.ADMIN, MemberPermission.REGULAR, "corporation"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(toGet))
+                .requestAttr("userId", userId)
+                .requestAttr("userCorporation", user.getCorporation())
         ).andExpect(status().isOk())
                 .andReturn();
 
@@ -278,9 +265,10 @@ public class ApiControllerITest {
 
         //2 msg submit
         result = mockMvc.perform(post("/api/v1/check")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(toGet))
-                        .requestAttr(CacheSessionRepository.MEMBER_KEY, new BasicMember(userId, "email", "nickname", MemberStatus.ADMIN, MemberPermission.REGULAR, "corporation"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(toGet))
+                .requestAttr("userId", userId)
+                .requestAttr("userCorporation", user.getCorporation())
         ).andExpect(status().isOk())
                 .andReturn();
 
@@ -291,9 +279,10 @@ public class ApiControllerITest {
 
         //3 msg submit
         result = mockMvc.perform(post("/api/v1/check")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(toGet))
-                        .requestAttr(CacheSessionRepository.MEMBER_KEY, new BasicMember(userId, "email", "nickname", MemberStatus.ADMIN, MemberPermission.REGULAR, "corporation"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(toGet))
+                .requestAttr("userId", userId)
+                .requestAttr("userCorporation", user.getCorporation())
         ).andExpect(status().isOk())
                 .andReturn();
 
@@ -304,9 +293,10 @@ public class ApiControllerITest {
 
         //4 msg submit
         result = mockMvc.perform(post("/api/v1/check")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(toGet))
-                        .requestAttr(CacheSessionRepository.MEMBER_KEY, new BasicMember(userId, "email", "nickname", MemberStatus.ADMIN, MemberPermission.REGULAR, "corporation"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(toGet))
+                .requestAttr("userId", userId)
+                .requestAttr("userCorporation", user.getCorporation())
         ).andExpect(status().isOk())
                 .andReturn();
 
@@ -318,20 +308,7 @@ public class ApiControllerITest {
 
     @Test
     public void test_check3SameComments() throws Exception {
-        userId = userRepository.save(
-                new User(
-                        UUID.randomUUID(),
-                        "firstname",
-                        "lastname",
-                        "email",
-                        "nickname",
-                        "password",
-                        MemberStatus.ADMIN,
-                        MemberPermission.REGULAR,
-                        DateTime.now(),
-                        "corporation"
-                )
-        );
+        userId = userRepository.save(user);
 
         schemeId = schemesRepository.save(
                 new Scheme(
@@ -395,7 +372,8 @@ public class ApiControllerITest {
         MvcResult result = mockMvc.perform(post("/api/v1/check")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(toGet))
-                .requestAttr(CacheSessionRepository.MEMBER_KEY, new BasicMember(userId, "email", "nickname", MemberStatus.ADMIN, MemberPermission.REGULAR, "corporation"))
+                .requestAttr("userId", userId)
+                .requestAttr("userCorporation", user.getCorporation())
         ).andExpect(status().isOk())
                 .andReturn();
 
@@ -408,7 +386,8 @@ public class ApiControllerITest {
         result = mockMvc.perform(post("/api/v1/check")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(toGet))
-                .requestAttr(CacheSessionRepository.MEMBER_KEY, new BasicMember(userId, "email", "nickname", MemberStatus.ADMIN, MemberPermission.REGULAR, "corporation"))
+                .requestAttr("userId", userId)
+                .requestAttr("userCorporation", user.getCorporation())
         ).andExpect(status().isOk())
                 .andReturn();
 
@@ -417,19 +396,7 @@ public class ApiControllerITest {
         assertEquals(response.getIsSpam(), "false");
 
 
-        //3 msg submit
-        result = mockMvc.perform(post("/api/v1/check")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(toGet))
-                .requestAttr(CacheSessionRepository.MEMBER_KEY, new BasicMember(userId, "email", "nickname", MemberStatus.ADMIN, MemberPermission.REGULAR, "corporation"))
-        ).andExpect(status().isOk())
-                .andReturn();
-
-        response = objectMapper.readValue(result.getResponse().getContentAsString(), SpamResponse.class);
-
-        assertEquals(response.getIsSpam(), "false");
-
-        //4 msg submit but different
+        //3 msg submit but different
         toGetApiDTO toGet2 = new toGetApiDTO();
         toGet2.setContext(contextId.toString());
         List<APIInformationDTO> list2 = Lists.newArrayList();
@@ -443,7 +410,8 @@ public class ApiControllerITest {
         result = mockMvc.perform(post("/api/v1/check")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(toGet2))
-                .requestAttr(CacheSessionRepository.MEMBER_KEY, new BasicMember(userId, "email", "nickname", MemberStatus.ADMIN, MemberPermission.REGULAR, "corporation"))
+                .requestAttr("userId", userId)
+                .requestAttr("userCorporation", user.getCorporation())
         ).andExpect(status().isOk())
                 .andReturn();
 
@@ -456,7 +424,8 @@ public class ApiControllerITest {
         result = mockMvc.perform(post("/api/v1/check")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(toGet))
-                .requestAttr(CacheSessionRepository.MEMBER_KEY, new BasicMember(userId, "email", "nickname", MemberStatus.ADMIN, MemberPermission.REGULAR, "corporation"))
+                .requestAttr("userId", userId)
+                .requestAttr("userCorporation", user.getCorporation())
         ).andExpect(status().isOk())
                 .andReturn();
 

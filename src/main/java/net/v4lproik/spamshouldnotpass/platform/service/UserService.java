@@ -1,6 +1,6 @@
 package net.v4lproik.spamshouldnotpass.platform.service;
 
-import net.v4lproik.spamshouldnotpass.platform.dao.api.UserDao;
+import net.v4lproik.spamshouldnotpass.platform.dao.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
@@ -21,12 +21,12 @@ public class UserService {
 
     private static Logger log = Logger.getLogger(UserService.class);
 
-    private final UserDao userDao;
+    private final UserRepository userRepository;
     private final PasswordService passwordService;
 
     @Autowired
-    public UserService(final UserDao userDao, final PasswordService passwordService) {
-        this.userDao = userDao;
+    public UserService(final UserRepository userRepository, final PasswordService passwordService) {
+        this.userRepository = userRepository;
         this.passwordService = passwordService;
     }
 
@@ -34,7 +34,7 @@ public class UserService {
         checkNotNull(email);
         checkNotNull(password);
 
-        final User user = userDao.findByEmail(email);
+        final User user = userRepository.findByEmail(email);
 
         if (user == null){
             return user;
@@ -96,7 +96,7 @@ public class UserService {
                 corporation
         );
 
-        userDao.save(user);
+        userRepository.save(user);
 
         return user;
     }
@@ -104,22 +104,22 @@ public class UserService {
     public boolean isEmailAlreadyTaken(String email){
         checkNotNull(email);
 
-        return userDao.findByEmail(email) != null;
+        return userRepository.findByEmail(email) != null;
     }
-
+    
     @Transactional(readOnly = false)
     public void delete(UUID id) {
-        userDao.delete(id);
+        userRepository.delete(id);
     }
 
     @Transactional(readOnly = false)
     public void delete(User user) {
-        userDao.delete(user.getId());
+        userRepository.delete(user.getId());
     }
 
     @Transactional(readOnly = true)
     public User findById(UUID id) {
-        return userDao.findById(id);
+        return userRepository.findById(id);
     }
 
     @Transactional(readOnly = true)

@@ -69,7 +69,6 @@ public class SchemeController {
         final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
         final Map<String, List<PropertyJSON>> mapPropertiesJSON = toMapJSON(properties);
 
-System.out.println("\n");
         if(!schemeService.isSchemeValid(toMap(properties))){
             return new SchemeResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The scheme cannot be validated");
         }
