@@ -169,7 +169,7 @@ public class ApiController {
         Integer nbOfSameCommentsLast5Min = authorInfoRepository.getNumberOfSameDocumentsSubmittedInTheLast5min(userInformation.getOrDefault("email", ""), corporation, userInformation.getOrDefault("content", ""));
 
         userInformation.put(nbDocSubmittedLast5Min, String.valueOf(nbOfCommentsLast5Min));
-        userInformation.put(nbSameDocSubmittedLast5Min, String.valueOf(nbOfSameCommentsLast5Min));
+        userInformation.put(nbSameDocSubmittedLast5Min, String.valueOf(nbOfCommentsLast5Min));
     }
 
     /**
