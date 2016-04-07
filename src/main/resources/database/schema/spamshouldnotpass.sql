@@ -11,7 +11,6 @@ SET client_encoding = 'UTF8';
 SET standard_conforming_strings = on;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
-SET row_security = off;
 
 --
 -- Name: plpgsql; Type: EXTENSION; Schema: -; Owner: 
@@ -152,6 +151,77 @@ COPY "Scheme" (id, properties, "userId", date, "lastUpdate", type) FROM stdin;
 
 COPY "User" (id, firstname, lastname, nickname, email, permission, status, password, date, corporation, api_key) FROM stdin;
 \.
+
+--
+-- Name: Context_pkey; Type: CONSTRAINT; Schema: public; Owner: root; Tablespace:
+--
+
+ALTER TABLE ONLY "Context"
+ADD CONSTRAINT "Context_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: Rule_pkey; Type: CONSTRAINT; Schema: public; Owner: root; Tablespace:
+--
+
+ALTER TABLE ONLY "Rule"
+ADD CONSTRAINT "Rule_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: Scheme_pkey; Type: CONSTRAINT; Schema: public; Owner: root; Tablespace:
+--
+
+ALTER TABLE ONLY "Scheme"
+ADD CONSTRAINT "Scheme_pkey" PRIMARY KEY (id);
+
+
+--
+-- Name: untitled_table_pkey; Type: CONSTRAINT; Schema: public; Owner: root; Tablespace:
+--
+
+ALTER TABLE ONLY "User"
+ADD CONSTRAINT untitled_table_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: Context_userId_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY "Context"
+ADD CONSTRAINT "Context_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"(id);
+
+
+--
+-- Name: RulesInContext_idContext_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY "RulesInContext"
+ADD CONSTRAINT "RulesInContext_idContext_fkey" FOREIGN KEY ("idContext") REFERENCES "Context"(id);
+
+
+--
+-- Name: RulesInContext_idRule_fkey; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY "RulesInContext"
+ADD CONSTRAINT "RulesInContext_idRule_fkey" FOREIGN KEY ("idRule") REFERENCES "Rule"(id);
+
+
+--
+-- Name: idUser; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY "Scheme"
+ADD CONSTRAINT "idUser" FOREIGN KEY ("userId") REFERENCES "User"(id);
+
+
+--
+-- Name: userId; Type: FK CONSTRAINT; Schema: public; Owner: root
+--
+
+ALTER TABLE ONLY "Rule"
+ADD CONSTRAINT "userId" FOREIGN KEY ("userId") REFERENCES "User"(id);
 
 
 --
