@@ -11,6 +11,7 @@ public class PlatformResponse {
 
     public enum Error{
         UNKNOWN,
+        NOT_FOUND,
         INVALID_INPUT,
         INVALID_PERMISSION
     }

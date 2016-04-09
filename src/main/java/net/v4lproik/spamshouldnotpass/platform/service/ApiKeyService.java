@@ -1,25 +1,19 @@
 package net.v4lproik.spamshouldnotpass.platform.service;
 
+import net.v4lproik.spamshouldnotpass.platform.models.PasswordBuilder;
 import org.springframework.stereotype.Service;
-
-import javax.crypto.KeyGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
 
 @Service
 public class ApiKeyService {
 
     public String generate(){
-        SecureRandom rand = new SecureRandom();
-        KeyGenerator generator = null;
-        try {
-            generator = KeyGenerator.getInstance("AES");
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalArgumentException("[ApiKeyService] Error getting generator when generating api key", e);
-        }
-        generator.init(rand);
-        generator.init(256);
+        final PasswordBuilder builder = new PasswordBuilder()
+                .lowercase(13)
+                .uppercase(13)
+                .specials(3)
+                .digits(3)
+                .shuffle();
 
-        return generator.generateKey().toString();
+        return builder.build();
     }
 }

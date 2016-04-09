@@ -8,6 +8,7 @@ import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.BasicUserDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.toCreateUserDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
+import net.v4lproik.spamshouldnotpass.platform.models.response.ApiKeyResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.BasicUserResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.PlatformResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.UserResponse;
@@ -79,6 +80,24 @@ public class UserController {
 
         return new BasicUserResponse(
                 convertBasicUserToDTO(user)
+        );
+    }
+
+    @UserAccess
+    @RequestMapping(value = "/get-api-key", method = RequestMethod.POST)
+    @ResponseStatus(value = HttpStatus.OK)
+    @ResponseBody
+    public PlatformResponse getApiKey(HttpServletRequest req) {
+
+        final BasicMember basicUser = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY));
+        final User user = userService.findById(basicUser.getId());
+
+        if (user == null){
+            return new UserResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.NOT_FOUND, "User can't be found");
+        }
+
+        return new ApiKeyResponse(
+                user.getApiKey()
         );
     }
 
