@@ -1,6 +1,6 @@
-package net.v4lproik.spamshouldnotpass.platform.service;
+package net.v4lproik.spamshouldnotpass.platform.services;
 
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.UserRepository;
+import net.v4lproik.spamshouldnotpass.platform.repositories.UserRepository;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

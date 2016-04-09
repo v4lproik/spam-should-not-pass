@@ -1,4 +1,4 @@
-package net.v4lproik.spamshouldnotpass.platform.dao.repositories;
+package net.v4lproik.spamshouldnotpass.platform.repositories;
 
 import com.google.common.collect.Lists;
 import net.v4lproik.spamshouldnotpass.platform.client.postgres.DatabaseTestConfiguration;
@@ -19,6 +19,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.Assert.assertEquals;
@@ -91,7 +92,7 @@ public class ContextRepositoryITest {
 
 
         //then
-        assertEquals(contextRepository.findById(context.getId()), context);
+        assertEquals(contextRepository.findById(context.getId()).get(), context);
     }
 
     @Test
@@ -122,10 +123,10 @@ public class ContextRepositoryITest {
         contextRepository.save(context);
 
         //then
-        Context toGet = contextRepository.findByIdWithRules(context.getId());
-        assertEquals(toGet, context);
-        assertEquals(toGet.getRules().size(), 1);
-        assertEquals(toGet.getRules().contains(rule1), true);
+        Optional<Context> toGet = contextRepository.findByIdWithRules(context.getId());
+        assertEquals(toGet.get(), context);
+        assertEquals(toGet.get().getRules().size(), 1);
+        assertEquals(toGet.get().getRules().contains(rule1), true);
     }
 
     @Test
@@ -170,10 +171,10 @@ public class ContextRepositoryITest {
         contextRepository.update(context);
 
         //then
-        Context toGet = contextRepository.findByIdWithRules(context.getId());
-        List<Rule> toGetRules = toGet.getRules();
+        Optional<Context> toGet = contextRepository.findByIdWithRules(context.getId());
+        List<Rule> toGetRules = toGet.get().getRules();
 
-        assertEquals(toGet, context);
+        assertEquals(toGet.get(), context);
         assertEquals(toGetRules.size(), 2);
         assertEquals(toGetRules.get(0).getId(), rule1.getId());
         assertEquals(toGetRules.get(1).getId(), rule2.getId());
@@ -210,7 +211,7 @@ public class ContextRepositoryITest {
         contextRepository.delete(context.getId());
 
         //then
-        Context toGet = contextRepository.findByIdWithRules(context.getId());
+        Context toGet = contextRepository.findByIdWithRules(context.getId()).orElse(null);
 
         assertEquals(toGet, null);
     }

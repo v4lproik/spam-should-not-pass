@@ -6,7 +6,7 @@ import net.v4lproik.spamshouldnotpass.platform.client.dynamodb.ConfigDynamoDB;
 import net.v4lproik.spamshouldnotpass.platform.client.dynamodb.DynamoDBTablesInitializer;
 import net.v4lproik.spamshouldnotpass.platform.client.elasticsearch.ConfigES;
 import net.v4lproik.spamshouldnotpass.platform.client.postgres.Config;
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.UserRepository;
+import net.v4lproik.spamshouldnotpass.platform.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.spring.initializer.DynamoDBInitializer;
 import net.v4lproik.spamshouldnotpass.spring.interceptor.AuthorisationApiKeyInterceptor;
 import net.v4lproik.spamshouldnotpass.spring.interceptor.AuthorisationSessionInterceptor;

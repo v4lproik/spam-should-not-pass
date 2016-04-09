@@ -1,7 +1,7 @@
 package net.v4lproik.spamshouldnotpass.spring.interceptor;
 
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
+import net.v4lproik.spamshouldnotpass.platform.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.spring.annotation.ApiAccess;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +13,7 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.lang.reflect.Method;
+import java.util.Optional;
 
 public class AuthorisationApiKeyInterceptor extends HandlerInterceptorAdapter {
 
@@ -42,16 +43,16 @@ public class AuthorisationApiKeyInterceptor extends HandlerInterceptorAdapter {
                 return false;
             }
 
-            final User user = userRepository.findByApiKey(token);
+            final Optional<User> user = userRepository.findByApiKey(token);
 
-            if (user == null){
+            if (!user.isPresent()){
                 log.error(String.format("[AuthorisationSessionInterceptor] job finished : No match for api key %s", token));
                 res.sendError(403);
                 return false;
             }
 
-            req.setAttribute("userId", user.getId());
-            req.setAttribute("userCorporation", user.getCorporation());
+            req.setAttribute("userId", user.get().getId());
+            req.setAttribute("userCorporation", user.get().getCorporation());
 
             return true;
         }

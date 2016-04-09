@@ -1,8 +1,6 @@
-package net.v4lproik.spamshouldnotpass.platform.dao.repositories;
+package net.v4lproik.spamshouldnotpass.platform.repositories;
 
 import com.querydsl.jpa.hibernate.HibernateQuery;
-import net.v4lproik.spamshouldnotpass.platform.dao.api.RuleDao;
-import net.v4lproik.spamshouldnotpass.platform.models.RuleType;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.QRule;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.Rule;
 import org.hibernate.Session;
@@ -14,10 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public class RulesRepository implements RuleDao {
+public class RulesRepository extends net.v4lproik.spamshouldnotpass.platform.repositories.Repository<Rule> {
 
     private static final Logger log = LoggerFactory.getLogger(RulesRepository.class);
 
@@ -47,7 +46,6 @@ public class RulesRepository implements RuleDao {
         return rules;
     }
 
-    @Override
     public List<Rule> listByUserId(UUID userId) {
         Transaction tx = currentSession().beginTransaction();
 
@@ -65,25 +63,7 @@ public class RulesRepository implements RuleDao {
     }
 
     @Override
-    public List<Rule> listByUserIdAndType(UUID userId, RuleType type) {
-        Transaction tx = currentSession().beginTransaction();
-
-        HibernateQuery<?> query = new HibernateQuery<Void>(currentSession());
-
-        List<Rule> rules = query.from(qrule)
-                .select(qrule)
-                .where(qrule.userId.eq(userId)
-                        .and(qrule.type.eq(type)))
-                .fetch();
-
-        currentSession().flush();
-        tx.commit();
-
-        return rules;
-    }
-
-    @Override
-    public UUID save(Rule ruleToSave) {
+    public Optional<UUID> save(Rule ruleToSave) {
         Transaction tx = currentSession().beginTransaction();
 
         UUID uuid = (UUID) currentSession().save(ruleToSave);
@@ -91,7 +71,7 @@ public class RulesRepository implements RuleDao {
         currentSession().flush();
         tx.commit();
 
-        return uuid;
+        return Optional.ofNullable(uuid);
     }
 
     @Override
@@ -118,7 +98,7 @@ public class RulesRepository implements RuleDao {
     }
 
     @Override
-    public Rule findById(UUID id) {
+    public Optional<Rule> findById(UUID id) {
         Transaction tx = currentSession().beginTransaction();
 
         HibernateQuery<?> query = new HibernateQuery<Void>(currentSession());
@@ -131,7 +111,7 @@ public class RulesRepository implements RuleDao {
         currentSession().flush();
         tx.commit();
 
-        return rule;
+        return Optional.ofNullable(rule);
     }
 
     private Session currentSession() {

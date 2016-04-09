@@ -1,7 +1,6 @@
-package net.v4lproik.spamshouldnotpass.platform.dao.repositories;
+package net.v4lproik.spamshouldnotpass.platform.repositories;
 
 import com.querydsl.jpa.hibernate.HibernateQuery;
-import net.v4lproik.spamshouldnotpass.platform.dao.api.SchemeDao;
 import net.v4lproik.spamshouldnotpass.platform.models.SchemeType;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.QScheme;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.Scheme;
@@ -14,10 +13,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public class SchemesRepository implements SchemeDao {
+public class SchemesRepository extends net.v4lproik.spamshouldnotpass.platform.repositories.Repository<Scheme> {
 
     private static final Logger log = LoggerFactory.getLogger(SchemesRepository.class);
 
@@ -47,7 +47,6 @@ public class SchemesRepository implements SchemeDao {
         return schemes;
     }
 
-    @Override
     public List<Scheme> listByUserId(UUID userId) {
         Transaction tx = currentSession().beginTransaction();
 
@@ -64,7 +63,6 @@ public class SchemesRepository implements SchemeDao {
         return schemes;
     }
 
-    @Override
     public Scheme listByUserIdAndType(UUID userId, SchemeType type) {
         Transaction tx = currentSession().beginTransaction();
 
@@ -83,7 +81,7 @@ public class SchemesRepository implements SchemeDao {
     }
 
     @Override
-    public UUID save(Scheme schemeToSave) {
+    public Optional<UUID> save(Scheme schemeToSave) {
         Transaction tx = currentSession().beginTransaction();
 
         UUID uuid = (UUID) currentSession().save(schemeToSave);
@@ -91,7 +89,7 @@ public class SchemesRepository implements SchemeDao {
         currentSession().flush();
         tx.commit();
 
-        return uuid;
+        return Optional.ofNullable(uuid);
     }
 
     @Override
@@ -117,8 +115,7 @@ public class SchemesRepository implements SchemeDao {
         tx.commit();
     }
 
-    @Override
-    public Scheme findById(UUID id) {
+    public Optional<Scheme> findById(UUID id) {
         Transaction tx = currentSession().beginTransaction();
 
         HibernateQuery<?> query = new HibernateQuery<Void>(currentSession());
@@ -131,7 +128,7 @@ public class SchemesRepository implements SchemeDao {
         currentSession().flush();
         tx.commit();
 
-        return scheme;
+        return Optional.ofNullable(scheme);
     }
 
     private Session currentSession() {

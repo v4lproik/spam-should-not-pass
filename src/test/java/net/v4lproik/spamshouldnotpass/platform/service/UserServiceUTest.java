@@ -1,10 +1,12 @@
 package net.v4lproik.spamshouldnotpass.platform.service;
 
 import junit.framework.TestCase;
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.UserRepository;
+import net.v4lproik.spamshouldnotpass.platform.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
+import net.v4lproik.spamshouldnotpass.platform.services.PasswordService;
+import net.v4lproik.spamshouldnotpass.platform.services.UserService;
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -12,6 +14,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.mockito.Matchers.any;
@@ -61,9 +64,10 @@ public class UserServiceUTest extends TestCase {
         );
 
         when(passwordService.generateHash(user.getPassword())).thenReturn("encryptedPassword");
-        when(userRepository.save(userExpected)).thenReturn(userExpected.getId());
+        when(userRepository.findByEmail(user.getEmail())).thenReturn(Optional.empty());
+        when(userRepository.save(userExpected)).thenReturn(Optional.of(userExpected.getId()));
 
-        User generated = userService.save(
+        userService.save(
                 user.getFirstname(),
                 user.getLastname(),
                 user.getStatus(),

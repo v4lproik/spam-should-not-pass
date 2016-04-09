@@ -3,7 +3,7 @@
 #create user
 email="spider.cochon12@email.fr"
 curl -X POST -H "Content-type: application/json" -H "Accept: application/json" -d "{\"firstname\":\"spider\", \"lastname\":\"cochon\", \"email\":\"$email\", \"permission\":\"REGULAR\", \"status\":\"USER\", \"password\":\"spidercochon\", \"corporation\":\"google\"}" http://localhost:8080/user/create
-#get token
+#find token
 token=$(curl -X POST -H "Content-type: application/json" -H "Accept: application/json" -d "{\"email\":\"$email\", \"password\":\"spidercochon\"}" http://localhost:8080/user/auth | python -c 'import json,sys;obj=json.load(sys.stdin);print obj["token"]')
 #generate an api key
 curl -X POST -H "Content-type: application/json" -H "Accept: application/json"  -H "x-auth-token: $token" http://localhost:8080/user/create-api-key

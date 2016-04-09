@@ -1,4 +1,4 @@
-package net.v4lproik.spamshouldnotpass.platform.dao.repositories;
+package net.v4lproik.spamshouldnotpass.platform.repositories;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.session.Session;

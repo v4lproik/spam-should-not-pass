@@ -6,8 +6,10 @@ import net.v4lproik.spamshouldnotpass.platform.client.dynamodb.DynamoDBTablesIni
 import net.v4lproik.spamshouldnotpass.platform.client.dynamodb.DynamoDBTestConfiguration;
 import net.v4lproik.spamshouldnotpass.platform.client.postgres.DatabaseTestConfiguration;
 import net.v4lproik.spamshouldnotpass.platform.client.postgres.SqlDatabaseInitializer;
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.*;
-import net.v4lproik.spamshouldnotpass.platform.models.*;
+import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
+import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
+import net.v4lproik.spamshouldnotpass.platform.models.RuleType;
+import net.v4lproik.spamshouldnotpass.platform.models.SchemeType;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.APIInformationDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.toGetApiDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.Context;
@@ -15,6 +17,7 @@ import net.v4lproik.spamshouldnotpass.platform.models.entities.Rule;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.Scheme;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
 import net.v4lproik.spamshouldnotpass.platform.models.response.SpamResponse;
+import net.v4lproik.spamshouldnotpass.platform.repositories.*;
 import net.v4lproik.spamshouldnotpass.spring.SpringAppConfig;
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -67,9 +70,6 @@ public class ApiControllerITest {
     @Autowired
     private ContextRepository contextRepository;
 
-    @Autowired
-    private AuthorInfoRepository authorInfoRepository;
-
     private MockMvc mockMvc;
 
     private User user;
@@ -113,7 +113,7 @@ public class ApiControllerITest {
     @Test
     public void test_checkComment() throws Exception {
 
-        userId = userRepository.save(user);
+        userId = userRepository.save(user).get();
 
         schemeId = schemesRepository.save(
                 new Scheme(
@@ -124,7 +124,7 @@ public class ApiControllerITest {
                         DateTime.now(),
                         SchemeType.SPAM
                 )
-        );
+        ).get();
 
         schemeId2 = schemesRepository.save(
                 new Scheme(
@@ -135,19 +135,19 @@ public class ApiControllerITest {
                         DateTime.now(),
                         SchemeType.SPAMMER
                 )
-        );
+        ).get();
 
         Rule rule = new Rule(
                 UUID.randomUUID(),
-                "Bad Firstname",
-                "{'super content news', 'manu', 'cedric'}.contains(content)",
+                "Content bad words",
+                "content.contains({'super content news', 'manu', 'cedric'})",
                 RuleType.DOCUMENT,
                 user.getId(),
                 DateTime.now(),
                 DateTime.now()
         );
 
-        ruleId = rulesRepository.save(rule);
+        ruleId = rulesRepository.save(rule).get();
 
         Context context = new Context(
                 UUID.randomUUID(),
@@ -158,7 +158,7 @@ public class ApiControllerITest {
         );
 
         context.setRules(Lists.newArrayList(rule));
-        contextId = contextRepository.save(context);
+        contextId = contextRepository.save(context).get();
 
 
         toGetApiDTO toGet = new toGetApiDTO();
@@ -189,7 +189,7 @@ public class ApiControllerITest {
 
     @Test
     public void test_check3Comments() throws Exception {
-        userId = userRepository.save(user);
+        userId = userRepository.save(user).get();
 
         schemeId = schemesRepository.save(
                 new Scheme(
@@ -200,7 +200,7 @@ public class ApiControllerITest {
                         DateTime.now(),
                         SchemeType.SPAM
                 )
-        );
+        ).get();
 
         schemeId2 = schemesRepository.save(
                 new Scheme(
@@ -211,7 +211,7 @@ public class ApiControllerITest {
                         DateTime.now(),
                         SchemeType.SPAMMER
                 )
-        );
+        ).get();
 
         Rule rule = new Rule(
                 UUID.randomUUID(),
@@ -223,9 +223,7 @@ public class ApiControllerITest {
                 DateTime.now()
         );
 
-        ruleId = rulesRepository.save(
-                rule
-        );
+        ruleId = rulesRepository.save(rule).get();
 
         Context context = new Context(
                 UUID.randomUUID(),
@@ -236,7 +234,7 @@ public class ApiControllerITest {
         );
 
         context.setRules(Lists.newArrayList(rule));
-        contextId = contextRepository.save(context);
+        contextId = contextRepository.save(context).get();
 
 
         toGetApiDTO toGet = new toGetApiDTO();
@@ -308,7 +306,7 @@ public class ApiControllerITest {
 
     @Test
     public void test_check3SameComments() throws Exception {
-        userId = userRepository.save(user);
+        userId = userRepository.save(user).get();
 
         schemeId = schemesRepository.save(
                 new Scheme(
@@ -319,7 +317,7 @@ public class ApiControllerITest {
                         DateTime.now(),
                         SchemeType.SPAM
                 )
-        );
+        ).get();
 
         schemeId2 = schemesRepository.save(
                 new Scheme(
@@ -330,7 +328,7 @@ public class ApiControllerITest {
                         DateTime.now(),
                         SchemeType.SPAMMER
                 )
-        );
+        ).get();
 
         Rule rule = new Rule(
                 UUID.randomUUID(),
@@ -344,7 +342,7 @@ public class ApiControllerITest {
 
         ruleId = rulesRepository.save(
                 rule
-        );
+        ).get();
 
         Context context = new Context(
                 UUID.randomUUID(),
@@ -355,7 +353,7 @@ public class ApiControllerITest {
         );
 
         context.setRules(Lists.newArrayList(rule));
-        contextId = contextRepository.save(context);
+        contextId = contextRepository.save(context).get();
 
 
         toGetApiDTO toGet = new toGetApiDTO();

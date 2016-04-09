@@ -1,7 +1,6 @@
-package net.v4lproik.spamshouldnotpass.platform.dao.repositories;
+package net.v4lproik.spamshouldnotpass.platform.repositories;
 
 import com.querydsl.jpa.hibernate.HibernateQuery;
-import net.v4lproik.spamshouldnotpass.platform.dao.api.ContextDao;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.*;
 import org.hibernate.Hibernate;
 import org.hibernate.Session;
@@ -14,11 +13,12 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Transactional
 @Repository
-public class ContextRepository implements ContextDao {
+public class ContextRepository extends net.v4lproik.spamshouldnotpass.platform.repositories.Repository<Context> {
 
     private static final Logger log = LoggerFactory.getLogger(ContextRepository.class);
 
@@ -34,7 +34,6 @@ public class ContextRepository implements ContextDao {
         this.sessionFactory = sessionFactory;
     }
 
-    @Override
     public List<Context> listByUserId(UUID userId) {
         Transaction tx = currentSession().beginTransaction();
 
@@ -52,7 +51,7 @@ public class ContextRepository implements ContextDao {
     }
 
     @Override
-    public UUID save(Context contextToSave) {
+    public Optional<UUID> save(Context contextToSave) {
         Transaction tx = currentSession().beginTransaction();
 
         UUID uuid = (UUID) currentSession().save(contextToSave);
@@ -60,10 +59,9 @@ public class ContextRepository implements ContextDao {
         currentSession().flush();
         tx.commit();
 
-        return uuid;
+        return Optional.of(uuid);
     }
 
-    @Override
     public void addRule(RuleInContext ruleInContext) {
         Transaction tx = currentSession().beginTransaction();
 
@@ -97,7 +95,7 @@ public class ContextRepository implements ContextDao {
     }
 
     @Override
-    public Context findById(UUID id) {
+    public Optional<Context> findById(UUID id) {
         Transaction tx = currentSession().beginTransaction();
 
         HibernateQuery<?> query = new HibernateQuery<Void>(currentSession());
@@ -110,11 +108,15 @@ public class ContextRepository implements ContextDao {
         currentSession().flush();
         tx.commit();
 
-        return context;
+        return Optional.ofNullable(context);
     }
 
     @Override
-    public Context findByIdWithRules(UUID id) {
+    public List<Context> list() {
+        throw new UnsupportedOperationException();
+    }
+
+    public Optional<Context> findByIdWithRules(UUID id) {
         Transaction tx = currentSession().beginTransaction();
 
         HibernateQuery<?> query = new HibernateQuery<Void>(currentSession());
@@ -131,11 +133,10 @@ public class ContextRepository implements ContextDao {
         currentSession().flush();
         tx.commit();
 
-        return context;
+        return Optional.ofNullable(context);
     }
 
-    @Override
-    public Context findByName(String name, UUID userId) {
+    public Optional<Context> findByName(String name, UUID userId) {
         Transaction tx = currentSession().beginTransaction();
 
         HibernateQuery<?> query = new HibernateQuery<Void>(currentSession());
@@ -148,28 +149,7 @@ public class ContextRepository implements ContextDao {
         currentSession().flush();
         tx.commit();
 
-        return context;
-    }
-
-    @Override
-    public Context findByNameWithRules(String name, UUID userId) {
-        Transaction tx = currentSession().beginTransaction();
-
-        HibernateQuery<?> query = new HibernateQuery<Void>(currentSession());
-
-        Context context = query.from(qcontext)
-                .select(qcontext)
-                .where(qcontext.name.eq(name).and(qcontext.userId.eq(userId)))
-                .fetchFirst();
-
-        if (context != null) {
-            Hibernate.initialize(context.getRules());
-        }
-
-        currentSession().flush();
-        tx.commit();
-
-        return context;
+        return Optional.ofNullable(context);
     }
 
     private Session currentSession() {

@@ -1,9 +1,9 @@
-package net.v4lproik.spamshouldnotpass.platform.service;
+package net.v4lproik.spamshouldnotpass.platform.services;
 
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
+import net.v4lproik.spamshouldnotpass.platform.repositories.UserRepository;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.google.common.base.Preconditions.checkNotNull;
@@ -34,15 +35,16 @@ public class UserService {
         checkNotNull(email);
         checkNotNull(password);
 
-        final User user = userRepository.findByEmail(email);
+        final Optional<User> user = userRepository.findByEmail(email);
 
-        if (user == null){
-            return user;
+        if (!user.isPresent()){
+            return null;
         }
 
+        final String userPassword = user.get().getPassword();
         boolean auth;
         try {
-            auth = passwordService.validatePassword(password, user.getPassword());
+            auth = passwordService.validatePassword(password,userPassword);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new IllegalArgumentException(String.format("[UserService] Error validating password for user %s", email), e);
         }
@@ -51,7 +53,7 @@ public class UserService {
             return null;
         }
 
-        return user;
+        return user.get();
     }
 
     public User save(final String firstname,
@@ -77,9 +79,7 @@ public class UserService {
         String passwordGenerated;
         try {
             passwordGenerated = passwordService.generateHash(password);
-        } catch (NoSuchAlgorithmException e) {
-            throw new IllegalArgumentException("[UserService] Error generating password for new user", e);
-        } catch (InvalidKeySpecException e) {
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new IllegalArgumentException("[UserService] Error generating password for new user", e);
         }
 
@@ -104,7 +104,7 @@ public class UserService {
     public boolean isEmailAlreadyTaken(String email){
         checkNotNull(email);
 
-        return userRepository.findByEmail(email) != null;
+        return userRepository.findByEmail(email).isPresent();
     }
     
     @Transactional(readOnly = false)
@@ -118,12 +118,7 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public User findById(UUID id) {
+    public Optional<User> findById(UUID id) {
         return userRepository.findById(id);
-    }
-
-    @Transactional(readOnly = true)
-    public User findByLogin(String email) {
-        return null;
     }
 }
