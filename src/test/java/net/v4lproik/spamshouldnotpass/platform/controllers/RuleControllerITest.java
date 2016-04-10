@@ -3,9 +3,6 @@ package net.v4lproik.spamshouldnotpass.platform.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.v4lproik.spamshouldnotpass.platform.client.postgres.DatabaseTestConfiguration;
 import net.v4lproik.spamshouldnotpass.platform.client.postgres.SqlDatabaseInitializer;
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.RulesRepository;
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
 import net.v4lproik.spamshouldnotpass.platform.models.RuleType;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.toCreateRuleDTO;
@@ -13,6 +10,9 @@ import net.v4lproik.spamshouldnotpass.platform.models.dto.toCreateUserDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.toUpdateRuleDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.Rule;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
+import net.v4lproik.spamshouldnotpass.platform.repositories.CacheSessionRepository;
+import net.v4lproik.spamshouldnotpass.platform.repositories.RulesRepository;
+import net.v4lproik.spamshouldnotpass.platform.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.spring.SpringAppConfig;
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -99,7 +99,7 @@ public class RuleControllerITest {
         )
                 .andExpect(status().isOk()).andReturn();
 
-        user = userRepository.findByEmail(login);
+        user = userRepository.findByEmail(login).get();
         final BasicMember member = new BasicMember(
                 user.getId(),
                 user.getEmail(),
@@ -130,7 +130,7 @@ public class RuleControllerITest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        final Rule ruleExpected = rulesRepository.findById(rule.getId());
+        final Rule ruleExpected = rulesRepository.findById(rule.getId()).get();
 
         assertEquals(ruleExpected, rule);
     }
@@ -155,7 +155,7 @@ public class RuleControllerITest {
         )
                 .andExpect(status().isOk()).andReturn();
 
-        user = userRepository.findByEmail(login);
+        user = userRepository.findByEmail(login).get();
         final BasicMember member = new BasicMember(
                 user.getId(),
                 user.getEmail(),
@@ -197,7 +197,7 @@ public class RuleControllerITest {
                 .andExpect(status().isOk())
                 .andReturn();
 
-        final Rule ruleUpdated = rulesRepository.findById(rule.getId());
+        final Rule ruleUpdated = rulesRepository.findById(rule.getId()).get();
 
         assertEquals(ruleUpdated, rule);
     }

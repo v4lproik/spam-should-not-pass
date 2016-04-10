@@ -1,4 +1,4 @@
-package net.v4lproik.spamshouldnotpass.platform.service;
+package net.v4lproik.spamshouldnotpass.platform.services;
 
 import org.springframework.stereotype.Service;
 

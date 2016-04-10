@@ -1,8 +1,6 @@
 package net.v4lproik.spamshouldnotpass.platform.controllers;
 
 import com.google.common.collect.Lists;
-import net.v4lproik.spamshouldnotpass.platform.dao.api.ContextDao;
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.*;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.CompositePKRulesInContext;
@@ -11,6 +9,8 @@ import net.v4lproik.spamshouldnotpass.platform.models.entities.Rule;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.RuleInContext;
 import net.v4lproik.spamshouldnotpass.platform.models.response.ContextsResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.PlatformResponse;
+import net.v4lproik.spamshouldnotpass.platform.repositories.CacheSessionRepository;
+import net.v4lproik.spamshouldnotpass.platform.repositories.ContextRepository;
 import net.v4lproik.spamshouldnotpass.spring.annotation.UserAccess;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -27,24 +28,23 @@ import java.util.UUID;
 public class ContextController {
 
     @Autowired
-    private ContextDao contextDao;
+    private ContextRepository contextRepository;
 
     @UserAccess
     @RequestMapping(value = "/get", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public PlatformResponse get(HttpServletRequest req,
-                                @RequestBody toGetContextDTO toGet) {
+    public PlatformResponse get(@RequestBody toGetContextDTO toGet) {
 
-        final Context context = contextDao.findById(toGet.getId());
+        final Optional<Context> context = contextRepository.findById(toGet.getId());
 
-        if (context == null){
+        if (!context.isPresent()){
             return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The context does not exist");
         }
 
         return new ContextsResponse(
                 Lists.newArrayList(
-                        convertToDTO(context, false)
+                        convertToDTO(context.get(), false)
                 )
         );
     }
@@ -55,15 +55,15 @@ public class ContextController {
     @ResponseBody
     public PlatformResponse getAndRules(@RequestBody toGetContextDTO toGet) {
 
-        final Context context = contextDao.findByIdWithRules(toGet.getId());
+        final Optional<Context> context = contextRepository.findByIdWithRules(toGet.getId());
 
-        if (context == null){
+        if (!context.isPresent()){
             return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The context does not exist");
         }
 
         return new ContextsResponse(
                 Lists.newArrayList(
-                        convertToDTO(context, true)
+                        convertToDTO(context.get(), true)
                 )
         );
     }
@@ -76,7 +76,7 @@ public class ContextController {
 
         final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
 
-        List<Context> contexts = contextDao.listByUserId(userId);
+        List<Context> contexts = contextRepository.listByUserId(userId);
 
         List<ContextDTO> contextsDTO = Lists.newArrayList();
         for (Context context: contexts){
@@ -98,7 +98,7 @@ public class ContextController {
 
         final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
 
-        if (contextDao.findByName(toCreate.getName(), userId) != null){
+        if (contextRepository.findByName(toCreate.getName(), userId).isPresent()){
             return new ContextsResponse(PlatformResponse.Status.NOK,
                     PlatformResponse.Error.INVALID_INPUT,
                     String.format("Context's name [%s] has already been created", toCreate.getName()));
@@ -117,7 +117,7 @@ public class ContextController {
                 DateTime.now()
         );
 
-        contextDao.save(context);
+        contextRepository.save(context);
 
         return PlatformResponse.ok();
     }
@@ -129,20 +129,22 @@ public class ContextController {
     public PlatformResponse addRules(HttpServletRequest req,
                                      @RequestBody RulesInContextDTO toCreate) {
 
-        final Context context = contextDao.findById(toCreate.getIdContext());
+        final Optional<Context> context = contextRepository.findById(toCreate.getIdContext());
 
-        if (context == null){
+        if (!context.isPresent()){
             return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The context does not exist");
         }
 
-        if (!context.getUserId().equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
+        final UUID userId = context.get().getUserId();
+
+        if (!userId.equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
             return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to update this context");
         }
 
         for (toGetRuleDTO ruleId:toCreate.getListRules()){
-            contextDao.addRule(
+            contextRepository.addRule(
                     new RuleInContext(
-                            new CompositePKRulesInContext(ruleId.getId(), context.getId())
+                            new CompositePKRulesInContext(ruleId.getId(), userId)
                     )
             );
         }
@@ -157,28 +159,31 @@ public class ContextController {
     public PlatformResponse updateAndRules(HttpServletRequest req,
                                            @RequestBody toUpdateContextDTO toUpdate) {
 
-        final Context context = contextDao.findById(toUpdate.getId());
+        final Optional<Context> context = contextRepository.findById(toUpdate.getId());
 
-        if (context == null){
+        if (!context.isPresent()){
             return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The context does not exist");
         }
 
-        if (!context.getUserId().equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
+        final UUID userId = context.get().getUserId();
+        final DateTime date = context.get().getDate();
+
+        if (!userId.equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
             return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to update this context");
         }
 
-        contextDao.update(
+        contextRepository.update(
                 new Context(
                         toUpdate.getId(),
                         toUpdate.getName(),
-                        context.getUserId(),
-                        context.getDate(),
+                        userId,
+                        date,
                         DateTime.now()
                 ));
 
         if (toUpdate.getRulesId() != null){
             for (UUID ruleId:toUpdate.getRulesId()){
-                contextDao.addRule(
+                contextRepository.addRule(
                         new RuleInContext(
                                 new CompositePKRulesInContext(ruleId, toUpdate.getId())
                         )
@@ -196,22 +201,25 @@ public class ContextController {
     public PlatformResponse update(HttpServletRequest req,
                                    @RequestBody toCreateRuleDTO toUpdate) {
 
-        final Context context = contextDao.findById(toUpdate.getId());
+        final Optional<Context> context = contextRepository.findById(toUpdate.getId());
 
-        if (context == null){
+        if (!context.isPresent()){
             return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The context does not exist");
         }
 
-        if (!context.getUserId().equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
+        final UUID userId = context.get().getUserId();
+        final DateTime date = context.get().getDate();
+
+        if (!userId.equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
             return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to update this context");
         }
 
-        contextDao.update(
+        contextRepository.update(
                 new Context(
                         toUpdate.getId(),
                         toUpdate.getName(),
-                        context.getUserId(),
-                        context.getDate(),
+                        userId,
+                        date,
                         DateTime.now()
                 ));
 
@@ -225,17 +233,19 @@ public class ContextController {
     public PlatformResponse delete(HttpServletRequest req,
                                    @RequestBody toGetContextDTO toGet) {
 
-        final Context context = contextDao.findById(toGet.getId());
+        final Optional<Context> context = contextRepository.findById(toGet.getId());
 
-        if (context == null){
+        if (!context.isPresent()){
             return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The context does not exist");
         }
 
-        if (!context.getUserId().equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
+        final UUID userId = context.get().getUserId();
+
+        if (!userId.equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
             return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to delete this context");
         }
 
-        contextDao.delete(toGet.getId());
+        contextRepository.delete(toGet.getId());
 
         return PlatformResponse.ok();
     }

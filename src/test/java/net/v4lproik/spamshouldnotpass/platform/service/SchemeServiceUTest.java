@@ -5,6 +5,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import javassist.CannotCompileException;
 import javassist.NotFoundException;
+import net.v4lproik.spamshouldnotpass.platform.services.SchemeService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,7 +62,7 @@ public class SchemeServiceUTest {
         clazz.getMethod("setObject", String.class).invoke(obj, "object");
         clazz.getMethod("setContent", String.class).invoke(obj, "content");
 
-//        // get property "bar"
+//        // find property "bar"
 //        String result = (String) clazz.getMethod("getBar").invoke(obj);
 //        System.out.println("Value for bar: " + result);
 

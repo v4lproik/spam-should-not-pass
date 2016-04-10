@@ -1,5 +1,6 @@
 package net.v4lproik.spamshouldnotpass.platform.service;
 
+import net.v4lproik.spamshouldnotpass.platform.services.PasswordService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

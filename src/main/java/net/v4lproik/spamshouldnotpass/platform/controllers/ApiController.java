@@ -6,9 +6,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import javassist.CannotCompileException;
 import javassist.NotFoundException;
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.AuthorInfoRepository;
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.ContextRepository;
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.SchemesRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.SchemeType;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.APIInformationDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.PropertyJSON;
@@ -19,7 +16,10 @@ import net.v4lproik.spamshouldnotpass.platform.models.entities.Rule;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.Scheme;
 import net.v4lproik.spamshouldnotpass.platform.models.response.PlatformResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.SpamResponse;
-import net.v4lproik.spamshouldnotpass.platform.service.SchemeService;
+import net.v4lproik.spamshouldnotpass.platform.repositories.AuthorInfoRepository;
+import net.v4lproik.spamshouldnotpass.platform.repositories.ContextRepository;
+import net.v4lproik.spamshouldnotpass.platform.repositories.SchemesRepository;
+import net.v4lproik.spamshouldnotpass.platform.services.SchemeService;
 import net.v4lproik.spamshouldnotpass.spring.annotation.ApiAccess;
 import org.apache.log4j.Logger;
 import org.joda.time.DateTime;
@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -90,14 +91,14 @@ public class ApiController {
         }
 
         //check if there are rules bound to this context and if the user has enough permission
-        final Context context = contextRepository.findByIdWithRules(UUID.fromString(contextName));
-        if (context == null){
+        final Optional<Context> context = contextRepository.findByIdWithRules(UUID.fromString(contextName));
+        if (!context.isPresent()){
             return new SpamResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The context is missing or invalid");
         }
-        if (!context.getUserId().equals(userId)){
+        if (!context.get().getUserId().equals(userId)){
             return new SpamResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "You don't have the permission to query this context");
         }
-        final List<Rule> rules = context.getRules();
+        final List<Rule> rules = context.get().getRules();
         if (rules.size() == 0){
             return new SpamResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "This context has an emtpy rules set");
         }
@@ -154,7 +155,7 @@ public class ApiController {
             }
         }
 
-        //store information
+        //save information
         storeInformation(userInformation, corporation);
 
         return new SpamResponse(String.valueOf(spam), reason);
@@ -177,7 +178,7 @@ public class ApiController {
      * @param userInformation
      */
     private void storeInformation(Map<String, String> userInformation, String corporation) {
-        authorInfoRepository.store(
+        authorInfoRepository.save(
                 new AuthorMessageInfo(
                         userInformation.getOrDefault("email", ""),
                         corporation,

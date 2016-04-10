@@ -1,6 +1,6 @@
 package net.v4lproik.spamshouldnotpass.spring.interceptor;
 
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
+import net.v4lproik.spamshouldnotpass.platform.repositories.CacheSessionRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.spring.annotation.AdminAccess;

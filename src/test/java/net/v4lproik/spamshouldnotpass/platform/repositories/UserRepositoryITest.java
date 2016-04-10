@@ -1,11 +1,9 @@
-package net.v4lproik.spamshouldnotpass.platform.dao.repositories;
+package net.v4lproik.spamshouldnotpass.platform.repositories;
 
 import net.v4lproik.spamshouldnotpass.platform.client.postgres.DatabaseTestConfiguration;
 import net.v4lproik.spamshouldnotpass.platform.client.postgres.SqlDatabaseInitializer;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
-import net.v4lproik.spamshouldnotpass.platform.models.RuleType;
-import net.v4lproik.spamshouldnotpass.platform.models.entities.Rule;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -25,12 +23,8 @@ import static org.junit.Assert.assertEquals;
         classes = {
                 DatabaseTestConfiguration.class,
                 UserRepository.class,
-                RulesRepository.class,
         })
-public class RulesRepositoryITest {
-
-    @Autowired
-    private RulesRepository rulesRepository;
+public class UserRepositoryITest {
 
     @Autowired
     private UserRepository userRepository;
@@ -38,25 +32,19 @@ public class RulesRepositoryITest {
     @Autowired
     private SqlDatabaseInitializer databaseInitializer;
 
-    UUID userUuid;
-    UUID ruleUuid;
+    private final UUID uuid = UUID.randomUUID();
+    private User user;
 
     @Before
     public void setUp(){
         try{
             databaseInitializer.createDatabase();
         }catch (Exception e){
+//            e.printStackTrace();
         }
 
-        userUuid = UUID.randomUUID();
-        ruleUuid = UUID.randomUUID();
-    }
-
-    @Test
-    public void testSave() throws Exception {
-
-        User user = new User(
-                userUuid,
+        user = new User(
+                uuid,
                 "firstname",
                 "lastname",
                 "email",
@@ -67,33 +55,28 @@ public class RulesRepositoryITest {
                 DateTime.now(),
                 "corporation"
         );
+    }
 
+    @Test
+    public void testSave() throws Exception {
         userRepository.save(
                 user
         );
 
-        UUID uuid = rulesRepository.save(
-                new Rule(
-                        ruleUuid,
-                        "new rule",
-                        "firsname.equals('spidercochon')",
-                        RuleType.USER,
-                        user.getId(),
-                        DateTime.now(),
-                        DateTime.now()
-                )
-        );
-
-        Rule rule = rulesRepository.findById(uuid);
-
-        assertEquals(ruleUuid, uuid);
-        assertEquals(rule.getId(), uuid);
-        assertEquals(rule.getUserId(), user.getId());
+        assertEquals(userRepository.findById(user.getId()).get(), user);
     }
+
+    @Test
+    public void generateApiKey() throws Exception {
+        userRepository.save(user);
+        userRepository.saveApiKey(user.getId(), "test");
+        assertEquals(userRepository.findById(user.getId()).get(), user);
+        assertEquals(userRepository.findById(user.getId()).get().getApiKey(), "test");
+    }
+
 
     @After
     public void cleanUp() throws Exception {
-        rulesRepository.delete(ruleUuid);
-        userRepository.delete(userUuid);
+        userRepository.delete(user.getId());
     }
 }

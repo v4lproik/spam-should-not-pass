@@ -1,8 +1,6 @@
 package net.v4lproik.spamshouldnotpass.platform.controllers;
 
 import com.google.common.collect.Lists;
-import net.v4lproik.spamshouldnotpass.platform.dao.api.RuleDao;
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.RuleDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.toCreateRuleDTO;
@@ -11,6 +9,8 @@ import net.v4lproik.spamshouldnotpass.platform.models.dto.toUpdateRuleDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.Rule;
 import net.v4lproik.spamshouldnotpass.platform.models.response.PlatformResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.RulesResponse;
+import net.v4lproik.spamshouldnotpass.platform.repositories.CacheSessionRepository;
+import net.v4lproik.spamshouldnotpass.platform.repositories.RulesRepository;
 import net.v4lproik.spamshouldnotpass.spring.annotation.UserAccess;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -27,7 +28,7 @@ import java.util.UUID;
 public class RuleController {
 
     @Autowired
-    private RuleDao ruleDao;
+    private RulesRepository rulesRepository;
 
     @UserAccess
     @RequestMapping(value = "/get", method = RequestMethod.POST)
@@ -36,15 +37,15 @@ public class RuleController {
     public PlatformResponse list(HttpServletRequest req,
                                  @RequestBody toGetRuleDTO toGet) {
 
-        final Rule rule = ruleDao.findById(toGet.getId());
+        final Optional<Rule> rule = rulesRepository.findById(toGet.getId());
 
-        if (rule == null){
+        if (!rule.isPresent()){
             return new RulesResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The rule does not exist");
         }
 
         return new RulesResponse(
                 Lists.newArrayList(
-                        convertToDTO(rule, false)
+                        convertToDTO(rule.get(), false)
                 )
         );
     }
@@ -57,7 +58,7 @@ public class RuleController {
 
         final UUID userId = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId();
 
-        List<Rule> rules = ruleDao.listByUserId(userId);
+        List<Rule> rules = rulesRepository.listByUserId(userId);
 
         List<RuleDTO> rulesDTO = Lists.newArrayList();
         for (Rule rule: rules){
@@ -76,23 +77,26 @@ public class RuleController {
     public PlatformResponse update(HttpServletRequest req,
                                    @RequestBody toUpdateRuleDTO toUpdate) {
 
-        final Rule rule = ruleDao.findById(toUpdate.getId());
+        final Optional<Rule> rule = rulesRepository.findById(toUpdate.getId());
 
-        if (rule == null){
+        if (!rule.isPresent()){
             return new RulesResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The rule does not exist");
         }
 
-        if (!rule.getUserId().equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
+        final UUID userId = rule.get().getUserId();
+
+        if (!userId.equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
             return new RulesResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to update this rule");
         }
 
-        rule.setId(toUpdate.getId());
-        rule.setName(toUpdate.getName());
-        rule.setRule(toUpdate.getRule());
-        rule.setType(toUpdate.getType());
-        rule.setLastUpdate(DateTime.now());
+        Rule modifiedRule = rule.get();
+        modifiedRule.setId(toUpdate.getId());
+        modifiedRule.setName(toUpdate.getName());
+        modifiedRule.setRule(toUpdate.getRule());
+        modifiedRule.setType(toUpdate.getType());
+        modifiedRule.setLastUpdate(DateTime.now());
 
-        ruleDao.update(rule);
+        rulesRepository.update(modifiedRule);
 
         return PlatformResponse.ok();
     }
@@ -117,7 +121,7 @@ public class RuleController {
                 DateTime.now()
         );
 
-        ruleDao.save(create);
+        rulesRepository.save(create);
 
         return PlatformResponse.ok();
     }
@@ -129,17 +133,19 @@ public class RuleController {
     public PlatformResponse delete(HttpServletRequest req,
                                    @RequestBody toGetRuleDTO toGet) {
 
-        final Rule rule = ruleDao.findById(toGet.getId());
+        final Optional<Rule> rule = rulesRepository.findById(toGet.getId());
 
-        if (rule == null){
+        if (!rule.isPresent()){
             return new RulesResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The rule does not exist");
         }
 
-        if (!rule.getUserId().equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
+        final UUID userId = rule.get().getUserId();
+
+        if (!userId.equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
             return new RulesResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to delete this rule");
         }
 
-        ruleDao.delete(toGet.getId());
+        rulesRepository.delete(toGet.getId());
 
         return PlatformResponse.ok();
     }

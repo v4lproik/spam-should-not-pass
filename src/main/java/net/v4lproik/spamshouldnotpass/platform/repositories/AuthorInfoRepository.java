@@ -1,4 +1,4 @@
-package net.v4lproik.spamshouldnotpass.platform.dao.repositories;
+package net.v4lproik.spamshouldnotpass.platform.repositories;
 
 import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
@@ -25,7 +25,7 @@ import java.util.Optional;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 @Repository
-public class AuthorInfoRepository {
+public class AuthorInfoRepository{
 
     private static final Logger log = LoggerFactory.getLogger(AuthorInfoRepository.class);
 
@@ -40,7 +40,7 @@ public class AuthorInfoRepository {
         this.objectMapper = checkNotNull(objectMapper);
     }
 
-    public void store(AuthorMessageInfo authorMessageInfo){
+    public void save(AuthorMessageInfo authorMessageInfo){
         checkNotNull(authorMessageInfo);
         checkNotNull(authorMessageInfo.getAuthorId());
         checkNotNull(authorMessageInfo.getMessage());

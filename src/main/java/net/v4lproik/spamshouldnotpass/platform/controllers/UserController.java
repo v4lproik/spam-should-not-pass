@@ -1,7 +1,5 @@
 package net.v4lproik.spamshouldnotpass.platform.controllers;
 
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.CacheSessionRepository;
-import net.v4lproik.spamshouldnotpass.platform.dao.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
@@ -12,8 +10,10 @@ import net.v4lproik.spamshouldnotpass.platform.models.response.ApiKeyResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.BasicUserResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.PlatformResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.UserResponse;
-import net.v4lproik.spamshouldnotpass.platform.service.ApiKeyService;
-import net.v4lproik.spamshouldnotpass.platform.service.UserService;
+import net.v4lproik.spamshouldnotpass.platform.repositories.CacheSessionRepository;
+import net.v4lproik.spamshouldnotpass.platform.repositories.UserRepository;
+import net.v4lproik.spamshouldnotpass.platform.services.ApiKeyService;
+import net.v4lproik.spamshouldnotpass.platform.services.UserService;
 import net.v4lproik.spamshouldnotpass.spring.annotation.UserAccess;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -90,14 +91,14 @@ public class UserController {
     public PlatformResponse getApiKey(HttpServletRequest req) {
 
         final BasicMember basicUser = ((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY));
-        final User user = userService.findById(basicUser.getId());
+        final Optional<User> user = userService.findById(basicUser.getId());
 
-        if (user == null){
+        if (!user.isPresent()){
             return new UserResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.NOT_FOUND, "User can't be found");
         }
 
         return new ApiKeyResponse(
-                user.getApiKey()
+                user.get().getApiKey()
         );
     }
 

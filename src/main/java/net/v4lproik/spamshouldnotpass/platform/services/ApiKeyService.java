@@ -1,4 +1,4 @@
-package net.v4lproik.spamshouldnotpass.platform.service;
+package net.v4lproik.spamshouldnotpass.platform.services;
 
 import net.v4lproik.spamshouldnotpass.platform.models.PasswordBuilder;
 import org.springframework.stereotype.Service;

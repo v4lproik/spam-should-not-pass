@@ -1,4 +1,4 @@
-package net.v4lproik.spamshouldnotpass.platform.dao.repositories;
+package net.v4lproik.spamshouldnotpass.platform.repositories;
 
 import com.querydsl.jpa.hibernate.HibernateDeleteClause;
 import com.querydsl.jpa.hibernate.HibernateQuery;
@@ -13,10 +13,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
-public class UserRepository {
+public class UserRepository extends net.v4lproik.spamshouldnotpass.platform.repositories.Repository<User> {
 
     private static final Logger log = LoggerFactory.getLogger(UserRepository.class);
 
@@ -30,7 +32,7 @@ public class UserRepository {
         this.sessionFactory = sessionFactory;
     }
 
-    public UUID save(User user) {
+    public Optional<UUID> save(User user) {
         Transaction tx = currentSession().beginTransaction();
 
         UUID uuid = (UUID) currentSession().save(user);
@@ -38,7 +40,12 @@ public class UserRepository {
         currentSession().flush();
         tx.commit();
 
-        return uuid;
+        return Optional.of(uuid);
+    }
+
+    @Override
+    public void update(User user) {
+
     }
 
     public void saveApiKey(UUID userId, String apiKey) {
@@ -74,7 +81,7 @@ public class UserRepository {
         tx.commit();
     }
 
-    public User findById(UUID id) {
+    public Optional<User> findById(UUID id) {
         Transaction tx = currentSession().beginTransaction();
 
         HibernateQuery<?> query = new HibernateQuery<Void>(currentSession());
@@ -87,10 +94,15 @@ public class UserRepository {
         currentSession().flush();
         tx.commit();
 
-        return user;
+        return Optional.of(user);
     }
 
-    public User findByApiKey(String token) {
+    @Override
+    public List<User> list() {
+        throw new UnsupportedOperationException();
+    }
+
+    public Optional<User> findByApiKey(String token) {
         Transaction tx = currentSession().beginTransaction();
 
         HibernateQuery<?> query = new HibernateQuery<Void>(currentSession());
@@ -103,10 +115,10 @@ public class UserRepository {
         currentSession().flush();
         tx.commit();
 
-        return user;
+        return Optional.ofNullable(user);
     }
 
-    public User findByEmail(String email) {
+    public Optional<User> findByEmail(String email) {
         Transaction tx = currentSession().beginTransaction();
 
         HibernateQuery<?> query = new HibernateQuery<Void>(currentSession());
@@ -119,7 +131,7 @@ public class UserRepository {
         currentSession().flush();
         tx.commit();
 
-        return user;
+        return Optional.ofNullable(user);
     }
 
     private Session currentSession() {
