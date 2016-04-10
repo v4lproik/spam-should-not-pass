@@ -53,8 +53,6 @@ public class UserController {
         final String login = toCreateUserDTO.getEmail();
         final String password = toCreateUserDTO.getPassword();
 
-        log.debug(String.format("/user/auth?login=%s&password=%s", login, password));
-
         User user = userService.authenticate(login, password);
         if (user == null){
             return new UserResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "Invalid Login or Password");
@@ -114,8 +112,6 @@ public class UserController {
         final MemberStatus status = toCreateUserDTO.getStatus();
         final MemberPermission permission = toCreateUserDTO.getPermission();
         final String corporation = toCreateUserDTO.getCorporation();
-
-        log.debug(String.format("/user/create?email=%s&password=%s", email, password));
 
         if (userService.isEmailAlreadyTaken(email)){
             return new UserResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "Email is already taken");

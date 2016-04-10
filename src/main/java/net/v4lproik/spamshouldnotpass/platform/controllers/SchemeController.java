@@ -4,14 +4,14 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
-import net.v4lproik.spamshouldnotpass.platform.repositories.CacheSessionRepository;
-import net.v4lproik.spamshouldnotpass.platform.repositories.SchemesRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
 import net.v4lproik.spamshouldnotpass.platform.models.SchemeType;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.*;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.Scheme;
 import net.v4lproik.spamshouldnotpass.platform.models.response.PlatformResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.SchemeResponse;
+import net.v4lproik.spamshouldnotpass.platform.repositories.CacheSessionRepository;
+import net.v4lproik.spamshouldnotpass.platform.repositories.SchemesRepository;
 import net.v4lproik.spamshouldnotpass.platform.services.SchemeService;
 import net.v4lproik.spamshouldnotpass.spring.annotation.UserAccess;
 import org.joda.time.DateTime;
@@ -118,8 +118,7 @@ public class SchemeController {
     @RequestMapping(value = "/get/document", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public PlatformResponse getDoc(HttpServletRequest req,
-                                 @RequestBody toGetUserDTO userDTO) throws ClassNotFoundException, IOException {
+    public PlatformResponse getDoc(@RequestBody toGetUserDTO userDTO) throws ClassNotFoundException, IOException {
 
         final UUID userUUID = userDTO.getId();
 
