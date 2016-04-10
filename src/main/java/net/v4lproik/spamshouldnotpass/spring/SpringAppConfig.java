@@ -6,6 +6,8 @@ import net.v4lproik.spamshouldnotpass.platform.client.dynamodb.ConfigDynamoDB;
 import net.v4lproik.spamshouldnotpass.platform.client.dynamodb.DynamoDBTablesInitializer;
 import net.v4lproik.spamshouldnotpass.platform.client.elasticsearch.ConfigES;
 import net.v4lproik.spamshouldnotpass.platform.client.postgres.Config;
+import net.v4lproik.spamshouldnotpass.platform.client.queue.ConfigSqs;
+import net.v4lproik.spamshouldnotpass.platform.client.queue.EventBus;
 import net.v4lproik.spamshouldnotpass.platform.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.spring.initializer.DynamoDBInitializer;
 import net.v4lproik.spamshouldnotpass.spring.interceptor.AuthorisationApiKeyInterceptor;
@@ -34,10 +36,32 @@ public class SpringAppConfig extends WebMvcConfigurerAdapter {
     @Autowired
     public UserRepository userRepository;
 
+    //=========== MAPPER ===========//
+    @Bean
+    public ExpressionParser parser() {
+        return new SpelExpressionParser();
+    }
+
+    @Bean
+    public ObjectMapper objectMapper() {
+        return new ObjectMapper();
+    }
+
+
     //=========== CLIENT ===========//
     @Bean
     public Config config(){
         return new Config(env);
+    }
+
+    @Bean
+    ConfigSqs configSqs(ObjectMapper objectMapper){
+        return new ConfigSqs(env, objectMapper);
+    }
+
+    @Bean
+    EventBus eventBus(ConfigSqs configSqs){
+        return configSqs.eventBus();
     }
 
     @Bean
@@ -59,19 +83,6 @@ public class SpringAppConfig extends WebMvcConfigurerAdapter {
     public DynamoDB dynamoDB(ConfigDynamoDB configDynamoDB){
         return configDynamoDB.dynamoDB();
     }
-
-
-    //=========== MAPPER ===========//
-    @Bean
-    public ExpressionParser parser() {
-        return new SpelExpressionParser();
-    }
-
-    @Bean
-    public ObjectMapper objectMapper() {
-        return new ObjectMapper();
-    }
-
 
     //=========== INTERCEPTOR ===========//
     @Bean

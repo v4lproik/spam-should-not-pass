@@ -6,6 +6,7 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import javassist.CannotCompileException;
 import javassist.NotFoundException;
+import net.v4lproik.spamshouldnotpass.platform.client.queue.EventBus;
 import net.v4lproik.spamshouldnotpass.platform.models.SchemeType;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.APIInformationDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.PropertyJSON;
@@ -57,6 +58,9 @@ public class ApiController {
 
     @Autowired
     private AuthorInfoRepository authorInfoRepository;
+
+    @Autowired
+    private EventBus eventBus;
 
     private static Logger log = Logger.getLogger(ApiController.class.getName());
     private static Map<UUID, DateTime> lastGeneratedTime = Maps.newHashMap();
@@ -157,6 +161,9 @@ public class ApiController {
 
         //save information
         storeInformation(userInformation, corporation);
+
+        //send to eventBus
+        eventBus.publish(obj);
 
         return new SpamResponse(String.valueOf(spam), reason);
     }

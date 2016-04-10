@@ -22,3 +22,10 @@ dynamodb:
   image: kcyeu/dynamodb-local
   ports:
     - "8000:8000"
+
+sqs:
+  image: behance/fake-sqs
+  ports:
+    - "4568:4568"
+
+
