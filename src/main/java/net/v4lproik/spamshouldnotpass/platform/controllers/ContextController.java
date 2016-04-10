@@ -2,6 +2,7 @@ package net.v4lproik.spamshouldnotpass.platform.controllers;
 
 import com.google.common.collect.Lists;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
+import net.v4lproik.spamshouldnotpass.platform.models.PlatformException;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.*;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.CompositePKRulesInContext;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.Context;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -34,17 +34,13 @@ public class ContextController {
     @RequestMapping(value = "/get", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public PlatformResponse get(@RequestBody toGetContextDTO toGet) {
+    public PlatformResponse get(@RequestBody toGetContextDTO toGet) throws PlatformException {
 
-        final Optional<Context> context = contextRepository.findById(toGet.getId());
-
-        if (!context.isPresent()){
-            return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The context does not exist");
-        }
+        final Context context = contextRepository.findById(toGet.getId()).orElseThrow(() -> new PlatformException(PlatformResponse.Error.NOT_FOUND, "The context cannot be found"));
 
         return new ContextsResponse(
                 Lists.newArrayList(
-                        convertToDTO(context.get(), false)
+                        convertToDTO(context, false)
                 )
         );
     }
@@ -53,17 +49,13 @@ public class ContextController {
     @RequestMapping(value = "/get-and-rules", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public PlatformResponse getAndRules(@RequestBody toGetContextDTO toGet) {
+    public PlatformResponse getAndRules(@RequestBody toGetContextDTO toGet) throws PlatformException {
 
-        final Optional<Context> context = contextRepository.findByIdWithRules(toGet.getId());
-
-        if (!context.isPresent()){
-            return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The context does not exist");
-        }
+        final Context context = contextRepository.findByIdWithRules(toGet.getId()).orElseThrow(() -> new PlatformException(PlatformResponse.Error.NOT_FOUND, "The context cannot be found"));
 
         return new ContextsResponse(
                 Lists.newArrayList(
-                        convertToDTO(context.get(), true)
+                        convertToDTO(context, true)
                 )
         );
     }
@@ -127,15 +119,11 @@ public class ContextController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public PlatformResponse addRules(HttpServletRequest req,
-                                     @RequestBody RulesInContextDTO toCreate) {
+                                     @RequestBody RulesInContextDTO toCreate) throws PlatformException {
 
-        final Optional<Context> context = contextRepository.findById(toCreate.getIdContext());
+        final Context context = contextRepository.findById(toCreate.getIdContext()).orElseThrow(() -> new PlatformException(PlatformResponse.Error.NOT_FOUND, "The context cannot be found"));
 
-        if (!context.isPresent()){
-            return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The context does not exist");
-        }
-
-        final UUID userId = context.get().getUserId();
+        final UUID userId = context.getUserId();
 
         if (!userId.equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
             return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to update this context");
@@ -157,16 +145,11 @@ public class ContextController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public PlatformResponse updateAndRules(HttpServletRequest req,
-                                           @RequestBody toUpdateContextDTO toUpdate) {
+                                           @RequestBody toUpdateContextDTO toUpdate) throws PlatformException {
 
-        final Optional<Context> context = contextRepository.findById(toUpdate.getId());
-
-        if (!context.isPresent()){
-            return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The context does not exist");
-        }
-
-        final UUID userId = context.get().getUserId();
-        final DateTime date = context.get().getDate();
+        final Context context = contextRepository.findById(toUpdate.getId()).orElseThrow(() -> new PlatformException(PlatformResponse.Error.NOT_FOUND, "The context cannot be found"));
+        final UUID userId = context.getUserId();
+        final DateTime date = context.getDate();
 
         if (!userId.equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
             return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to update this context");
@@ -199,16 +182,11 @@ public class ContextController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public PlatformResponse update(HttpServletRequest req,
-                                   @RequestBody toCreateRuleDTO toUpdate) {
+                                   @RequestBody toCreateRuleDTO toUpdate) throws PlatformException {
 
-        final Optional<Context> context = contextRepository.findById(toUpdate.getId());
-
-        if (!context.isPresent()){
-            return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The context does not exist");
-        }
-
-        final UUID userId = context.get().getUserId();
-        final DateTime date = context.get().getDate();
+        final Context context = contextRepository.findById(toUpdate.getId()).orElseThrow(() -> new PlatformException(PlatformResponse.Error.NOT_FOUND, "The context cannot be found"));
+        final UUID userId = context.getUserId();
+        final DateTime date = context.getDate();
 
         if (!userId.equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
             return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to update this context");
@@ -231,15 +209,10 @@ public class ContextController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public PlatformResponse delete(HttpServletRequest req,
-                                   @RequestBody toGetContextDTO toGet) {
+                                   @RequestBody toGetContextDTO toGet) throws PlatformException {
 
-        final Optional<Context> context = contextRepository.findById(toGet.getId());
-
-        if (!context.isPresent()){
-            return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The context does not exist");
-        }
-
-        final UUID userId = context.get().getUserId();
+        final Context context = contextRepository.findById(toGet.getId()).orElseThrow(() -> new PlatformException(PlatformResponse.Error.NOT_FOUND, "The context cannot be found"));
+        final UUID userId = context.getUserId();
 
         if (!userId.equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
             return new ContextsResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to delete this context");

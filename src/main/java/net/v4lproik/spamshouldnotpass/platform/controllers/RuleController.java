@@ -2,6 +2,7 @@ package net.v4lproik.spamshouldnotpass.platform.controllers;
 
 import com.google.common.collect.Lists;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
+import net.v4lproik.spamshouldnotpass.platform.models.PlatformException;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.RuleDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.toCreateRuleDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.toGetRuleDTO;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 @Controller
@@ -34,20 +34,19 @@ public class RuleController {
     @RequestMapping(value = "/get", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public PlatformResponse list(HttpServletRequest req,
-                                 @RequestBody toGetRuleDTO toGet) {
+    public PlatformResponse list(@RequestBody toGetRuleDTO toGet) throws PlatformException {
 
-        final Optional<Rule> rule = rulesRepository.findById(toGet.getId());
-
-        if (!rule.isPresent()){
-            return new RulesResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The rule does not exist");
-        }
+        final Rule rule = getRuleorThrowException(toGet);
 
         return new RulesResponse(
                 Lists.newArrayList(
-                        convertToDTO(rule.get(), false)
+                        convertToDTO(rule, false)
                 )
         );
+    }
+
+    private Rule getRuleorThrowException(@RequestBody toGetRuleDTO toGet) throws PlatformException {
+        return rulesRepository.findById(toGet.getId()).orElseThrow(() -> new PlatformException(PlatformResponse.Error.NOT_FOUND, "The rule cannot be found"));
     }
 
     @UserAccess
@@ -75,28 +74,22 @@ public class RuleController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public PlatformResponse update(HttpServletRequest req,
-                                   @RequestBody toUpdateRuleDTO toUpdate) {
+                                   @RequestBody toUpdateRuleDTO toUpdate) throws PlatformException {
 
-        final Optional<Rule> rule = rulesRepository.findById(toUpdate.getId());
-
-        if (!rule.isPresent()){
-            return new RulesResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The rule does not exist");
-        }
-
-        final UUID userId = rule.get().getUserId();
+        final Rule rule = rulesRepository.findById(toUpdate.getId()).orElseThrow(() -> new PlatformException(PlatformResponse.Error.NOT_FOUND, "The rule cannot be found"));
+        final UUID userId = rule.getUserId();
 
         if (!userId.equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
             return new RulesResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to update this rule");
         }
 
-        Rule modifiedRule = rule.get();
-        modifiedRule.setId(toUpdate.getId());
-        modifiedRule.setName(toUpdate.getName());
-        modifiedRule.setRule(toUpdate.getRule());
-        modifiedRule.setType(toUpdate.getType());
-        modifiedRule.setLastUpdate(DateTime.now());
+        rule.setId(toUpdate.getId());
+        rule.setName(toUpdate.getName());
+        rule.setRule(toUpdate.getRule());
+        rule.setType(toUpdate.getType());
+        rule.setLastUpdate(DateTime.now());
 
-        rulesRepository.update(modifiedRule);
+        rulesRepository.update(rule);
 
         return PlatformResponse.ok();
     }
@@ -131,15 +124,10 @@ public class RuleController {
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
     public PlatformResponse delete(HttpServletRequest req,
-                                   @RequestBody toGetRuleDTO toGet) {
+                                   @RequestBody toGetRuleDTO toGet) throws PlatformException {
 
-        final Optional<Rule> rule = rulesRepository.findById(toGet.getId());
-
-        if (!rule.isPresent()){
-            return new RulesResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "The rule does not exist");
-        }
-
-        final UUID userId = rule.get().getUserId();
+        final Rule rule = rulesRepository.findById(toGet.getId()).orElseThrow(() -> new PlatformException(PlatformResponse.Error.NOT_FOUND, "The rule cannot be found"));
+        final UUID userId = rule.getUserId();
 
         if (!userId.equals(((BasicMember) req.getAttribute(CacheSessionRepository.MEMBER_KEY)).getId())){
             return new RulesResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_PERMISSION, "Permission is not enough to delete this rule");
