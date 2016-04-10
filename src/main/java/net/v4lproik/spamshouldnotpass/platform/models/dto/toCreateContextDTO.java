@@ -27,7 +27,8 @@ public class toCreateContextDTO {
 
     private List<Rule> rules = new ArrayList<>();
 
-    public toCreateContextDTO(@JsonProperty("id") String id, @JsonProperty("name") String name) {
+    public toCreateContextDTO(@JsonProperty("id") UUID id, @JsonProperty("name") String name) {
+        this.id = id;
         this.name = name;
     }
 

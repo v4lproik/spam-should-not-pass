@@ -23,8 +23,8 @@ public class ConfigDynamoDB {
     @Bean
     public DynamoDB dynamoDB() {
 
-        final String ACCESS_KEY = env.getRequiredProperty("aws.dynamodb.accessKey");
-        final String SECRET_KEY = env.getRequiredProperty("aws.dynamodb.secretKey");
+        final String ACCESS_KEY = env.getRequiredProperty("aws.accessKey");
+        final String SECRET_KEY = env.getRequiredProperty("aws.secretKey");
         final String ENDPOINT = env.getProperty("aws.dynamodb.endpoint");
 
         AWSCredentials credentials = new BasicAWSCredentials(ACCESS_KEY, SECRET_KEY);

@@ -6,6 +6,7 @@ import net.v4lproik.spamshouldnotpass.platform.client.dynamodb.DynamoDBTablesIni
 import net.v4lproik.spamshouldnotpass.platform.client.dynamodb.DynamoDBTestConfiguration;
 import net.v4lproik.spamshouldnotpass.platform.client.postgres.DatabaseTestConfiguration;
 import net.v4lproik.spamshouldnotpass.platform.client.postgres.SqlDatabaseInitializer;
+import net.v4lproik.spamshouldnotpass.platform.client.queue.EventBus;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
 import net.v4lproik.spamshouldnotpass.platform.models.RuleType;
@@ -17,7 +18,10 @@ import net.v4lproik.spamshouldnotpass.platform.models.entities.Rule;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.Scheme;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
 import net.v4lproik.spamshouldnotpass.platform.models.response.SpamResponse;
-import net.v4lproik.spamshouldnotpass.platform.repositories.*;
+import net.v4lproik.spamshouldnotpass.platform.repositories.ContextRepository;
+import net.v4lproik.spamshouldnotpass.platform.repositories.RulesRepository;
+import net.v4lproik.spamshouldnotpass.platform.repositories.SchemesRepository;
+import net.v4lproik.spamshouldnotpass.platform.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.spring.SpringAppConfig;
 import org.joda.time.DateTime;
 import org.junit.After;
@@ -69,6 +73,9 @@ public class ApiControllerITest {
 
     @Autowired
     private ContextRepository contextRepository;
+
+    @Autowired
+    private EventBus eventBus;
 
     private MockMvc mockMvc;
 
@@ -184,6 +191,7 @@ public class ApiControllerITest {
         assertEquals(response.getError(), null);
         assertEquals(response.getIsSpam(), "true");
         assertEquals(response.getReason(), rule.getName());
+        assertEquals(eventBus.pull("global").size(), 1);
     }
 
 
