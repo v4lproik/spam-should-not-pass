@@ -20,6 +20,7 @@
         <querydsl.version>4.0.6</querydsl.version>
         <dynamodb-sdk.version>1.10.40</dynamodb-sdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <cucumber.version>1.2.3</cucumber.version>
     </properties>
 
     <build>
@@ -291,6 +292,24 @@
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk-dynamodb</artifactId>
             <version>${dynamodb-sdk.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-spring</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>info.cukes</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <version>${cucumber.version}</version>
+            <scope>test</scope>
         </dependency>
 
     </dependencies>
