@@ -1,5 +1,7 @@
 package net.v4lproik.spamshouldnotpass.platform.models.response;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.BasicUserDTO;
 
 final public class UserResponse extends PlatformResponse {
@@ -15,7 +17,9 @@ final public class UserResponse extends PlatformResponse {
         super(status, null, null);
     }
 
-    public UserResponse(BasicUserDTO user, String token) {
+    @JsonCreator
+    public UserResponse(@JsonProperty("user") BasicUserDTO user,
+                        @JsonProperty("token") String token) {
         super();
         this.user = user;
         this.token = token;

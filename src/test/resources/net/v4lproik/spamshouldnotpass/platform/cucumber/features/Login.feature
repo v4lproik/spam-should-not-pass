@@ -1,14 +1,9 @@
 Feature: Login
 
-  Scenario Outline: Should return null when a non-registered user tries to login
+  Scenario: User login scenarios;
 
-    Given my login is "<Login>"
-    Given my password is "<Password>"
-    When I provide my credentials
-    Then I should receive the following error "<Result>"
-
-  Examples:
-    | Login          | Password | Result |
-    | abcde@abcde.fr | 1234     | null   |
-    | abcde@abcde.fr |          | null   |
-    | abcde@abcde.fr | null     | null   |
+    Given A new user
+      | email          | password | firstname | lastname | corporation |
+      | abcde@abcde.fr | 1234     | spider    | cochon   | google      |
+    When He submits its credentials
+    Then He is logged in
