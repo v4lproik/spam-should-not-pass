@@ -1,7 +1,7 @@
 Feature: Login
 
-  Scenario: User login scenarios;
-
+  @database
+  Scenario: A user submits good credentials
     Given A new user
       | email          | password | firstname | lastname | corporation |
       | abcde@abcde.fr | 1234     | spider    | cochon   | google      |

@@ -11,6 +11,6 @@ import org.junit.runner.RunWith;
         glue = { "net.v4lproik.spamshouldnotpass.platform.cucumber.steps" },
         features = { "src/test/resources/net/v4lproik/spamshouldnotpass/platform/cucumber/features" }
 )
-public class FeaturesBaseTest
+public class CucumberBaseTest
 {
 }
