@@ -9,6 +9,8 @@ It provides a powerful JEE platform that performs spam checks
 - Postgresql 9.4
 - Redis 2.8.21
 - Elasticsearch 1.5
+- DynamoDB
+- Sqs
 
 ## Pre-requisites
 
