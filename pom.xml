@@ -18,7 +18,7 @@
         <mockito-all>1.10.19</mockito-all>
         <hibernate-jpa-2.1-api>1.0.0.Final</hibernate-jpa-2.1-api>
         <querydsl.version>4.0.6</querydsl.version>
-        <dynamodb-sdk.version>1.10.40</dynamodb-sdk.version>
+        <aws-sdk.version>1.10.40</aws-sdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <cucumber.version>1.2.4</cucumber.version>
     </properties>
@@ -290,8 +290,8 @@
         </dependency>
         <dependency>
             <groupId>com.amazonaws</groupId>
-            <artifactId>aws-java-sdk-dynamodb</artifactId>
-            <version>${dynamodb-sdk.version}</version>
+            <artifactId>aws-java-sdk</artifactId>
+            <version>${aws-sdk.version}</version>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
