@@ -1,5 +1,7 @@
 package net.v4lproik.spamshouldnotpass.platform.models.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
 
@@ -8,16 +10,17 @@ import java.util.UUID;
 public class BasicUserDTO {
 
     UUID id;
-
     String email;
-
     String nickName;
-
     MemberStatus status;
-
     MemberPermission permission;
 
-    public BasicUserDTO(UUID id, String email, String nickName, MemberStatus status, MemberPermission permission) {
+    @JsonCreator
+    public BasicUserDTO(@JsonProperty("id") UUID id,
+                        @JsonProperty("email")String email,
+                        @JsonProperty("nickName")String nickName,
+                        @JsonProperty("status")MemberStatus status,
+                        @JsonProperty("permission")MemberPermission permission) {
         this.id = id;
         this.email = email;
         this.nickName = nickName;

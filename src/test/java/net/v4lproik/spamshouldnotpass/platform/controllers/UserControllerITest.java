@@ -3,10 +3,10 @@ package net.v4lproik.spamshouldnotpass.platform.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import net.v4lproik.spamshouldnotpass.platform.client.postgres.DatabaseTestConfiguration;
 import net.v4lproik.spamshouldnotpass.platform.client.postgres.SqlDatabaseInitializer;
-import net.v4lproik.spamshouldnotpass.platform.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.toCreateUserDTO;
+import net.v4lproik.spamshouldnotpass.platform.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.platform.services.PasswordService;
 import net.v4lproik.spamshouldnotpass.platform.services.UserService;
 import net.v4lproik.spamshouldnotpass.spring.SpringAppConfig;
@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = {SpringAppConfig.class, DatabaseTestConfiguration.class})
 @WebAppConfiguration
-public class UserControllerUTest {
+public class UserControllerITest {
 
     @Autowired
     private SqlDatabaseInitializer databaseInitializer;
