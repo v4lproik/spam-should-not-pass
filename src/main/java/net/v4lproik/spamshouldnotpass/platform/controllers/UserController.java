@@ -4,6 +4,7 @@ import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.BasicUserDTO;
+import net.v4lproik.spamshouldnotpass.platform.models.dto.toAuthUserDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.toCreateUserDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
 import net.v4lproik.spamshouldnotpass.platform.models.response.ApiKeyResponse;
@@ -48,10 +49,10 @@ public class UserController {
     @RequestMapping(value = "/auth", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public PlatformResponse authenticate(@RequestBody toCreateUserDTO toCreateUserDTO) {
+    public PlatformResponse authenticate(@RequestBody toAuthUserDTO toAuthUserDTO) {
 
-        final String login = toCreateUserDTO.getEmail();
-        final String password = toCreateUserDTO.getPassword();
+        final String login = toAuthUserDTO.getEmail();
+        final String password = toAuthUserDTO.getPassword();
 
         User user = userService.authenticate(login, password);
         if (user == null){
