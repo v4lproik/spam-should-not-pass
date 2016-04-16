@@ -20,7 +20,7 @@
         <querydsl.version>4.0.6</querydsl.version>
         <aws-sdk.version>1.10.68</aws-sdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <cucumber.version>1.2.4</cucumber.version>
+        <cucumber.version>1.2.3</cucumber.version>
     </properties>
 
     <build>
@@ -292,8 +292,6 @@
             <groupId>com.amazonaws</groupId>
             <artifactId>aws-java-sdk</artifactId>
             <version>${aws-sdk.version}</version>
-            <artifactId>aws-java-sdk</artifactId>
-            <version>${aws-sdk.version}</version>
         </dependency>
         <dependency>
             <groupId>info.cukes</groupId>
@@ -313,6 +311,5 @@
             <version>${cucumber.version}</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 </project>
