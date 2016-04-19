@@ -101,7 +101,7 @@ public class UserService {
         return user;
     }
 
-    public boolean isEmailAlreadyTaken(String email){
+    public boolean isEmailAlreadyTaken(String email) {
         checkNotNull(email);
 
         return userRepository.findByEmail(email).isPresent();

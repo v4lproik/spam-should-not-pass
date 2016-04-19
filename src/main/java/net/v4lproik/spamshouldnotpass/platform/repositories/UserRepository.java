@@ -94,7 +94,7 @@ public class UserRepository extends net.v4lproik.spamshouldnotpass.platform.repo
         currentSession().flush();
         tx.commit();
 
-        return Optional.of(user);
+        return Optional.ofNullable(user);
     }
 
     @Override
