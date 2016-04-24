@@ -58,6 +58,21 @@ public class PlatformResponse {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PlatformResponse that = (PlatformResponse) o;
+        return status == that.status &&
+                error == that.error &&
+                Objects.equal(message, that.message);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(status, error, message);
+    }
+
+    @Override
     public String toString() {
         return Objects.toStringHelper(this)
                 .add("status", status)

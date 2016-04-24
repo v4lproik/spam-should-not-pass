@@ -3,7 +3,6 @@ package net.v4lproik.spamshouldnotpass.platform.cucumber.steps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterables;
-import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import net.v4lproik.spamshouldnotpass.platform.client.ClientTestConfiguration;
@@ -20,6 +19,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
@@ -48,6 +48,8 @@ public class CommonSteps
 
     public static UserFixture user;
 
+    public static MvcResult mvcResult;
+
     private MockMvc mockMvc;
 
     @Before
@@ -61,31 +63,32 @@ public class CommonSteps
         try{
             databaseInitializer.createDatabase();
         }catch (Exception e){
+            // Nothing
+        }
+        try{
+            databaseInitializer.flushAllData();
+        }catch (Exception e){
+            // Nothing
         }
     }
 
     @Given("^A new user$")
-    public void aNewUser(List<UserFixture> theMe) throws Throwable {
+    public void aNewUser(List<UserFixture> theMe) throws Throwable
+    {
         user = Iterables.getOnlyElement(theMe);
-
-        mockMvc.perform(post("/user/create")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(
-                        new toCreateUserDTO(
-                                user.firstname,
-                                user.lastname,
-                                user.email,
-                                user.password,
-                                MemberStatus.USER.name(),
-                                MemberPermission.REGULAR.name(),
-                                user.corporation
-                        )
-                ))
+        mvcResult = mockMvc.perform(post("/user/create")
+                                            .contentType(MediaType.APPLICATION_JSON)
+                                            .content(objectMapper.writeValueAsString(
+                                                    new toCreateUserDTO(
+                                                            user.firstname,
+                                                            user.lastname,
+                                                            user.email,
+                                                            user.password,
+                                                            MemberStatus.USER.name(),
+                                                            MemberPermission.REGULAR.name(),
+                                                            user.corporation
+                                                    )
+                                            ))
         ).andExpect(status().isOk()).andReturn();
-    }
-
-    @After
-    public void cleanUp(){
-        userRepository.delete(user.userId);
     }
 }

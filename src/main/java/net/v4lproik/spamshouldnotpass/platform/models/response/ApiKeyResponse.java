@@ -1,5 +1,8 @@
 package net.v4lproik.spamshouldnotpass.platform.models.response;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 final public class ApiKeyResponse extends PlatformResponse {
 
     private String key;
@@ -12,7 +15,8 @@ final public class ApiKeyResponse extends PlatformResponse {
         super(status, null, null);
     }
 
-    public ApiKeyResponse(String key) {
+    @JsonCreator
+    public ApiKeyResponse(@JsonProperty("key") String key) {
         super();
         this.key = key;
     }

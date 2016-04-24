@@ -18,6 +18,9 @@ public class ExceptionController {
     @ExceptionHandler(PlatformException.class)
     @ResponseBody
     public PlatformResponse handleException(PlatformException ex){
-        return new PlatformResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.NOT_FOUND, ex.getMessage());
+        return new PlatformResponse(
+                PlatformResponse.Status.NOK, ex.getPlatformError() == null ? PlatformResponse.Error.UNKNOWN : ex.getPlatformError(),
+                ex.getMessage()
+        );
     }
 }

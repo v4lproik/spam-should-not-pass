@@ -7,6 +7,7 @@ public class BasicUserResponse extends PlatformResponse {
     private BasicUserDTO user;
 
     public BasicUserResponse(BasicUserDTO user) {
+        super();
         this.user = user;
     }
 
