@@ -21,4 +21,8 @@ public class PlatformException extends Exception implements Serializable {
     public PlatformException(String msg, Exception e)  {
         super(msg, e);
     }
+
+    public PlatformResponse.Error getPlatformError() {
+        return platformError;
+    }
 }

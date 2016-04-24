@@ -28,9 +28,11 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import java.util.Optional;
 
 import static junit.framework.TestCase.assertEquals;
+import static junit.framework.TestCase.assertFalse;
 import static net.v4lproik.spamshouldnotpass.platform.cucumber.steps.CommonSteps.mvcResult;
 import static net.v4lproik.spamshouldnotpass.platform.cucumber.steps.CommonSteps.user;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -73,49 +75,52 @@ public class LoginSteps
         ).andExpect(status().isOk()).andReturn();
 
         UserResponse response = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-                                                       UserResponse.class);
-        user.authToken = response.getToken();
-        user.userId = response.getUser().getId();
-        user.permission = response.getUser().getPermission();
-        user.status = response.getUser().getStatus();
+                UserResponse.class);
+
+        if (response.getStatus().equals(PlatformResponse.Status.OK)) {
+            user.authToken = response.getToken();
+            user.userId = response.getUser().getId();
+            user.permission = response.getUser().getPermission();
+            user.status = response.getUser().getStatus();
+        }
     }
 
     @When("^He submits wrong credentials$")
     public void heSubmitsWrongCredentials() throws Throwable
     {
         mvcResult = mockMvc.perform(post("/user/auth")
-                           .contentType(MediaType.APPLICATION_JSON)
-                           .content(objectMapper.writeValueAsString(
-                                      new toAuthUserDTO(
-                                              user.email,
-                                              user.password + "wrong"
-                                      )
-                           ))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(
+                        new toAuthUserDTO(
+                                user.email,
+                                user.password + "wrong"
+                        )
+                ))
         ).andExpect(status().isOk()).andReturn();
     }
 
     @When("^He creates an API key$")
     public void heCreatesAnAPIKey() throws Throwable {
         mvcResult = mockMvc.perform(post("/user/create-api-key")
-                    .contentType(MediaType.APPLICATION_JSON)
-                    .requestAttr(CacheSessionRepository.MEMBER_KEY,
-                                 new BasicMember(user.userId,user.email,user.nickname,user.status,user.permission,user.corporation))
+                .contentType(MediaType.APPLICATION_JSON)
+                .requestAttr(CacheSessionRepository.MEMBER_KEY,
+                        new BasicMember(user.userId,user.email,user.nickname,user.status,user.permission,user.corporation))
         ).andExpect(status().isOk()).andReturn();
     }
 
     @When("^He deletes his account$")
     public void heAccessUserInfo() throws Throwable {
         mvcResult = mockMvc.perform(post("/user/delete")
-                                            .contentType(MediaType.APPLICATION_JSON)
-                                            .content(objectMapper.writeValueAsString(user.userId))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(user.userId))
         ).andExpect(status().isOk()).andReturn();
     }
 
-    @And("^He tries to log out$")
-    public void heTriesToLogOut() throws Throwable {
+    @And("^He logged out$")
+    public void heLoggedOut() throws Throwable {
         mvcResult = mockMvc.perform(post("/user/logout")
-                                            .contentType(MediaType.APPLICATION_JSON)
-                                            .header("x-auth-token", user.authToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("x-auth-token", user.authToken)
         ).andExpect(status().isOk()).andReturn();
     }
 
@@ -124,7 +129,7 @@ public class LoginSteps
     public void heIsLoggedIn() throws Throwable {
 
         final UserResponse response = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-                                                       UserResponse.class);
+                UserResponse.class);
 
         assertEquals(response.getStatus(), PlatformResponse.Status.OK);
         assertNotNull(response.getToken());
@@ -147,45 +152,45 @@ public class LoginSteps
     public void heIsLoggedOut() throws Throwable {
 
         UserResponse response = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-                                                       UserResponse.class);
+                UserResponse.class);
 
-        assert(response.getStatus() == PlatformResponse.Status.OK);
-        assert(sessionRepo.getSession(user.authToken) == null);
+        assertEquals(response.getStatus(), PlatformResponse.Status.OK);
+        assertNull(sessionRepo.getSession(user.authToken));
     }
 
     @Then("^He receives an error$")
     public void heReceivesAnError() throws Throwable {
         UserResponse response = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-                                                       UserResponse.class);
+                UserResponse.class);
 
-        assert(response.getStatus() == PlatformResponse.Status.NOK);
-        assert(response.getError() == PlatformResponse.Error.INVALID_INPUT);
-        assert(response.getUser() == null);
+        assertEquals(response.getStatus(), PlatformResponse.Status.NOK);
+        assertEquals(response.getError(), PlatformResponse.Error.INVALID_INPUT);
+        assertNull(response.getUser());
     }
 
     @Then("^The user is deleted$")
     public void theUserIsDeleted() throws Throwable {
         UserResponse response = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-                                                       UserResponse.class);
+                UserResponse.class);
 
-        assert(response.getStatus() == PlatformResponse.Status.OK);
-        
+        assertEquals(response.getStatus(), PlatformResponse.Status.OK);
+
         Optional<User> usr = userRepository.findById(user.userId);
-        assert(!usr.isPresent());
+        assertFalse(!usr.isPresent());
     }
 
     @Then("^He receives an API key$")
     public void heReceivesAnAPIKey() throws Throwable {
         mvcResult = mockMvc.perform(post("/user/get-api-key")
-                                            .contentType(MediaType.APPLICATION_JSON)
-                                            .requestAttr(CacheSessionRepository.MEMBER_KEY,
-                                                         new BasicMember(user.userId,user.email,user.nickname,user.status,user.permission,user.corporation))
+                .contentType(MediaType.APPLICATION_JSON)
+                .requestAttr(CacheSessionRepository.MEMBER_KEY,
+                        new BasicMember(user.userId,user.email,user.nickname,user.status,user.permission,user.corporation))
         ).andExpect(status().isOk()).andReturn();
 
         ApiKeyResponse response = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-                                                         ApiKeyResponse.class);
+                ApiKeyResponse.class);
 
-        assert(response.getStatus() == PlatformResponse.Status.OK);
-        assert(response.getKey().length() == 32);
+        assertEquals(response.getStatus(), PlatformResponse.Status.OK);
+        assertEquals(response.getKey().length(), 32);
     }
 }

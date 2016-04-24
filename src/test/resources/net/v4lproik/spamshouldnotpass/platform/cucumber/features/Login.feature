@@ -29,14 +29,16 @@ Feature: Login
     When He creates an API key
     Then He receives an API key
 
-#  @database
-#  Scenario: A user decides to delete its own account
-#    When He deletes his account
-#    When He submits its credentials
-#    Then He is not logged in
-#
-#  @database
-#  Scenario: A user logs out
-#    When He submits its credentials
-#    And He tries to log out
-#    Then He is logged out
+  @database
+  Scenario: A user decides to delete its own account
+    When He submits its credentials
+    Then He is logged in
+    When He deletes his account
+    When He submits its credentials
+    Then He is not logged in
+
+  @database
+  Scenario: A user logs out
+    When He submits its credentials
+    When He logged out
+    Then He is logged out

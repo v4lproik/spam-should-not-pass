@@ -17,7 +17,6 @@ import net.v4lproik.spamshouldnotpass.platform.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.platform.services.ApiKeyService;
 import net.v4lproik.spamshouldnotpass.platform.services.UserService;
 import net.v4lproik.spamshouldnotpass.spring.annotation.UserAccess;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.session.Session;
@@ -32,8 +31,6 @@ import java.util.UUID;
 @Controller
 @RequestMapping(value = "/user")
 public class UserController {
-
-    private static Logger log = Logger.getLogger(UserController.class.getName());
 
     @Autowired
     private UserService userService;
@@ -157,9 +154,9 @@ public class UserController {
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public PlatformResponse delete(HttpServletRequest req, @RequestBody UUID uuid) {
+    public PlatformResponse delete(HttpServletRequest req, @RequestBody UUID userId) {
 
-        userService.delete(uuid);
+        userService.delete(userId);
         invalidateSession(req);
 
         return PlatformResponse.ok();
