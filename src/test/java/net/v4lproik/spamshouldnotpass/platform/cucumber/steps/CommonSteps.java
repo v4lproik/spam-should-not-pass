@@ -61,8 +61,12 @@ public class CommonSteps
     @Before(value = "@database")
     public void initDatabase(){
         try{
-            //databaseInitializer.flushAllData();
             databaseInitializer.createDatabase();
+        }catch (Exception e){
+            // Nothing
+        }
+        try{
+            databaseInitializer.flushAllData();
         }catch (Exception e){
             // Nothing
         }
