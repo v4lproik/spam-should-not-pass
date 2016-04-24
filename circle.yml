@@ -9,7 +9,7 @@ dependencies:
     - "~/.docker"
 
   pre:
-    - sudo -H pip install docker-compose==1.3.3
+    - sudo -H pip install docker-compose==1.6.2
     - if [ -f ~/.docker/images.tar ]; then docker load -i ~/.docker/images.tar; fi
 
   override:
