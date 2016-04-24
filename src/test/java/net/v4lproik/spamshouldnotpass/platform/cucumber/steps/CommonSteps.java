@@ -3,7 +3,6 @@ package net.v4lproik.spamshouldnotpass.platform.cucumber.steps;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Iterables;
-import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.Given;
 import net.v4lproik.spamshouldnotpass.platform.client.ClientTestConfiguration;
@@ -12,7 +11,6 @@ import net.v4lproik.spamshouldnotpass.platform.cucumber.fixture.UserFixture;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.toCreateUserDTO;
-import net.v4lproik.spamshouldnotpass.platform.models.response.UserResponse;
 import net.v4lproik.spamshouldnotpass.platform.repositories.UserRepository;
 import net.v4lproik.spamshouldnotpass.spring.SpringAppConfig;
 import org.mockito.MockitoAnnotations;
@@ -62,11 +60,11 @@ public class CommonSteps
 
     @Before(value = "@database")
     public void initDatabase(){
-        System.out.println("Before1");
-
         try{
+            databaseInitializer.flushAllData();
             databaseInitializer.createDatabase();
         }catch (Exception e){
+            // Nothing
         }
     }
 
@@ -74,7 +72,6 @@ public class CommonSteps
     public void aNewUser(List<UserFixture> theMe) throws Throwable
     {
         user = Iterables.getOnlyElement(theMe);
-
         mvcResult = mockMvc.perform(post("/user/create")
                                             .contentType(MediaType.APPLICATION_JSON)
                                             .content(objectMapper.writeValueAsString(
@@ -89,20 +86,5 @@ public class CommonSteps
                                                     )
                                             ))
         ).andExpect(status().isOk()).andReturn();
-
-        UserResponse response = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
-                                                       UserResponse.class);
-
-        if (response.getUser() != null)
-        {
-            user.userId = response.getUser().getId();
-            user.permission = response.getUser().getPermission();
-            user.status = response.getUser().getStatus();
-        }
-    }
-
-    @After
-    public void cleanUp(){
-        userRepository.delete(user.userId);
     }
 }

@@ -2,21 +2,14 @@ package net.v4lproik.spamshouldnotpass.platform.cucumber.steps;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.Iterables;
-import cucumber.api.java.After;
 import cucumber.api.java.Before;
 import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
 import cucumber.api.java.en.Then;
 import cucumber.api.java.en.When;
 import net.v4lproik.spamshouldnotpass.platform.client.ClientTestConfiguration;
 import net.v4lproik.spamshouldnotpass.platform.controllers.UserController;
-import net.v4lproik.spamshouldnotpass.platform.cucumber.fixture.UserFixture;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
-import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
-import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.toAuthUserDTO;
-import net.v4lproik.spamshouldnotpass.platform.models.dto.toCreateUserDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.entities.User;
 import net.v4lproik.spamshouldnotpass.platform.models.response.ApiKeyResponse;
 import net.v4lproik.spamshouldnotpass.platform.models.response.PlatformResponse;
@@ -30,14 +23,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.List;
 import java.util.Optional;
 
-import static net.v4lproik.spamshouldnotpass.platform.cucumber.steps.CommonSteps.user;
+import static junit.framework.TestCase.assertEquals;
 import static net.v4lproik.spamshouldnotpass.platform.cucumber.steps.CommonSteps.mvcResult;
+import static net.v4lproik.spamshouldnotpass.platform.cucumber.steps.CommonSteps.user;
+import static org.junit.Assert.assertNotNull;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -67,7 +60,6 @@ public class LoginSteps
         mockMvc = MockMvcBuilders.standaloneSetup(userController).build();
     }
 
-
     @When("^He submits its credentials$")
     public void heSubmitsItsCredentials() throws Throwable {
         mvcResult = mockMvc.perform(post("/user/auth")
@@ -83,10 +75,13 @@ public class LoginSteps
         UserResponse response = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
                                                        UserResponse.class);
         user.authToken = response.getToken();
+        user.userId = response.getUser().getId();
+        user.permission = response.getUser().getPermission();
+        user.status = response.getUser().getStatus();
     }
 
-    @When("^He submits its wrong credentials$")
-    public void heSubmitsItsWrongCredentials() throws Throwable
+    @When("^He submits wrong credentials$")
+    public void heSubmitsWrongCredentials() throws Throwable
     {
         mvcResult = mockMvc.perform(post("/user/auth")
                            .contentType(MediaType.APPLICATION_JSON)
@@ -108,7 +103,7 @@ public class LoginSteps
         ).andExpect(status().isOk()).andReturn();
     }
 
-    @When("^He tries to delete the user$")
+    @When("^He deletes his account$")
     public void heAccessUserInfo() throws Throwable {
         mvcResult = mockMvc.perform(post("/user/delete")
                                             .contentType(MediaType.APPLICATION_JSON)
@@ -128,15 +123,24 @@ public class LoginSteps
     @Then("^He is logged in$")
     public void heIsLoggedIn() throws Throwable {
 
-        UserResponse response = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
+        final UserResponse response = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
                                                        UserResponse.class);
 
-        assert(response.getStatus() == PlatformResponse.Status.OK);
-        assert(response.getToken() != null);
-        assert(response.getUser().getId()).equals(user.userId);
-        assert(response.getUser().getEmail().equals(user.email));
-        assert(response.getUser().getStatus().equals(user.status));
-        assert(response.getUser().getPermission().equals(user.permission));
+        assertEquals(response.getStatus(), PlatformResponse.Status.OK);
+        assertNotNull(response.getToken());
+        assertEquals(response.getUser().getId(), user.userId);
+        assertEquals(response.getUser().getEmail(), user.email);
+        assertEquals(response.getUser().getStatus(), user.status);
+        assertEquals(response.getUser().getPermission(), user.permission);
+    }
+
+    @Then("^He is not logged in$")
+    public void heIsNotLoggedIn() throws Throwable {
+
+        final UserResponse response = objectMapper.readValue(mvcResult.getResponse().getContentAsString(),
+                UserResponse.class);
+
+        assertEquals(response.getStatus(), PlatformResponse.Status.NOK);
     }
 
     @Then("^He is logged out")
@@ -167,7 +171,7 @@ public class LoginSteps
         assert(response.getStatus() == PlatformResponse.Status.OK);
         
         Optional<User> usr = userRepository.findById(user.userId);
-        assert(usr.isPresent() == false);
+        assert(!usr.isPresent());
     }
 
     @Then("^He receives an API key$")

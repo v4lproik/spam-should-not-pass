@@ -12,7 +12,7 @@ Feature: Login
 
    @database
    Scenario: A user submits bad credentials
-     When He submits its wrong credentials
+     When He submits wrong credentials
      Then He receives an error
 
    @database
@@ -24,16 +24,19 @@ Feature: Login
 
   @database
   Scenario: A user creates an API key
+    When He submits its credentials
+    Then He is logged in
     When He creates an API key
     Then He receives an API key
 
-  @database
-  Scenario: Delete a user
-    When He tries to delete the user
-    Then The user is deleted
-
-  @database
-  Scenario: A user logs out
-    When He submits its credentials
-    And He tries to log out
-    Then He is logged out
+#  @database
+#  Scenario: A user decides to delete its own account
+#    When He deletes his account
+#    When He submits its credentials
+#    Then He is not logged in
+#
+#  @database
+#  Scenario: A user logs out
+#    When He submits its credentials
+#    And He tries to log out
+#    Then He is logged out

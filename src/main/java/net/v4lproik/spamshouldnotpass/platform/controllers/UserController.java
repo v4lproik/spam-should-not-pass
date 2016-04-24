@@ -3,6 +3,7 @@ package net.v4lproik.spamshouldnotpass.platform.controllers;
 import net.v4lproik.spamshouldnotpass.platform.models.BasicMember;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberPermission;
 import net.v4lproik.spamshouldnotpass.platform.models.MemberStatus;
+import net.v4lproik.spamshouldnotpass.platform.models.PlatformException;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.BasicUserDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.toAuthUserDTO;
 import net.v4lproik.spamshouldnotpass.platform.models.dto.toCreateUserDTO;
@@ -104,7 +105,7 @@ public class UserController {
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public PlatformResponse create(@RequestBody toCreateUserDTO toCreateUserDTO){
+    public PlatformResponse create(@RequestBody toCreateUserDTO toCreateUserDTO) throws PlatformException {
 
         final String email = toCreateUserDTO.getEmail();
         final String password = toCreateUserDTO.getPassword();
@@ -115,7 +116,7 @@ public class UserController {
         final String corporation = toCreateUserDTO.getCorporation();
 
         if (userService.isEmailAlreadyTaken(email)){
-            return new UserResponse(PlatformResponse.Status.NOK, PlatformResponse.Error.INVALID_INPUT, "Email is already taken");
+            throw new PlatformException(PlatformResponse.Error.INVALID_INPUT, "Email is already taken");
         }
 
         User created = userService.save(
@@ -156,9 +157,10 @@ public class UserController {
     @RequestMapping(value = "/delete", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
     @ResponseBody
-    public PlatformResponse delete(@RequestBody UUID uuid) {
+    public PlatformResponse delete(HttpServletRequest req, @RequestBody UUID uuid) {
 
         userService.delete(uuid);
+        invalidateSession(req);
 
         return PlatformResponse.ok();
     }
@@ -169,14 +171,18 @@ public class UserController {
     @ResponseBody
     public PlatformResponse logout(HttpServletRequest req) {
 
+        invalidateSession(req);
+
+        return PlatformResponse.ok();
+    }
+
+    private void invalidateSession(HttpServletRequest req) {
         //invalidate session and remove it from cache
         final HttpSession session = req.getSession();
         if (session != null){
             session.invalidate();
         }
         sessionRepo.delete(req.getHeader("x-auth-token"));
-
-        return PlatformResponse.ok();
     }
 
     private BasicUserDTO convertUserToBasicUserDTO(User entity){

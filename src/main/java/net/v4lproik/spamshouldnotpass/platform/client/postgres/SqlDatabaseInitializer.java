@@ -21,16 +21,16 @@ public class SqlDatabaseInitializer {
     @NotNull
     private final Environment env;
 
+    private final DataSourceInitializer initializer;
+
     public SqlDatabaseInitializer(final DataSource postgresDataSource, final Environment env){
         this.postgresDataSource = postgresDataSource;
         this.env = env;
+        this.initializer = new DataSourceInitializer();
+        initializer.setDataSource(postgresDataSource);
     }
 
     public void createDatabase() throws SQLException {
-
-        DataSourceInitializer initializer = new DataSourceInitializer();
-
-        initializer.setDataSource(postgresDataSource);
 
         ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
 
@@ -48,6 +48,32 @@ public class SqlDatabaseInitializer {
             connection = postgresDataSource.getConnection();
             populator.populate(postgresDataSource.getConnection());
         }
+        finally {
+            if (connection != null) {
+                DataSourceUtils.releaseConnection(connection, postgresDataSource);
+            }
+        }
+    }
+
+    public void flushAllData() throws SQLException {
+
+        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+
+        populator.setIgnoreFailedDrops(false);
+
+        populator.addScript(
+                new ClassPathResource(String.format("%s.drop", env.getRequiredProperty("database.script")))
+        );
+
+        initializer.setDatabasePopulator(populator);
+
+        Connection connection = null;
+
+        try {
+            connection = postgresDataSource.getConnection();
+            populator.populate(postgresDataSource.getConnection());
+        }
+
         finally {
             if (connection != null) {
                 DataSourceUtils.releaseConnection(connection, postgresDataSource);
