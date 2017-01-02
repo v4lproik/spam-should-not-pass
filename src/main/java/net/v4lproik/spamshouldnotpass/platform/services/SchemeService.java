@@ -18,14 +18,14 @@ public class SchemeService {
     private final String ALLOW_CHAR_VARIABLES = "^\\w+$";
     private final List<String> types = Lists.newArrayList("java.lang.String", "java.lang.Integer", "java.lang.Boolean");
 
-    public boolean isSchemeValid(Map<String, List<String>> map){
+    public boolean isSchemeValid(Map<String, List<String>> map) {
 
         Map<String, List<String>> collect = map.entrySet()
                 .parallelStream()
                 .filter(x -> types.contains(x.getKey()) && this.matches(x.getValue()).equals(x.getValue()))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
-        if (map.equals(collect)){
+        if (map.equals(collect)) {
             return true;
         }
 
@@ -49,7 +49,7 @@ public class SchemeService {
         return collect;
     }
 
-    public static Class generate(String className, Map<Class<?>, List<String>>  properties) throws NotFoundException,
+    public static Class generate(String className, Map<Class<?>, List<String>> properties) throws NotFoundException,
             CannotCompileException {
 
         ClassPool pool = ClassPool.getDefault();
@@ -57,7 +57,7 @@ public class SchemeService {
 
         for (Map.Entry<Class<?>, List<String>> entry : properties.entrySet()) {
 
-            for (String variableName:entry.getValue()){
+            for (String variableName : entry.getValue()) {
 
                 cc.addField(new CtField(resolveCtClass(entry.getKey()), variableName, cc));
 
@@ -102,10 +102,10 @@ public class SchemeService {
         return pool.get(clazz.getName());
     }
 
-    private List<String> matches(List<String> arr){
+    private List<String> matches(List<String> arr) {
         List<String> allMatches = new ArrayList<String>();
-        for (String str:arr){
-           if (str.matches(ALLOW_CHAR_VARIABLES)) allMatches.add(str);
+        for (String str : arr) {
+            if (str.matches(ALLOW_CHAR_VARIABLES)) allMatches.add(str);
         }
         return allMatches;
     }

@@ -9,11 +9,11 @@ import java.util.UUID;
 
 public class BasicUserDTO {
 
-    UUID id;
-    String email;
-    String nickName;
-    MemberStatus status;
-    MemberPermission permission;
+    private UUID id;
+    private String email;
+    private String nickName;
+    private MemberStatus status;
+    private MemberPermission permission;
 
     @JsonCreator
     public BasicUserDTO(@JsonProperty("id") UUID id,

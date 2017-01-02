@@ -19,10 +19,10 @@ import java.lang.reflect.Method;
 
 public class AuthorisationSessionInterceptor extends HandlerInterceptorAdapter {
 
-    static Logger log = Logger.getLogger(AuthorisationSessionInterceptor.class.getName());
+    private static final Logger log = Logger.getLogger(AuthorisationSessionInterceptor.class.getName());
 
     @Autowired
-    CacheSessionRepository repository;
+    private CacheSessionRepository repository;
 
     public AuthorisationSessionInterceptor() {
         super();

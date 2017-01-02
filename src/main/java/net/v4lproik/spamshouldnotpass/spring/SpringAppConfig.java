@@ -55,12 +55,12 @@ public class SpringAppConfig extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    ConfigSqs configSqs(ObjectMapper objectMapper){
+    public ConfigSqs configSqs(ObjectMapper objectMapper){
         return new ConfigSqs(env, objectMapper);
     }
 
     @Bean
-    EventBus eventBus(ConfigSqs configSqs){
+    public EventBus eventBus(ConfigSqs configSqs){
         return configSqs.eventBus();
     }
 

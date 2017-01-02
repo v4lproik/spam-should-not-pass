@@ -20,7 +20,7 @@ import static com.google.common.base.Preconditions.checkNotNull;
 @Service
 public class UserService {
 
-    private static Logger log = Logger.getLogger(UserService.class);
+    private static final Logger log = Logger.getLogger(UserService.class);
 
     private final UserRepository userRepository;
     private final PasswordService passwordService;
@@ -31,25 +31,25 @@ public class UserService {
         this.passwordService = passwordService;
     }
 
-    public User authenticate(String email, String password){
+    public User authenticate(String email, String password) {
         checkNotNull(email);
         checkNotNull(password);
 
         final Optional<User> user = userRepository.findByEmail(email);
 
-        if (!user.isPresent()){
+        if (!user.isPresent()) {
             return null;
         }
 
         final String userPassword = user.get().getPassword();
         boolean auth;
         try {
-            auth = passwordService.validatePassword(password,userPassword);
+            auth = passwordService.validatePassword(password, userPassword);
         } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
             throw new IllegalArgumentException(String.format("[UserService] Error validating password for user %s", email), e);
         }
 
-        if (!auth){
+        if (!auth) {
             return null;
         }
 
@@ -62,8 +62,7 @@ public class UserService {
                      final MemberPermission permission,
                      final String email,
                      final String password,
-                     final String corporation
-    ) {
+                     final String corporation) {
         checkNotNull(firstname);
         checkNotNull(lastname);
         checkNotNull(permission);
@@ -72,7 +71,7 @@ public class UserService {
         checkNotNull(email);
         checkNotNull(corporation);
 
-        if (isEmailAlreadyTaken(email)){
+        if (isEmailAlreadyTaken(email)) {
             throw new IllegalArgumentException(String.format("[UserService] The email %s is already taken", email));
         }
 
@@ -106,7 +105,7 @@ public class UserService {
 
         return userRepository.findByEmail(email).isPresent();
     }
-    
+
     @Transactional(readOnly = false)
     public void delete(UUID id) {
         userRepository.delete(id);
