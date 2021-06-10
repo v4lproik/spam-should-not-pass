@@ -13,7 +13,7 @@
         <spring.version>4.1.6.RELEASE</spring.version>
         <spring-session.version>1.0.2.RELEASE</spring-session.version>
         <spring-session-data-redis.version>1.0.2.RELEASE</spring-session-data-redis.version>
-        <jetty-servlets>9.3.0.M2</jetty-servlets>
+        <jetty-servlets>9.4.41.v20210516</jetty-servlets>
         <junit>4.11</junit>
         <mockito-all>1.10.19</mockito-all>
         <hibernate-jpa-2.1-api>1.0.0.Final</hibernate-jpa-2.1-api>
